@@ -309,8 +309,7 @@ Once the demo is running and you've modified a few inputs:
    with "Revisit when" triggers. Good for understanding what the
    platform has *decided not* to do.
 4. **Pick a good-first-issue:**
-   - Clean an undirty directory for ruff hard-gate adoption
-   - Remove the `langchain` and `qdrant-client` orphan deps
+   - Clean a not-yet-hard-gated directory for ruff hard-gate adoption
    - Add a new gene caller (follow the `GeneCaller` pattern)
    - Write a benchmark scenario in `benchmarks/scenarios.py`
 

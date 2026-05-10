@@ -51,16 +51,12 @@ uvicorn==0.29.0
 websockets==15.0.1
 
 # AI/ML
-langchain==0.2.1            # ← DECLARED BUT UNUSED
 openai==1.30.1
 anthropic==0.25.8
 
 # Data
 pandas==2.2.2
 numpy==1.26.4
-
-# Vector Store
-qdrant-client==1.9.1        # ← DECLARED BUT UNUSED
 
 # MCP persistence
 pymongo==4.17.0
@@ -74,12 +70,12 @@ mypy==1.10.0
 anukriti-pgx-core==0.2.1
 ```
 
-Two of these are **orphans** — `langchain` and `qdrant-client`.
-Zero Python files import them. They're historical declarations from
-an earlier design phase that didn't ship. A follow-up cleanup PR
-will remove them.
-
-The actual in-use stack is what we walk next.
+**Historical note:** earlier revisions of this file declared
+`langchain==0.2.1` and `qdrant-client==1.9.1` as future integrations.
+Neither was ever imported — the agent framework is hand-rolled
+(Module 04), and retrieval uses in-tree TF-IDF. Both were removed in
+a 2026-05-10 cleanup commit once we confirmed zero imports. The
+in-use stack is what we walk next.
 
 ---
 
@@ -387,8 +383,8 @@ You now know:
 - **pgx-core has zero runtime deps.** Safety property.
 - **Swarm's real stack:** Python 3.11, Pydantic v2, FastAPI,
   WebSockets, pymongo, Gemini/OpenAI/Anthropic, vanilla JS + D3.
-- **Two orphan deps** (`langchain`, `qdrant-client`) are declared
-  but unused; scheduled for cleanup.
+- **Earlier orphan deps** (`langchain`, `qdrant-client`) were declared
+  but never imported; removed in the 2026-05-10 cleanup.
 - **We chose boring at the edges** (Python, FastAPI, Mongo, Docker)
   to spend weirdness budget on the safety-critical middle (closed
   enums, regression contracts, `GenerativeBoundary`).
