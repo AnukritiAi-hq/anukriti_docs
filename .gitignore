@@ -1,0 +1,37 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Tooling that might land here someday
+node_modules/
+.pytest_cache/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build output (if we ever add a static-site generator)
+_site/
+_book/
+site/
+public/
+dist/
+build/
+
+# Local drafts
+drafts/
+*.draft.md
+
+# Session / AI tool artifacts
+.codex/
+.kiro/
+claude-session.jsonl
+codex-session.jsonl
+
+# Env files (unlikely here, but belt and braces)
+.env
+.env.*
