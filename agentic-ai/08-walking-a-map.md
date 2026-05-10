@@ -239,7 +239,14 @@ citation. No hallucination — just arrows you can see and follow.
 
 ---
 
-Next up: **[09 — Using Tools](09-using-tools.md)**
+Next up: **[08a — Treating Everyone Fairly](08a-treating-everyone-fairly.md)**
+
+Walking a knowledge-graph map already touched on populations.
+Before we move on to tools, let's dig into the deeper question:
+what does it actually mean for our system to treat every
+population equally?
+
+Then after that: **[09 — Using Tools](09-using-tools.md)**
 
 Sometimes an agent needs to do something that isn't code it was
 born with. Save a file. Look up a paper. Write to a database.

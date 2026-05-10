@@ -74,6 +74,7 @@ know the idea.
 06  Remembering Things              learning from last time
 07  Finding Information             looking things up the smart way
 08  Walking a Map                   following arrows to find a friend
+08a Treating Everyone Fairly        what "population-aware" actually means
 09  Using Tools                     when a helper needs a hammer
 10  Checking the Work               the double-checker
 11  Knowing When to Say No          when "I don't know" is the right answer

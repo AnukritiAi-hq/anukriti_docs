@@ -13,6 +13,223 @@ of guessing?
 
 ---
 
+## What "population-aware" actually means here
+
+> *"Anukriti claims to treat every population equally. How?"*
+
+This is the question people ask first, and it deserves a direct
+answer before the implementation details.
+
+The phrase **"population-aware"** can mean three different things.
+We need to be precise about which one we do, because two of them
+are opposites.
+
+### The three meanings of "equal treatment"
+
+**Meaning 1: Same answer for everyone.**
+This is what Eurocentric medicine accidentally does. Clinical
+guidelines derived from EUR cohorts get applied uniformly, so
+SAS, EAS, AFR, and AMR patients receive the same recommendation
+as EUR patients even when the underlying biology argues for
+different ones. This is the 14%-SAS-on-clopidogrel problem from
+[Module 01](01-what-is-anukriti.md) — it's the problem we exist
+to solve, not our goal.
+
+**Meaning 2: Same *reasoning rigor* for everyone.**
+Every population goes through the same 5-stage pipeline. Same
+6 evidence facets checked. Same 4 verification engines. Same
+`GenerativeBoundary`. No hidden Eurocentric fast-path that skips
+checks for EUR patients. **This is our goal** — equal epistemic
+rigor, not equal confidence.
+
+**Meaning 3: Same *confidence* for every output regardless of
+evidence.**
+Also wrong, but in the opposite direction. A system that emits
+the same confidence for every query — regardless of whether the
+evidence supports the population in question — is dishonest.
+Our system does the opposite: the same process produces
+*different* confidence based on *actual* evidence density.
+
+### What "equal rigor" looks like mechanically
+
+Five concrete mechanisms make the platform population-aware.
+Each one is a specific file and pattern you can inspect.
+
+#### Mechanism 1 — Population as a first-class knowledge-graph node
+
+The KG has a closed 10-value `NodeKind` enum
+(`knowledge_graph/schema.py`). `POPULATION` is one of those kinds
+— not a property stuck on other nodes, a node in its own right.
+Edges of kind `HIGHER_FREQUENCY_IN` carry numeric weights.
+
+From the seed data:
+
+| Edge | Weight |
+|------|--------|
+| CYP2C19 \*2 → SAS | 0.36 |
+| CYP2D6 \*4 → EUR | 0.20 |
+| CYP2D6 \*17 → AFR | 0.20 |
+| HLA-B \*15:02 → EAS | 0.08 |
+
+The `MultiHopReasoner` multiplies weights along a walked path.
+SAS + CYP2C19 \*2 is a 0.36-weighted edge; EUR + CYP2C19 \*2
+would be 0.14. The walker produces **different weighted paths
+for different populations**, even when the intermediate nodes
+overlap.
+
+#### Mechanism 2 — Population-aware retrieval re-ranker
+
+`retrieval/multi_strategy/biomedical_retriever.py` (the
+`PopulationAwareRetriever` class) applies a **signed boost**:
+
+- Documents mentioning the target population score **higher**
+- Documents mentioning a different population score **lower**
+- Population-agnostic documents are unchanged
+
+The mention-detector uses word-boundary regex for 3-letter
+codes (so `EAS` doesn't match inside `increased`; see
+`core/models/population_mentions.py`).
+
+An SAS patient's retrieval surfaces Gujarati-cohort studies above
+generic CPIC text; an EUR patient's retrieval inverts. **Same
+candidate set, different top-ranked subset.**
+
+#### Mechanism 3 — Population as one of 6 evidence-sufficiency facets
+
+`core/evidence_sufficiency/coverage/claim_coverage.py` defines
+the 6 facets. One of them is `POPULATION`. Each has a state:
+`COVERED`, `UNCERTAIN`, or `MISSING`.
+
+The 12-rule decision engine fires:
+
+```
+R5  POPULATION MISSING     → ESCALATE
+R9  POPULATION UNCERTAIN   → DOWNGRADE
+```
+
+**We explicitly refuse to ignore whether we have
+population-specific evidence.** An answer derived only from EUR
+cohorts for a non-EUR patient gets downgraded — caveat attached,
+not silent confidence.
+
+#### Mechanism 4 — Named bias detection
+
+`core/evidence_sufficiency/uncertainty/bias_detector.py` —
+the `PopulationEvidenceBiasDetector` checks for three specific
+patterns with concrete numeric thresholds:
+
+| BiasKind | Trigger |
+|----------|---------|
+| `EUROCENTRIC_IMBALANCE` | Target is non-EUR AND target evidence count = 0 AND EUR evidence count > 0 |
+| `ANCESTRY_SCARCITY` | Target allele count / max allele count < 0.5 (default) |
+| `UNSUPPORTED_EXTRAPOLATION` | POPULATION facet UNCERTAIN AND target has zero KG frequency data |
+
+A query about a Black patient on codeine (CYP2D6) surfaces
+`ANCESTRY_SCARCITY` because AFR has sparse CYP2D6 evidence in our
+seed. The answer is **downgraded**, not silently derived from
+EUR priors. **Our honesty is proportional to actual evidence, not
+proportional to the medical establishment's comfort.**
+
+#### Mechanism 5 — Honest refusals with named rule IDs
+
+The canonical operational test
+(`demos/evidence_sufficiency_demo.py`):
+
+> *"Codeine + CYP2D6 + African ancestry — recommendation?"*
+
+Expected output:
+
+```
+decision:      DOWNGRADE               (R9)
+verdict:       UNCERTAIN                (V7)
+uncertainty:   HIGH                     (U3 + U5)
+bias_findings: [ANCESTRY_SCARCITY]
+```
+
+A general-purpose LLM would happily produce a confident answer
+for the same query. Ours refuses to, and cites the specific rule
+that made it refuse. **This is the operational meaning of
+population-awareness in our system: we refuse when evidence
+doesn't support a claim for a specific population.**
+
+### The three honest gaps
+
+Claiming "population-aware" means being honest about where we
+fall short. Three specific gaps:
+
+#### Gap 1 — Sub-populations are not seeded
+
+The `NodeKind.ANCESTRY` enum value exists as a populated
+extension point, but has **zero nodes in the seed today**.
+That means:
+
+- SAS:GIH (Gujarati) and SAS:BEB (Bengali) reason identically
+- AFR:YRI (Yoruba) and AFR:ESN (Esan) reason identically
+- Clinically, these sub-populations have real allele-frequency
+  differences
+
+This is deferred-correctly, not broken. The enum value is ready
+for when published evidence justifies sub-population edges.
+But today, "population-aware" means "super-population-aware,"
+not "patient-ancestry-aware."
+
+#### Gap 2 — The 5-value closed enum excludes mixed ancestry
+
+`SuperPopulation` has EUR, EAS, SAS, AFR, AMR. **That's 5
+buckets for ~8 billion people.** Mixed-ancestry individuals
+(who are a large and growing share of patients) don't fit
+cleanly into one bucket.
+
+Today, a clinician picks the best-match category. The honest
+solution — ancestry as a mixture vector rather than a single
+categorical — is not implemented. It would be a real research
+project, not a small refactor.
+
+#### Gap 3 — We name scarcity; we don't fix it
+
+Our bias detector *names* the problem. It doesn't solve it.
+Solving it requires either:
+
+1. More diverse cohort data in the knowledge graph (an
+   upstream-research problem)
+2. Different reasoning modes for thin-evidence populations (e.g.
+   higher-confidence related populations as a prior)
+
+We do neither. We refuse, and we cite why we refused. That's
+**epistemically honest but clinically unsatisfying** — a patient
+still needs a decision, and "we can't help you" is not a
+clinically useful answer. A future research direction.
+
+### So — are we treating every population equally?
+
+- **Equal reasoning rigor? Yes.** Every population goes through
+  the same 5-stage pipeline with the same checks and the same
+  boundary.
+- **Equal confidence outputs? No, and this is deliberate.**
+  Different populations produce different confidence tiers
+  based on actual evidence density.
+- **Equal clinical usefulness across populations? No, and we
+  don't pretend otherwise.** A patient in an underrepresented
+  population gets a less actionable answer from our system.
+  That's a limitation of the evidence base we're reading, not
+  one we introduce. We make it *visible* (named refusals) where
+  other systems make it *invisible* (confident EUR-derived
+  answers).
+
+If a reviewer asks *"why is your answer for a SAS patient so
+specific and your answer for an AFR patient just a downgrade?"*
+— the honest response is: *"because the evidence density
+differs by population, and we refuse to paper over that. Here's
+the specific rule that fired and the specific bias we
+detected."*
+
+That's what population-aware actually means here.
+
+*(For the friendly, story-based version of the same content, see
+[agentic-ai Module 08a — Treating Everyone Fairly](../agentic-ai/08a-treating-everyone-fairly.md).)*
+
+---
+
 ## Why ancestry matters — the clinical argument
 
 From Module 01: 14% of South Asians vs. 2% of Europeans are *CYP2C19
