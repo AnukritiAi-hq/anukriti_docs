@@ -80,7 +80,7 @@ outputs, behind a `GenerativeBoundary` where 4 specific LLM actions
 | Runtime (deterministic path) | < 2 ms end-to-end |
 | Runtime (full FHIR path) | < 30 ms end-to-end |
 | Gene panel | 13 genes, 11 star-allele + 2 single-rsID |
-| Populations | SAS / AFR / EUR with real CPIC allele-frequency splits |
+| Populations | AFR / AMR / EAS / EUR / SAS — 325 allele-frequency records across all 13 genes (gnomAD v4.0) |
 | Guideline pinning | CPIC 2022 + 2019, 29 provenance manifest entries |
 | External validation | AWS AI Competition Finalist · SAMANWAYA'26 conference abstract submitted · Agents Assemble 2026 hackathon submission |
 

@@ -84,7 +84,7 @@ FHIR R5 — DetectedIssue + ClinicalImpression + Provenance
   product biomedical suite)
 - **13 genes** (11 star-allele, 2 single-rsID) + 2 product-layer shims
   (GST, HLA-B)
-- **3 populations** (SAS / AFR / EUR) with real allele-frequency splits
+- **5 populations** (AFR / AMR / EAS / EUR / SAS) with 325 gnomAD v4.0 allele-frequency records across all 13 genes
 - **CPIC 2022 + 2019** guidelines pinned; 29 provenance manifest entries
 
 ---
