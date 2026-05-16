@@ -285,15 +285,19 @@ Items that depend on Phase C unlocking:
 
 ## Part 8 — Outreach contact list (consolidated)
 
-| Contact | Role | Repo connection | Why reach out |
-|---|---|---|---|
-| **Mike Zack** (`mz@pgx.ai`, PGxAI Inc.) | Lead author, Zack 2026 npj DM | Upstream complement (guideline generation) | Partnership: their guidelines feed into our `guidelines/cpic.py` |
-| **Priya Moorjani** (`moorjani@berkeley.edu`, UC Berkeley) | Senior + corresponding, Kerdoncuff 2025 + Moorjani 2013 | Owner of LASI-DAD analysis + Indian population genetics canonical work | LASI-DAD data access + scientific advisor |
-| **Jinkook Lee** (`jinkookl@usc.edu`, USC) | Senior, Kerdoncuff 2025 | LASI-DAD PI on the US side | LASI-DAD data access |
-| **Aparajit Ballav Dey** (`abdey@hotmail.com`, AIIMS Delhi) | Senior, Kerdoncuff 2025 | LASI-DAD PI on the India side | LASI-DAD data access + Indian institutional partnership |
-| **Eimear Kenny** (Mount Sinai, Icahn School of Medicine) | Corresponding, Martin 2017 + Pangenome 2023 | Population-aware GWAS canonical author, Pangenome lead | Academic advisor; Mount Sinai = natural research home |
-| **Alicia Martin** (`armartin@mgh.harvard.edu`, Broad/MGH) | Lead author, Martin 2017 | Method 1 (cross-ancestry borrowing) methodological reference | Methodological collaboration on Method 1 prototype |
-| **Mark DePristo / DeepVariant team** (Verily) | Senior, Poplin 2018 | Upstream variant caller | 3-layer compose pitch (signal → interpretation → decision) |
+| Contact | Role | Repo connection | Why reach out | Status |
+|---|---|---|---|---|
+| **Mike Zack** (`mz@pgx.ai`, PGxAI Inc.) | Lead author, Zack 2026 npj DM | Upstream complement (guideline generation) | Partnership: their guidelines feed into our `guidelines/cpic.py` | not yet |
+| **Priya Moorjani** (`moorjani@berkeley.edu`, UC Berkeley) | Senior + corresponding, Kerdoncuff 2025 + Moorjani 2013 | Owner of LASI-DAD analysis + Indian population genetics canonical work | LASI-DAD data access + scientific advisor | not yet |
+| **Jinkook Lee** (`jinkookl@usc.edu`, USC) | Senior, Kerdoncuff 2025 | LASI-DAD PI on the US side | LASI-DAD data access | not yet |
+| **Aparajit Ballav Dey** (`abdey@hotmail.com`, AIIMS Delhi) | Senior, Kerdoncuff 2025 | LASI-DAD PI on the India side | LASI-DAD data access + Indian institutional partnership | not yet |
+| **Eimear Kenny** (Mount Sinai, Icahn School of Medicine) | Corresponding, Martin 2017 + Pangenome 2023 | Population-aware GWAS canonical author, Pangenome lead | Academic advisor; Mount Sinai = natural research home | not yet |
+| **Alicia Martin** (`armartin@mgh.harvard.edu`, Broad/MGH) | Lead author, Martin 2017 | Method 1 (cross-ancestry borrowing) methodological reference | Methodological collaboration on Method 1 prototype | not yet |
+| **Mark DePristo / DeepVariant team** (Verily) | Senior, Poplin 2018 | Upstream variant caller | 3-layer compose pitch (signal → interpretation → decision) | not yet |
+| **Andrea Gaedigk** (`agaedigk@cmh.edu`, Children's Mercy KC / PharmVar) | PharmVar steward, StarTRAC 2025 + pharmacoequity 2023 | Nomenclature ground truth for `anukriti-pgx-core/anukriti_pgx_core/calling/` | Implementer alignment + South Asian data pointers | ✅ initial exchange done 2026-05-15 — see [`partnerships/01-Gaedigk-PharmVar-implementer-alignment.md`](partnerships/01-Gaedigk-PharmVar-implementer-alignment.md) |
+| **Andrew Somogyi** (`andrew.somogyi@adelaide.edu.au`, Univ. of Adelaide) | Referred by Gaedigk as a connector who "may be able to direct to other people" | Possible bridge to South Asian PGx authors | South Asian-focused PGx pointers — **highest-priority of the three Gaedigk referrals** | queued |
+| **Chonlaphat Sukasem** (`chonlaphat.suk@mahidol.ac.th`, Mahidol University) | Referred by Gaedigk; Thai PGx work | Adjacent-region (SEA) PGx, methodologically transferable | Thai PGx + adjacent-region triangulation | queued |
+| **Martin Kennedy** (`martin.kennedy@otago.ac.nz`, Univ. of Otago) | Referred by Gaedigk; native New Zealander PGx | Methodological reference for population-specific allele characterization done at small-team scale | Methodological reference for under-represented-population PGx | queued |
 
 ---
 
