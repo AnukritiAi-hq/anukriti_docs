@@ -114,6 +114,21 @@ previous ones.
 
 ---
 
+## Engineering reference docs (top-level)
+
+Standalone deep-dives that complement the courses, anchored to the
+actual source files. These are not part of either course's reading
+order but the courses link out to them.
+
+| Doc | What it covers | When to read |
+|-----|----------------|--------------|
+| [**DETERMINISTIC_ENGINE_DEEP_DIVE.md**](DETERMINISTIC_ENGINE_DEEP_DIVE.md) | Layer-by-layer trace of what happens when a VCF goes in: PharmVar TSV lookup → diplotype → CPIC named-table lookup → activity-score fallback → CPIC recommendation → template render. Real data files quoted. Includes a clarification of where SMILES + Tanimoto fits (the drug reranker — a side-path, not part of the engine). | When someone asks "how does the engine actually work?" or "where's the risk score?" |
+| [**IDEA_REFINEMENT_AND_PHASING_2026-05-14.md**](IDEA_REFINEMENT_AND_PHASING_2026-05-14.md) | Single source of truth for "how the 6 platform-foundational papers change the build order." Phase A/B/C/D plan + 11-contact outreach list. | Before any strategy or roadmap conversation. |
+| [**PLATFORM_ANALYSIS_2026-05-11.md**](PLATFORM_ANALYSIS_2026-05-11.md) | Pre-paper-synthesis platform analysis (predecessor to IDEA_REFINEMENT). | Historical context for why current priorities are what they are. |
+| [**SESSION_RESUME_2026-05-16.md**](SESSION_RESUME_2026-05-16.md) | Most recent end-of-session resume point. Successor SESSION_RESUME files are added per working session. | When picking up work mid-flight after a break. |
+
+---
+
 ## The three repos these docs describe
 
 | Repo | Role |
