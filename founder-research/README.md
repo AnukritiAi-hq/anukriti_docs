@@ -43,6 +43,9 @@ Where:
 
 - Domain expert conversations (clinicians, pharmacologists, CRAs,
   regulators, etc.)
+- Scientific-authority and registry-steward conversations
+  (CPIC / PharmVar / PharmGKB / data-custodian PIs) — the people
+  who shape the *evidence base* Anukriti consumes
 - Customer discovery calls (CRO bioinformaticians, healthcare-AI
   platform leads, research-hospital ops)
 - Peer / student conversations that surface real-world workflow
