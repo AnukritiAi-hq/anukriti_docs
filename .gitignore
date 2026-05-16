@@ -35,3 +35,8 @@ codex-session.jsonl
 # Env files (unlikely here, but belt and braces)
 .env
 .env.*
+
+# Stray downloads — non-Anukriti research material that lands in the
+# repo root by accident. Keep the file on disk if you want, but do
+# not let git track it.
+a7e8976cd_UserResearchMasterclass_Base44_*.pdf

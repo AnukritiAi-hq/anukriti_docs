@@ -1,0 +1,5 @@
+1: Martin AR, Kanai M, Kamatani Y, Okada Y, Neale BM, Daly MJ. Clinical use of
+current polygenic risk scores may exacerbate health disparities. Nat Genet. 2019
+Apr;51(4):584-591. doi: 10.1038/s41588-019-0379-x. Epub 2019 Mar 29. Erratum in:
+Nat Genet. 2021 May;53(5):763. doi: 10.1038/s41588-021-00797-z. PMID: 30926966;
+PMCID: PMC6563838.

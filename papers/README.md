@@ -28,7 +28,21 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-### 3. Poplin-2018-NatBiotech-DeepVariant-Universal-SNP-Indel-Caller-DNN.pdf
+### 3. Martin-2019-NatGenet-Clinical-Use-of-Current-Polygenic-Risk-Scores-Citation.txt
+
+- **Title:** Clinical use of current polygenic risk scores may exacerbate health disparities
+- **Authors:** Alicia R. Martin, Masahiro Kanai, Yoichiro Kamatani, Yukinori Okada, Benjamin M. Neale, Mark J. Daly
+- **Journal:** Nature Genetics, 51(4), 584–591 (April 2019; Epub Mar 29, 2019)
+- **DOI:** [10.1038/s41588-019-0379-x](https://doi.org/10.1038/s41588-019-0379-x)
+- **PMID:** [30926966](https://pubmed.ncbi.nlm.nih.gov/30926966/)
+- **PMCID:** [PMC6563838](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6563838/)
+- **Summary:** Sister paper to Martin 2017 — sharper, more clinical-impact-oriented. Quantifies how PRS performance gaps across ancestries translate into measurable health-disparity amplification when current scores are deployed clinically without ancestry-aware calibration. Erratum: *Nat Genet* 53(5):763 (May 2021).
+- **Relevance to Anukriti:** **Clinical-equity citation.** Where Martin 2017 establishes the population-genetics mechanism, Martin 2019 establishes the clinical-deployment harm. Together they are the two-paper case for why population-aware infrastructure is not optional. Cite both alongside Kerdoncuff 2025 in any deployment-risk argument.
+- **Storage note:** PDF not in the repo (NIH PMC paywall + size); this entry stores only the NCBI citation export. Pull the PDF locally from PMC6563838 when needed.
+
+---
+
+### 4. Poplin-2018-NatBiotech-DeepVariant-Universal-SNP-Indel-Caller-DNN.pdf
 
 - **Title:** A universal SNP and small-indel variant caller using deep neural networks (DeepVariant)
 - **Authors:** Ryan Poplin, Pi-Chuan Chang, David Alexander, Scott Schwartz, Thomas Colthurst, Alexander Ku, Dan Newburger, Jojo Dijamco, Nam Nguyen, Pegah T. Afshar, Sam S. Gross, Lizzie Dorfman, Cory Y. McLean, Mark A. DePristo (Verily / Google)
@@ -39,7 +53,7 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-### 4. Narasimhan-2019-Science-Formation-of-Human-Populations-in-South-and-Central-Asia.pdf
+### 5. Narasimhan-2019-Science-Formation-of-Human-Populations-in-South-and-Central-Asia.pdf
 
 - **Title:** The Formation of Human Populations in South and Central Asia
 - **Authors:** Vagheesh M. Narasimhan, Nick Patterson, Priya Moorjani, et al. (David Reich lab + 100+ collaborators)
@@ -50,7 +64,7 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-### 5. Kerdoncuff-2025-Cell-50000-Years-Evolutionary-History-of-India-Health-Disease.pdf
+### 6. Kerdoncuff-2025-Cell-50000-Years-Evolutionary-History-of-India-Health-Disease.pdf
 
 - **Title:** 50,000 years of evolutionary history of India: Impact on health and disease variation
 - **Authors:** Elise Kerdoncuff, Laurits Skov, Nick Patterson, Priya Moorjani (corresponding), Andrea Ganna, et al. (large pan-India clinical consortium incl. AIIMS, NIMHANS, BHU, etc.)
@@ -61,7 +75,7 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-### 6. Zack-2026-npjDigitalMedicine-Agentic-AI-System-for-Automated-Pharmacogenomic-Recommendation.pdf
+### 7. Zack-2026-npjDigitalMedicine-Agentic-AI-System-for-Automated-Pharmacogenomic-Recommendation.pdf
 
 - **Title:** An agentic AI system for automated pharmacogenomic recommendation generation
 - **Authors:** M. Zack, A. Savinkov, D. Stupichev, et al.
@@ -83,11 +97,12 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 | Theme | Papers |
 |-------|--------|
 | Indian population genetics & ANI/ASI ancestry | Moorjani 2013, Narasimhan 2019, Kerdoncuff 2025 |
-| Diversity, equity & risk-score transferability | Martin 2017, Pangenome 2023 |
+| Diversity, equity & risk-score transferability | Martin 2017, Martin 2019, Pangenome 2023 |
+| Clinical-deployment harm from EUR-trained PRS | Martin 2019 |
 | Variant-calling / pipeline tooling | Poplin 2018 (DeepVariant) |
 | Indian clinical phenotype + genetics | Kerdoncuff 2025 |
 | Agentic AI for genomics / pharmacogenomics | Zack 2026 |
 
 ---
 
-*Last updated: 2026-05-14*
+*Last updated: 2026-05-16*
