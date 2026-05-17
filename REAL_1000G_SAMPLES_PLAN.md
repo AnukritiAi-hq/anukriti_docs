@@ -119,7 +119,13 @@ Response (200):
 }
 ```
 
-Auth: requires API key (`read:samples` scope; bootstrap admin keys auto-pass).
+Auth: **public** as of the simulation-public-by-default policy
+(2026-05-17, see `anukriti-api d9db971` and
+[`anukriti-stack/DEPLOYMENT.md`](https://github.com/AnukritiAi-hq/anukriti-stack/blob/main/DEPLOYMENT.md#auth-policy-public-reads--cohort-runs--private-user-owned-state)
+"Auth policy" section). The 1000 Genomes data is public research
+data, and the per-key rate limit is bypassed for non-billable
+public routes; abuse is bounded by Container Apps default scaling
+and IP rate-limiting can be added in front of the api when needed.
 
 #### `POST /runs/from-samples`
 
@@ -146,7 +152,9 @@ Behaviour:
    }
    ```
 
-Auth: `write:runs` scope.
+Auth: **public** (same policy as `GET /samples/1000g` above).
+Invalid keys are silently ignored on public routes — stale
+localStorage tokens never break the demo flow.
 
 Errors:
 - `400 invalid_workflow` — bad workflow.
