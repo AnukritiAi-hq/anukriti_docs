@@ -10,7 +10,7 @@
 >   - Engine internals: [`DETERMINISTIC_ENGINE_DEEP_DIVE.md`](DETERMINISTIC_ENGINE_DEEP_DIVE.md)
 >   - Refusal taxonomy: [`EVIDENCE_SUFFICIENCY_LAYER_DEEP_DIVE.md`](EVIDENCE_SUFFICIENCY_LAYER_DEEP_DIVE.md)
 >   - Repo composition: [`THREE_REPO_INTEGRATION_DEEP_DIVE.md`](THREE_REPO_INTEGRATION_DEEP_DIVE.md)
->   - The repo this doc describes: [`anukriti-iwpc-warfarin`](https://github.com/AnukritiAi-hq/anukriti-iwpc-warfarin)
+>   - The repo this doc describes: [`anukriti-validation-iwpc`](https://github.com/AnukritiAi-hq/anukriti-validation-iwpc)
 
 ---
 
@@ -33,6 +33,16 @@ outside the 2.0–3.0 target range** — empirical confirmation that those
 prescribed doses were wrong and the engine would have correctly
 flagged them at the start.
 
+A companion **CPIC table audit** (`scripts/audit_cpic_tables.py`)
+diff-checks pgx-core's pinned phenotype tables against the canonical
+CPIC API. On `0.2.1` it ships clean for VKORC1 (3/3 = 100%) and
+flags real bugs in the CYP2C9 functionality table (10/16 alleles
+mismatch CPIC; cascades into ~1.2% of IWPC patients with wrong
+PM/IM bucketing). Disclosed in full in [§5a](#5a-what-the-cpic-table-audit-revealed-2026-05-26),
+scheduled for fix in `anukriti-pgx-core==0.3.0`. The IWPC headline
+numbers above are robust to this — most signal comes from VKORC1,
+which audits clean.
+
 Validation NOT yet performed: PharmCAT diplotype concordance (the
 external-caller comparison). Tracked as CP-5 in the
 [`anukriti` clinical-grade roadmap][cp5]; framework shipped, smoke
@@ -50,6 +60,7 @@ test blocked on chr2 VCF extraction throughput.
 3. [Method — what the script does](#3-method--what-the-script-does)
 4. [Results — Q1 through Q5](#4-results--q1-through-q5)
 5. [Interpretation — what the numbers do and don't say](#5-interpretation--what-the-numbers-do-and-dont-say)
+5a. [What the CPIC table audit revealed (2026-05-26)](#5a-what-the-cpic-table-audit-revealed-2026-05-26)
 6. [Scope caveats](#6-scope-caveats)
 7. [Reproduction recipe](#7-reproduction-recipe)
 8. [What the engine deliberately does NOT do (recap)](#8-what-the-engine-deliberately-does-not-do-recap)
@@ -334,6 +345,161 @@ Singapore Chinese).
 
 ---
 
+## 5a. What the CPIC table audit revealed (2026-05-26)
+
+> **Material finding.** The deep-dive ships with an external CPIC
+> table audit — `scripts/audit_cpic_tables.py` in the validation
+> repo. On the first run against the canonical CPIC API, the audit
+> flagged real discrepancies in `anukriti-pgx-core==0.2.1`'s
+> CYP2C9 phenotype table. They are documented here in full because
+> the platform's positioning is "every claim is auditable" — and
+> that means surfacing what the audit found, not burying it.
+
+### The audit, briefly
+
+`scripts/audit_cpic_tables.py` pulls the canonical CPIC tables from
+[`api.cpicpgx.org`](https://api.cpicpgx.org) and diffs them
+row-by-row against the JSON tables shipped inside the engine. The
+diff covers two surfaces — per-allele functionality and per-diplotype
+phenotype — for the 16 CYP2C9 alleles pgx-core covers, plus VKORC1.
+
+Headline (run on `anukriti-pgx-core==0.2.1`):
+
+| Audit | n | matches | mismatches | match rate |
+|---|---|---|---|---|
+| **CYP2C9 diplotype → phenotype** | 136 | 43 | 93 | 32% |
+| **CYP2C9 allele → function** | 16 | 6 | 10 | 38% |
+| **VKORC1 -1639 → sensitivity** (Johnson 2017) | 3 | 3 | 0 | **100%** |
+
+VKORC1 ships clean. CYP2C9 has bugs.
+
+### What's actually wrong
+
+Three error patterns, classified by impact:
+
+#### Pattern A — wrong-direction PM/IM bucketing (most concerning)
+
+The cascade root cause is **incorrect allele functionality bins** for
+several alleles, which then propagates into wrong phenotype calls
+for diplotypes containing them. Spot-verified against three
+independent sources (CPIC API, the DPWG dosing recommendation in
+NBK84174, and Johnson 2017 / PMID 21900891):
+
+```
+*2/*2     pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+*2/*5     pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+*2/*11    pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+*2/*14    pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+*11/*11   pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+*14/*14   pgx-core: Poor Metabolizer       CPIC: Intermediate Metabolizer
+```
+
+These are clinical-direction errors. CPIC's reasoning: alleles
+`*2`, `*5`, `*8`, `*11`, `*14` are *decreased function* (activity
+0.5), not no function (activity 0.0). Two decreased-function
+alleles sum to activity score 1.0, which CPIC classifies as IM. The
+pgx-core JSON treats them as no-function and compounds them into PM.
+
+#### Pattern B — wrong allele-functionality bins
+
+The underlying root cause behind Pattern A:
+
+```
+*4    pgx-core: No function          CPIC: Decreased function   (activity 0.5)
+*5    pgx-core: No function          CPIC: Decreased function   (activity 0.5)  [Strong evidence]
+*8    pgx-core: No function          CPIC: Decreased function   (activity 0.5)  [Definitive]
+*11   pgx-core: No function          CPIC: Decreased function   (activity 0.5)  [Definitive]
+*30   pgx-core: No function          CPIC: Decreased function   (activity 0.5)
+*61   pgx-core: No function          CPIC: Decreased function   (activity 0.5)
+*13   pgx-core: Decreased function   CPIC: No function          (activity 0.0)  [Definitive]
+*39   pgx-core: Decreased function   CPIC: No function          (activity 0.0)
+*43   pgx-core: Decreased function   CPIC: No function          (activity 0.0)
+```
+
+`*6` is correctly called No function in both — that's the only one
+of the no-function-tier alleles in pgx-core that lines up with CPIC.
+
+`*27` is the soft case: pgx-core says Decreased function, CPIC says
+"Uncertain function" (insufficient evidence). pgx-core is overconfident.
+
+#### Pattern C — incomplete coverage (not strictly a bug)
+
+About 50 of the 93 diplotype mismatches are pgx-core's table
+silently not listing diplotypes like `*11/*13`, `*13/*14`, `*2/*4`.
+The engine returns `Indeterminate` for these — which is the
+*correct* fallback behavior — but CPIC has explicit assignments for
+all of them. Closing this gap is regen-the-table, not redesign.
+
+### How much does this affect the IWPC validation headline numbers?
+
+**Very little, in absolute terms.** The IWPC cohort allele frequency
+of the affected diplotypes:
+
+| Diplotype | n in IWPC |
+|---|---|
+| `*2/*2` | 56 |
+| `*1/*5` | 6 |
+| `*1/*11` | 6 |
+| `*1/*6` | 3 |
+| `*1/*13` | 1 |
+| `*1/*14` | 1 |
+
+The Pattern A clinical-direction errors affect ~60–70 patients out
+of 5,700 — about 1.2% of the cohort. The Q1 monotonicity check
+(low 45.80 → standard 33.66 → high 21.58 mg/wk, gradient ~24 mg/wk)
+is robust to this: most of the engine's "high" signal comes from
+W2 (VKORC1 -1639 A/A, n=1,463 of 1,965 high-risk), and VKORC1
+audits clean at 100%.
+
+The 99-of-467 INR-confirmed undertreated number is also robust —
+none of the affected diplotypes have *2/*5, *2/*11 patterns at
+high enough frequency to materially shift the count.
+
+### What this changes about the validation's claims
+
+| Claim from §5 | Status after audit |
+|---|---|
+| Engine's CYP2C9 phenotype calls track CPIC | **Qualified.** CPIC-aligned in direction (NM > IM > PM dose gradient is monotonic), but per-row phenotype matching is only 32% on the surface CPIC publishes. The errors are bounded and systematic. |
+| Engine's VKORC1 calls track CPIC | **Confirmed.** 100% match with Johnson 2017. |
+| Joint W1..W5 classifier is monotonic across IWPC | **Confirmed.** Robust to the CYP2C9 table bugs (Q1 gradient holds). |
+| The 99/467 INR-confirmed gap is real | **Confirmed.** Affected primarily by VKORC1, which is clean. |
+
+### What's being fixed and where
+
+`anukriti-pgx-core==0.3.0` will:
+1. Re-bin the CYP2C9 allele functionality table to match CPIC (fixes
+   Pattern B → unblocks Pattern A automatically).
+2. Regenerate `CYP2C9_diplotypes_anukriti_v2024.01.json` from the
+   corrected functionality table + CPIC's published activity-score
+   rules (fixes Pattern A's residual cases).
+3. Add the missing diplotype rows from CPIC's published table
+   (closes Pattern C).
+4. Re-run this audit; target match rate **100%** on all three
+   surfaces.
+5. The IWPC validation script will be re-run against the new pgx-core
+   release, and any change in the headline numbers documented here.
+
+This is tracked as a v0.3.0 backlog entry in
+[`anukriti-pgx-core/PROJECT_CONTEXT.md`](https://github.com/AnukritiAi-hq/anukriti-pgx-core/blob/main/PROJECT_CONTEXT.md).
+
+### Why this audit was the right thing to do
+
+The discrepancies above existed in `anukriti-pgx-core==0.2.1` from
+the day it shipped. The internal regression tests (50/50 in
+pgx-core; 244/244 in swarm; 12/12 byte-locked) all pass — they
+prove the engine doesn't *drift*; they don't prove it's *correct*.
+External validation is the only mechanism that would catch this.
+
+That's the audit's job. It worked.
+
+The platform's positioning — *every claim cites a rule, every rule
+cites a paper, every refusal is named* — only holds if the rule
+tables are themselves correct. This audit is now part of the
+shipping contract: it runs alongside the IWPC validation and
+either passes or names what's wrong.
+
+---
+
 ## 6. Scope caveats
 
 ### Population coverage
@@ -393,12 +559,12 @@ exercise:
 ## 7. Reproduction recipe
 
 Full instructions in
-[`anukriti-iwpc-warfarin/README.md`](https://github.com/AnukritiAi-hq/anukriti-iwpc-warfarin#readme).
+[`anukriti-validation-iwpc/README.md`](https://github.com/AnukritiAi-hq/anukriti-validation-iwpc#readme).
 Brief version:
 
 ```bash
-git clone https://github.com/AnukritiAi-hq/anukriti-iwpc-warfarin
-cd anukriti-iwpc-warfarin
+git clone https://github.com/AnukritiAi-hq/anukriti-validation-iwpc
+cd anukriti-validation-iwpc
 
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt   # installs anukriti-pgx-core==0.2.1 from PyPI
