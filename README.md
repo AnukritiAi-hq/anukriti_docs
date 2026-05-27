@@ -131,7 +131,8 @@ order but the courses link out to them.
 | [**FRONTEND_BACKEND_CUTOVER_PLAN.md**](FRONTEND_BACKEND_CUTOVER_PLAN.md) | Four-phase plan to retire the client-side AF table + `runSimulation()` and route every cohort through the audited backend `/cohort/generate`. Companion to the 2026-05-17 PR that removed the fake "Fetch from AWS" UI. | Before touching `anukriti-main/src/lib/thousandGenomes.js` or `pgxRules.js` for new features. |
 | [**REAL_1000G_SAMPLES_PLAN.md**](REAL_1000G_SAMPLES_PLAN.md) | Implementation plan for the "Real 1000 Genomes samples" simulation source — pre-resolved sample genotypes from the public AWS Open Data 1000G bucket, served by two new endpoints. The credibility path for CRO / investor demos (vs the synthetic generator's fast path). | Before adding any new real-data source on the simulation page. |
 | [**PLATFORM_ANALYSIS_2026-05-11.md**](PLATFORM_ANALYSIS_2026-05-11.md) | Pre-paper-synthesis platform analysis (predecessor to IDEA_REFINEMENT). | Historical context for why current priorities are what they are. |
-| [**SESSION_RESUME_2026-05-16.md**](SESSION_RESUME_2026-05-16.md) | Most recent end-of-session resume point. Successor SESSION_RESUME files are added per working session. | When picking up work mid-flight after a break. |
+| [**SESSION_RESUME_2026-05-26.md**](SESSION_RESUME_2026-05-26.md) | Most recent end-of-session resume point. Covers the 17-commit, 8-repo session that shipped pgx-core 0.3.0 to PyPI, redeployed the Azure backend twice, surfaced `evidence_level` end-to-end through to the live frontend, retired the client-side workflow→level helper in favour of truth-from-engine, audit-disclosed the F-10 CYP2C9 findings, and bootstrapped the `anukriti-chemistry` library. | **Read first** when picking up work after a break. |
+| [**SESSION_RESUME_2026-05-16.md**](SESSION_RESUME_2026-05-16.md) | Predecessor end-of-session resume point. Kept for history; `SESSION_RESUME_2026-05-26.md` supersedes it. | Historical context only; new sessions start from the 2026-05-26 file. |
 
 ---
 
@@ -139,13 +140,28 @@ order but the courses link out to them.
 
 | Repo | Role |
 |------|------|
-| [`anukriti-pgx-core`](https://github.com/AnukritiAi-hq/anukriti-pgx-core) | Deterministic biomedical truth layer. Published on PyPI. |
+| [`anukriti-pgx-core`](https://github.com/AnukritiAi-hq/anukriti-pgx-core) | Deterministic biomedical truth layer. Published on PyPI. Latest: **`0.3.0` (2026-05-26)**. |
 | [`anukriti`](https://github.com/Abm32/Synthatrial) | FastAPI product — clinical PGx reports, FHIR, drug reranker. |
 | [`anukriti-swarm`](https://github.com/AnukritiAi-hq/anukriti-swarm) | Research platform — multi-agent runtime + live mission control. |
 
 The canonical "what is the Anukriti platform" map lives at
 [`anukriti-pgx-core/PLATFORM.md`](https://github.com/AnukritiAi-hq/anukriti-pgx-core/blob/main/PLATFORM.md).
 These docs are the **learning path** into it.
+
+### Sibling libraries and operational surfaces
+
+These are not part of the three-repo engine but are referenced
+throughout the docs above:
+
+| Repo | Role |
+|------|------|
+| [`anukriti-api`](https://github.com/AnukritiAi-hq/anukriti-api) | FastAPI gateway. The single HTTP surface a frontend points at; fuses pgx-core (PyPI) + swarm (in-process) behind one URL. Deployed to Azure Container Apps. |
+| [`anukriti-stack`](https://github.com/AnukritiAi-hq/anukriti-stack) | One-command deploy orchestrator. `Dockerfile.api`, `docker-compose.yml`, and `scripts/redeploy.sh` for Azure rollouts. |
+| [`anukriti-main`](https://github.com/AnukritiAi-hq/anukriti-main) | Base44 React/Vite frontend. Deployed at `https://product.anukritiai.com`. |
+| [`anukriti-validation-iwpc`](https://github.com/AnukritiAi-hq/anukriti-validation-iwpc) | Standalone IWPC warfarin cohort validation harness (n=5,700) + CPIC table audit script. Companion to `IWPC_VALIDATION_DEEP_DIVE.md`. |
+| [`anukriti-chemistry`](https://github.com/AnukritiAi-hq/anukriti-chemistry) | **New as of 2026-05-26.** Deterministic chemistry primitives — drug-name → SMILES, pinned active/toxic-isomer role table, optional RDKit-backed stereoisomer enumerator. Consumed by the upcoming `LLMNarrator` in `anukriti-swarm/ai/narrative/` (T8 of `EVIDENCE_LEVEL_AND_LLM_CONTEXT_PLAN.md`). Not yet on PyPI by design. |
+| [`anukriti_landing`](https://github.com/Abm32/anukriti_landing) | Public marketing site. Vercel-deployed. |
+| [`anukriti-rapid-agent`](https://github.com/AnukritiAi-hq/anukriti-rapid-agent) | Google Cloud Rapid Agent Hackathon submission (June 2026, MongoDB partner track). |
 
 ---
 

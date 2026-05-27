@@ -498,6 +498,43 @@ tables are themselves correct. This audit is now part of the
 shipping contract: it runs alongside the IWPC validation and
 either passes or names what's wrong.
 
+### Status as of 2026-05-26 — pgx-core 0.3.0 released; F-10 still open
+
+`anukriti-pgx-core==0.3.0` was published to PyPI on
+2026-05-26T13:08:28Z. The release is **purely additive** — it
+ships the `evidence_level` field on every phenotype record and
+threads a `drug=` kwarg through the engine + caller layer, but
+**does not touch the CYP2C9 functionality table content**. By
+deliberate founder call (see [`SESSION_RESUME_2026-05-26.md`](SESSION_RESUME_2026-05-26.md)),
+the F-10 fix was split into a separate v0.4.0 release so the
+content correction can be verified against PharmCAT before
+shipping. PharmCAT diplotype concordance is queued in
+[`anukriti/CLINICAL_GRADE_ROADMAP.md` CP-5][cp5] with the chr2
+VCF extraction blocker now diagnosed (~15 LOC tabix-region fix).
+
+What that means for the audit numbers above:
+
+- The audit reproduces **byte-identical** when re-run against
+  pgx-core 0.3.0. 43/136 diplotypes; 6/16 alleles; 3/3 VKORC1.
+  Verified during the v0.3.0 release-candidate regression sweep.
+- The IWPC validation re-runs against 0.3.0 with **byte-identical
+  headline numbers**: Q1 monotonic gradient
+  (low 45.80 → standard 33.66 → high 21.58 mg/wk; PASS); 1,965
+  high-risk; 467 undertreated; 99 INR-confirmed (79 below + 20
+  above target).
+- The CYP2C9 mismatches above remain in 0.3.0; they are
+  **scheduled for fix in v0.4.0**, gated on PharmCAT verification.
+- The deployed Azure backend (`anukriti-api` revision 15) and the
+  live frontend (`https://product.anukritiai.com`) both serve
+  pgx-core 0.3.0; users see the new `evidence_level: "A"` badge,
+  but the underlying CYP2C9 phenotype calls are unchanged from
+  the 0.2.1 baseline this section documents.
+
+The audit script (`scripts/audit_cpic_tables.py` in the
+`anukriti-validation-iwpc` repo) is the acceptance gate for v0.4.0:
+when it returns 100% match on all three surfaces, the F-10 fix
+is ready to ship.
+
 ---
 
 ## 6. Scope caveats

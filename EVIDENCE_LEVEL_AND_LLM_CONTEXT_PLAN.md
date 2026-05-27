@@ -4,7 +4,7 @@
 >
 > **Last updated:** 2026-05-26
 >
-> **Status:** Plan landed; first parallelizable step (`<EvidenceBadge>`) shipped this session. Remaining work is sized and sequenced for ~5 sessions across 4 repos.
+> **Status:** Plan landed 2026-05-26. **8 of 19 tasks shipped end-to-end** in the same session (T1–T6 + T13 + T15 + T18 partial). pgx-core 0.3.0 published to PyPI; Azure backend redeployed to revision 15; live frontend serves engine-truth `evidence_level: "A"` badges. **11 tasks remain** — see the [What landed 2026-05-26](#what-landed-2026-05-26) section below for the precise shipped-vs-open breakdown. Remaining work fits ~3 follow-up sessions (most of the heavy plumbing is done).
 >
 > **Companion docs:**
 >   - [`IWPC_VALIDATION_DEEP_DIVE.md`](IWPC_VALIDATION_DEEP_DIVE.md) — engine validation; §5a is what `evidence_level` makes auditable in the UI
@@ -37,8 +37,78 @@ has clear scope.
 
 ---
 
+## What landed 2026-05-26
+
+This plan was written and partially executed in the same session.
+The status of every task is captured below — refer to this section
+before starting any remaining work.
+
+| Task | Status | Commit / artefact |
+|---|---|---|
+| **T1** Pin CPIC recommendation-level table | ✅ shipped | `anukriti-pgx-core` `2e5a121` (CPIC_RECOMMENDATION_LEVELS_v2024.01.json, 25 pairs all level A) |
+| **T2** Add `evidence_level` field to public dataclasses | ✅ shipped | `anukriti-pgx-core` `2e5a121` (PhenotypeInference / Diplotype / GenotypeCall) |
+| **T3** Resolver `recommendation_level.py` | ✅ shipped | `anukriti-pgx-core` `2e5a121` (level_for + details_for, never raises) |
+| **T4** Wire `drug=` kwarg through engine + callers | ✅ shipped | `anukriti-pgx-core` `2e5a121` |
+| **T5** Tests | ✅ shipped | `anukriti-pgx-core` `2e5a121` (76/76 pass; was 50/50) |
+| **T6** v0.3.0 release ceremony | ✅ shipped | tag `v0.3.0`; PyPI published 2026-05-26T13:08:28Z |
+| **T7** `CitationValidator` in swarm `core/runtime/` | ⏳ open | — |
+| **T8** `LLMNarrator` in swarm `ai/narrative/` | ⏳ open | — |
+| **T9** `SwarmRuntime` synthesis_mode wiring | ⏳ open | — |
+| **T10** unit tests for T7+T8+T9 | ⏳ open | — |
+| **T11** `demos/llm_grounded_demo.py` | ⏳ open | — |
+| **T12** `POST /api/v1/llm-context` endpoint | ⏳ open | (blocked on T7–T9) |
+| **T13** Surface `evidence_level` on `/runs` response | ✅ shipped | `anukriti-api` `93d7a59` (per-patient path) + `4170a07` (cohort `/from-samples` path); also fixed a pre-existing latent attribute-error bug in the simvastatin/warfarin paths |
+| **T14** Smoke tests for T12 | ⏳ open | (blocked on T12) |
+| **T15** `<EvidenceBadge>` component | ✅ shipped | `anukriti-main` `3d56b56` (initial), `87937a2` (consume row.evidence_level), `6132628` (retire helper — truth-from-engine) |
+| **T16** `<EvidenceTooltip>` "How do we know this?" | ⏳ open | — |
+| **T17** `<LlmExplanationPanel>` with citations | ⏳ open | (blocked on T12) |
+| **T18** Wire `<EvidenceBadge>` into all result-displaying surfaces | 🟡 partial | Wired into `<ResultsTable>` only. Still pending: Simulation.jsx, TrialDecisionCard.jsx, ConfidencePanel.jsx (each is a 2-line addition) |
+| **T19** Vitest snapshots | ⏳ open | — |
+
+**End-to-end live trace verified** (the full chain from CPIC API
+snapshot → engine → caller → adapter → api response → frontend
+row mapper → `<EvidenceBadge>`):
+
+```
+api.cpicpgx.org/v1/pair
+   → CPIC_RECOMMENDATION_LEVELS_v2024.01.json
+   → PhenotypeEngine.infer(drug='clopidogrel')
+   → CYP2C19Caller(...).call(snps, drug='clopidogrel')
+   → call_diplotype('clopidogrel', snps)  [adapter]
+   → /runs/from-samples response.samples[i].evidence_level = 'A'
+   → SimulationContext row mapper
+   → <ResultsTable> reads row.evidence_level
+   → <EvidenceBadge level="A" />  renders "A · Strong Evidence"
+```
+
+Probe the live api with `POST /runs/from-samples
+{"workflow":"clopidogrel","sample_ids":["NA12891"]}` to verify;
+the response payload's `samples[0].evidence_level` will be `"A"`.
+
+**Companion deploys**:
+
+- PyPI: `anukriti-pgx-core==0.3.0` published from tag `v0.3.0`
+- Azure Container App `anukriti-api` revision 15 active with image
+  `git-4170a07-2cd068-2e5a12`
+- Vercel: `https://product.anukritiai.com` rebuilt with the new
+  bundle `index-Dm__d9Na.js` containing `EvidenceBadge`
+
+**What remained out of scope today** (deferred deliberately):
+
+- F-10 CYP2C9 functionality table fix → v0.4.0 (held until
+  PharmCAT verification per CP-5 in `anukriti/CLINICAL_GRADE_ROADMAP.md`)
+- The `anukriti-chemistry` library was bootstrapped (commit
+  `4a2252c`); its swarm integration depends on T8 (`LLMNarrator`)
+- T7–T12, T14, T16, T17, T19 — sequential or T12-blocked
+
+The full session narrative including these deferrals is in
+[`SESSION_RESUME_2026-05-26.md`](SESSION_RESUME_2026-05-26.md).
+
+---
+
 ## Table of contents
 
+0. [What landed 2026-05-26](#what-landed-2026-05-26)
 1. [What Anna asked for](#1-what-anna-asked-for)
 2. [Three architectural questions, resolved](#2-three-architectural-questions-resolved)
 3. [Per-repo task breakdown](#3-per-repo-task-breakdown)
