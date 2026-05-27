@@ -68,5 +68,13 @@ Insights from this archive feed into:
   partnership pipeline
 - `anukriti/CLINICAL_GRADE_ROADMAP.md` — product tactical execution
 
+## High-Signal Entries
+
+- `mcc_roshan/` — oncology research-center discovery call on DPYD,
+  real-time PCR, and fluoropyrimidine toxicity in an Indian cohort.
+  Key outcome: MCC may already have 400-500 DPYD-tested patients with
+  toxicity follow-up; the Level 2 ask is the exact 7-variant panel plus
+  Grade 3+ toxicity outcomes, especially PCR-negative toxicity cases.
+
 When a conversation changes the platform direction, cross-reference
 the relevant doc in the notes file so future-you can trace the chain.
