@@ -139,6 +139,31 @@ not assume: Cyrius/StellarPGx ≫ our current heuristic on SV samples.
 
 ## Phase C — Integration (off-by-default, predictor-annotates)
 
+> **C — SEAM LANDED (2026-06-02).** `anukriti/src/cyp2d6_sv_ingest.py` —
+> `ingest_sv_diplotype(diplotype, source)` ingests an external SV caller's
+> CYP2D6 diplotype (hybrids `*68/*36/*13`, deletion `*5`, dups `*NxM`,
+> tandems `*36+*10`) and resolves a phenotype the authoritative CPIC way:
+> sum per-allele activity scores (xN multiplies the copy) → bin (AS 0=PM,
+> ≤1.0=IM, ≤2.25=NM, >2.25=UM; Caudle 2020). It detects nothing and overrides
+> nothing — it phenotypes the *given* call and stamps the caller as provenance.
+>
+> **Measured on the 7 SV truth samples — phenotype concordance doubles:**
+> **heuristic 0.429 → ingestion 0.857.** It fixes the dangerous
+> wrong-direction calls the heuristic makes on duplications:
+>
+> | sample | truth | heuristic | ingestion |
+> |---|---|---|---|
+> | NA17244 `*2x2/*4x2` | NM | **PM (wrong)** | NM ✓ (AS 2.0) |
+> | NA07439 `*4x2/*41` | IM | **PM (wrong)** | IM ✓ (AS 0.5) |
+> | NA18545 `*5/*36x2+*10x2` | IM | **PM (wrong)** | IM ✓ (AS 1.0) |
+> | HG00337 `*2x2/*22` | NM | extensive | **indeterminate** (honest — `*22`
+>   uncertain function; named refusal beats a confident wrong guess) |
+>
+> The one non-match is the *correct* behavior: `*22` is uncertain-function, so
+> the engine refuses an activity score rather than guess — the platform's
+> named-uncertainty invariant. Tests: `tests/test_cyp2d6_sv_ingest.py` (8) +
+> bake-off `sv_ingestion` column. Full benchmark suite 58/58 green.
+
 Wire the chosen caller in under the platform invariants — **it annotates,
 it never decides**, and it ships **off by default**.
 
