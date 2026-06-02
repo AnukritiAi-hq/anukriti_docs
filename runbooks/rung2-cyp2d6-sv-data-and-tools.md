@@ -182,23 +182,35 @@ end on one SAS sample: the heuristic/placeholder misses the SV; the SV caller
 catches it. The `getrm_truth.py` HG01190 CYP2D6 entry is corrected to
 `*68+*4/*5` (PM) with provenance accordingly.
 
-**Cyrius full-CN note (still pending):** for Cyrius's full `*68+*4/*5`
-(including the `*5` deletion copy number), it needs the **full WGS BAM**
-(HG01190 is **~917 MB**, not the ~410 MB the submitted_bytes field implied).
-The ENA HTTPS link measured ~0.75–3.7 MB/s here — a multi-hour pull that
-exceeded the in-session timeout and truncated (samtools `quickcheck` =
-"missing EOF block"). Retried-as-is will not fix it (slow link + hard
-timeout).
+**Cyrius full-CN run — DEFERRED to high-compute (2026-06-02).** Cyrius needs
+*whole-genome* coverage: its `data/CYP2D6_region_37.bed` samples read depth at
+**thousands of `norm` control regions spread across every chromosome**, so a
+region slice cannot satisfy it (the slice run returned `Genotype: None`,
+`Median_depth 0.0` — expected). The full BAM is therefore required, and it is
+**69.6 GB** — confirmed by HTTP `Content-Length` (`69633381911` bytes), ~170×
+larger than the ENA `submitted_bytes` field (409 MB) which is wrong/misleading.
+The ENA HTTPS link throttled to **~26–55 KB/s** here, i.e. **days** for 69 GB;
+attempts truncated. This is a server-side rate limit, not a client bug — no
+in-session retry fixes it. **Parked for a high-compute / high-bandwidth run.**
 
-**Workarounds (pick one for the real call):**
-- Background the full download (`wget -c` to resume) outside a timed step,
-  then `samtools quickcheck` before running Cyrius.
-- Or use **Aldy region-scoped** (`aldy genotype -g CYP2D6`) which can work
-  on a locus BAM without genome-wide CN normalization (lower CN fidelity but
-  produces a callable diplotype for the bake-off).
-- Or pull the **1000G 30x GRCh38 CRAM** for HG01190 (often faster mirrors)
-  and slice with `-T <GRCh38.fa>`.
+Fast paths for the deferred run (the server supports range requests —
+`Accept-Ranges: bytes`, verified):
+- **aria2c parallel** (installed): `aria2c -x16 -s16 -c <BAM_URL>` — multiplies
+  the throttled single-stream rate; hours not days.
+- **IBM Aspera (`ascp`)** — ENA/SRA's high-speed protocol, typically 10–50×
+  HTTPS for genomic data (`conda install -c hcc aspera-cli`). Best option.
+- **1000G 30× GRCh38 CRAM** mirror for HG01190 (often better-provisioned than
+  the PRJEB19931 path); CRAM is smaller and slices with `-T <GRCh38.fa>`.
 
-**Expected truth for HG01190:** Gaedigk 2019 → `*68+*4/*5` (PM). Our
-`GETRM_CYP2D6` still lists `*1/*1` for HG01190 — to be corrected to the
-caller-confirmed SV call (with provenance) once a full-BAM run completes.
+**Why this is OK to defer:** Aldy already produced the scientifically
+meaningful result on the region slice — it caught the `*68` hybrid and called
+**Poor Metabolizer**, matching Gaedigk 2019 and correcting our stale truth
+entry. Cyrius's only additional output is the exact `*5` deletion copy number,
+a refinement that **does not change the PM phenotype**. The Rung-2 thesis is
+already demonstrated end to end. When run later on high compute, score Cyrius's
+`*68+*4/*5` into the bake-off via `compute_concordance` and the `cyp2d6_sv_ingest`
+seam (already built).
+
+**Truth status:** `GETRM_CYP2D6` HG01190 is already corrected to `*68+*4/*5`
+(PM) with provenance (Gaedigk 2019 + the live Aldy call). No further truth
+change pending — the Cyrius run would only confirm the `*5` copy detail.
