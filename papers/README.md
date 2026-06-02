@@ -86,6 +86,72 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
+### 8. s41397-020-00205-5.pdf — Cyrius (CYP2D6 SV/CNV caller)
+
+- **Title:** Cyrius: accurate CYP2D6 genotyping using whole-genome sequencing data
+- **Authors:** Xiao Chen, Fei Shen, Nina Gonzaludo, Alka Malhotra, Cande Rogert, Ryan J. Taft, David R. Bentley, Michael A. Eberle (Illumina)
+- **Journal:** The Pharmacogenomics Journal 21:251–261 (2021)
+- **DOI:** [10.1038/s41397-020-00205-5](https://doi.org/10.1038/s41397-020-00205-5) · **Open access (CC-BY)** · GitHub: Illumina/Cyrius
+- **Summary:** CYP2D6-specific genotyper from WGS. Resolves the hard cases — gene deletions (\*5), duplications (\*1xN), and CYP2D6–CYP2D7 hybrids — via copy-number from CYP2D6+CYP2D7 read depth. 96.5% concordance with truth genotypes vs 84–86.8% for prior methods; built an SV-aware haplotype-frequency DB from 2,504 samples.
+- **Relevance:** **Rung 2 (priority).** Direct answer to our heuristic-only CYP2D6 CNV gap. Input BAM/CRAM → star-allele incl. SV. Primary candidate for the Rung-2 caller bake-off.
+
+---
+
+### 9. cpt.2173.pdf — StellarPGx (genome-graph CYP caller)
+
+- **Title:** StellarPGx: A Nextflow Pipeline for Calling Star Alleles in Cytochrome P450 Genes
+- **Authors:** David Twesigomwe, Britt I. Drögemöller, Galen E.B. Wright, Azra Siddiqui, Jorge da Rocha, Zané Lombard, Scott Hazelhurst
+- **Journal:** Clinical Pharmacology & Therapeutics (2021)
+- **DOI:** [10.1002/cpt.2173](https://doi.org/10.1002/cpt.2173) · **Open access** · GitHub: SBIMB/StellarPGx
+- **Summary:** Genome-graph-based variant detection + read-coverage + combinatorial diplotype assignment across 12 CYP genes (CYP1/2/3 families). **99% CYP2D6 diplotype concordance with GeT-RM** — highest among the compared tools. Handles SV-prone genes (CYP2D6, CYP2A6, CYP2B6) and high-similarity isoforms (CYP2C19/CYP2C9).
+- **Relevance:** **Rung 2 (priority).** Closest tool to our equity angle — developed/validated on African genomes (SBIMB, Wits). Bake-off candidate; broadest gene coverage of the three.
+
+---
+
+### 10. s41467-018-03273-1.pdf — Aldy (allelic decomposition)
+
+- **Title:** Allelic decomposition and exact genotyping of highly polymorphic and structurally variant genes
+- **Authors:** Ibrahim Numanagić, Salem Malikić, Michael Ford, Xiang Qin, Lorraine Toji, Milan Radovich, Todd C. Skaar, Victoria M. Pratt, Bonnie Berger, Steve Scherer, S. Cenk Sahinalp
+- **Journal:** Nature Communications 9:828 (2018) · Aldy 4 update: Genome Research 33:61 (2023)
+- **DOI:** [10.1038/s41467-018-03273-1](https://doi.org/10.1038/s41467-018-03273-1) · **Open access** · GitHub: aldy
+- **Summary:** Combinatorial-optimization framework for full allelic decomposition (copy number + exact sequence of each copy) of polymorphic, multi-copy genes incl. structural alterations. Works on WGS *or* targeted-panel data; detects rare/novel alleles.
+- **Relevance:** **Rung 2.** Our existing benchmark already records Aldy CYP2D6 concordance at 0.886 (`getrm_truth.py`). Multi-gene SV/CNV bake-off candidate; also covers Rung-1 multi-rsID genes.
+
+---
+
+### 11. pone.0272129.pdf — ClinPharmSeq (targeted PGx panel)
+
+- **Title:** ClinPharmSeq: A targeted sequencing panel for clinical pharmacogenetics implementation
+- **Authors:** Seung-been Lee, Jong-Yeon Shin, Nak-Jung Kwon, Changhoon Kim, JeongSun Seo (Macrogen / SNU)
+- **Journal:** PLOS ONE (2022)
+- **DOI:** [10.1371/journal.pone.0272129](https://doi.org/10.1371/journal.pone.0272129) · **Open access**
+- **Summary:** Design + validation of a targeted NGS panel for clinical PGx, by the PyPGx author group. Establishes the targeted-capture format and gene set for implementation-grade PGx.
+- **Relevance:** **Rung 1.** Reference for the targeted-sequencing input format and panel design if we add capture-based ingestion alongside WGS.
+
+---
+
+### 12. s41586-019-1793-z.pdf — GenomeAsia 100K
+
+- **Title:** The GenomeAsia 100K Project enables genetic discoveries across Asia
+- **Authors:** GenomeAsia100K Consortium
+- **Journal:** Nature 576(7785):106–111 (2019)
+- **DOI:** [10.1038/s41586-019-1793-z](https://doi.org/10.1038/s41586-019-1793-z) · **Open access** · PMC7054211
+- **Summary:** WGS reference of 1,739 individuals across 219 population groups / 64 Asian countries — **including 598 sequences from India**. Catalogues variation, population structure, disease associations, and **founder effects** (sizable in South Asia, consistent with Kerdoncuff/Vysya).
+- **Relevance:** **Rung 4.** South-Asian-specific reference allele frequencies + founder-population structure for novel/population-private variant classification and imputation. Complements Kerdoncuff 2025 as a frequency baseline.
+
+---
+
+### 13. s41586-020-2308-7.pdf — gnomAD constraint (Karczewski 2020)
+
+- **Title:** The mutational constraint spectrum quantified from variation in 141,456 humans
+- **Authors:** Konrad J. Karczewski, Laurent C. Francioli, et al. (gnomAD Consortium)
+- **Journal:** Nature 581:434–443 (2020)
+- **DOI:** [10.1038/s41586-020-2308-7](https://doi.org/10.1038/s41586-020-2308-7) · **Open access**
+- **Summary:** The gnomAD flagship — genome-wide allele frequencies over 141,456 humans + the loss-of-function (LoF) constraint metric (pLI / LOEUF) quantifying which genes/regions are intolerant of damaging variation.
+- **Relevance:** **Rung 4.** The global frequency baseline a novel/population-private variant is judged *against* (the Kerdoncuff "absent from gnomAD" claim is measured here), plus LoF-constraint methodology for classifying damaging variants.
+
+---
+
 ## 📰 Companion Document
 
 - **human-pangenome-reference-2023.md** — Press release / paper summary on the Human Pangenome Reference Consortium (Liao et al., Nature 2023; Eimear Kenny co-author).
@@ -102,7 +168,12 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 | Variant-calling / pipeline tooling | Poplin 2018 (DeepVariant) |
 | Indian clinical phenotype + genetics | Kerdoncuff 2025 |
 | Agentic AI for genomics / pharmacogenomics | Zack 2026 |
+| Star-allele / SV-CNV callers (Rung 2) | Cyrius 2021, StellarPGx 2021, Aldy 2018 |
+| Targeted PGx panel / input format (Rung 1) | ClinPharmSeq 2022 |
+| Variant frequency / constraint baseline (Rung 4) | GenomeAsia100K 2019, gnomAD constraint 2020 |
+
+> Rung mapping is defined in [`../DETECTION_ROADMAP.md`](../DETECTION_ROADMAP.md).
 
 ---
 
-*Last updated: 2026-05-16*
+*Last updated: 2026-06-02*
