@@ -83,9 +83,38 @@ Rung 2 cannot be *measured* until the truth set contains SV samples.
 populated `sv` field and includes ≥1 deletion + ≥1 duplication + (if a
 public reference exists) ≥1 hybrid sample, each with provenance.
 
+> **A — LANDED (2026-06-02).** `getrm_truth.py`: `sv` field populated on all
+> 30 non-SV CYP2D6 entries; `GETRM_CYP2D6_SV` adds 6 SV reference samples
+> (deletion `*5/*5` ×2, duplications `*4x2/*41` / `*2x2/*22` / `*2x2/*4x2`,
+> deletion+hybrid-tandem `*5/*36x2+*10x2`) from Gaedigk 2019 (PMID 31401124,
+> Tables 3/4), each with `sv_kind` + `provenance`; spans AFR/EAS/EUR.
+> `get_truth_for_gene_by_sv()` added. CYP2D6 truth = 36 (30 non-SV + 6 SV).
+
 ---
 
 ## Phase B — Bake-off (decide which caller)
+
+> **B — BASELINE LANDED (2026-06-02), live three-tool run still pending.**
+> The live Cyrius/StellarPGx/Aldy bake-off (B1–B2) needs WGS BAMs (ENA
+> PRJEB19931) + tool installs **not available in the current environment**,
+> so it remains the next external step. What landed: `cyp2d6_sv_bakeoff.py`
+> — a scoring harness that runs **Anukriti's existing CYP2D6 CNV heuristic**
+> (`vcf_processor.infer_metabolizer_status_with_alleles`) against the Phase-A
+> SV truth set, SV-split + by-population, vs the published caller baselines.
+>
+> **First measured result (the honest baseline this rung must beat):**
+>
+> | split | n | diplotype | phenotype |
+> |---|---|---|---|
+> | overall | 36 | 0.444 | 0.139 |
+> | non-SV | 30 | 0.467 | 0.100 |
+> | **SV-only** | **6** | **0.333** | **0.333** |
+>
+> Published overall CYP2D6: **Cyrius 0.965 · StellarPGx 0.99 · Aldy 0.886 ·
+> Stargazer 0.843 · PharmCAT n/a (cannot call)**. The ~0.33 SV concordance
+> vs ~0.97–0.99 quantifies the gap a real SV caller closes. (Non-SV row is
+> depressed by the harness's deliberately-minimal SNP synthesis — it feeds
+> the heuristic only what it can see; the **SV-only row is the valid signal**.)
 
 - **B1.** Acquire the data: the harness already cites **ENA PRJEB19931**
   (70 PCR-free WGS samples) and Coriell NA/HG lines. Pull BAM/CRAM for the
