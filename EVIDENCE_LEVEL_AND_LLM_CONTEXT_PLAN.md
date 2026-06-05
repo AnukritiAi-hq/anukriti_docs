@@ -51,12 +51,12 @@ before starting any remaining work.
 | **T4** Wire `drug=` kwarg through engine + callers | ✅ shipped | `anukriti-pgx-core` `2e5a121` |
 | **T5** Tests | ✅ shipped | `anukriti-pgx-core` `2e5a121` (76/76 pass; was 50/50) |
 | **T6** v0.3.0 release ceremony | ✅ shipped | tag `v0.3.0`; PyPI published 2026-05-26T13:08:28Z |
-| **T7** `CitationValidator` in swarm `core/runtime/` | ⏳ open | — |
-| **T8** `LLMNarrator` in swarm `ai/narrative/` | ⏳ open | — |
+| **T7** `CitationValidator` in swarm `core/runtime/` | ✅ done | `5cbc617` (2026-06-05) |
+| **T8** `LLMNarrator` in swarm `ai/narrative/` | ✅ done | `5cbc617` (2026-06-05) |
 | **T9** `SwarmRuntime` synthesis_mode wiring | ⏳ open | — |
 | **T10** unit tests for T7+T8+T9 | ⏳ open | — |
 | **T11** `demos/llm_grounded_demo.py` | ⏳ open | — |
-| **T12** `POST /api/v1/llm-context` endpoint | ⏳ open | (blocked on T7–T9) |
+| **T12** `POST /api/v1/llm-context` endpoint | ✅ done | `0cc3d16` (2026-06-05) |
 | **T13** Surface `evidence_level` on `/runs` response | ✅ shipped | `anukriti-api` `93d7a59` (per-patient path) + `4170a07` (cohort `/from-samples` path); also fixed a pre-existing latent attribute-error bug in the simvastatin/warfarin paths |
 | **T14** Smoke tests for T12 | ⏳ open | (blocked on T12) |
 | **T15** `<EvidenceBadge>` component | ✅ shipped | `anukriti-main` `3d56b56` (initial), `87937a2` (consume row.evidence_level), `6132628` (retire helper — truth-from-engine) |
