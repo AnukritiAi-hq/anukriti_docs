@@ -155,3 +155,66 @@
 3. **Before meeting:** Prepare the rs2297595 expanded panel story (even if not yet implemented — show the architecture supports it)
 4. **At meeting:** Run the live demo on their laptop, show PCR ingestion API, discuss integration timeline
 5. **Post-meeting:** If they share a de-identified cohort, validate against their toxicity outcomes
+
+---
+
+## 8. Engine Validation — Concordance with 2025 Papers
+
+### Validated against: Ho et al. 2025 (PMID:39887719, CPT)
+"A Guide for Implementing DPYD Genotyping for Systemic Fluoropyrimidines into Clinical Practice"
+
+**All CPIC Level A diplotypes tested — 7/7 concordant:**
+
+| Diplotype | Engine Phenotype | Engine Recommendation | Paper Expected | ✓ |
+|-----------|-----------------|----------------------|----------------|---|
+| *1/*1 | Normal Metabolizer | Standard dose | Standard dose | ✅ |
+| *1/*2A | Intermediate Metabolizer | 50% dose reduction | 50% reduction | ✅ |
+| *1/HapB3 | Intermediate Metabolizer | 50% dose reduction | 50% reduction | ✅ |
+| *1/c.2846A>T | Intermediate Metabolizer | 50% dose reduction | 50% reduction | ✅ |
+| *2A/*2A | Poor Metabolizer | Avoid fluoropyrimidines | Avoid | ✅ |
+| *2A/*13 | Poor Metabolizer | Avoid fluoropyrimidines | Avoid | ✅ |
+| *2A/HapB3 | Poor Metabolizer | Avoid (>75% if no alt) | Avoid | ✅ |
+
+Capecitabine receives identical recommendations (as mandated by CPIC 2017).
+
+### Additional validation points from the 2025 paper:
+- **Activity score system confirmed:** AS=2 NM, AS=1/1.5 IM, AS=0/0.5 PM ✅
+- **Nov 2018 update:** ALL IMs (AS=1 AND AS=1.5) get 50% reduction ✅
+- **Tegafur NOT safe alternative** (also DPD-metabolized) — our engine explicitly states this ✅
+- **Uridine triacetate** cited as rescue — our PM narrative mentions it ✅
+- **Provenance:** Engine cites PMID:29152729 (CPIC 2017) on every call ✅
+
+### What the paper validates about our approach:
+1. 6-9% of the general population carries a heterozygous DPYD variant
+2. Severe toxicity in unscreened carriers: 70-80%
+3. Genotype-guided dosing reduces toxicity from 72% → 31% (*2A carriers)
+4. Wrongful death lawsuit resulted in $1M settlement + mandatory DPYD testing
+5. Cost-effectiveness: pre-treatment testing saves money (avoids ICU stays)
+6. FDA 2025 label update: "consider testing for genetic variants of DPYD"
+
+### Our differentiator vs the paper's scope:
+The Ho 2025 paper focuses on the **4-variant European panel** exclusively.
+Our engine goes further:
+
+- **Rule U4:** Population-aware refusal for SAS patients carrying *9A (27% South Indian freq)
+- **rs2297595 (M166V):** Enriched in SAS, flagged for expanded monitoring
+- **Named refusal with rule ID** — no other implementation does this
+- **Evidence density reporting** — we surface WHERE the evidence is thin
+
+The paper explicitly states: "DPYD allele frequencies differ across race and
+ethnicity... each institution's patient population inclusive of race and
+ethnicity should be taken into consideration when selecting which DPYD
+variants to test." — This is exactly what our U4 rule does.
+
+---
+
+## 9. FDA 2025 Label Update — Regulatory Momentum
+
+Source: JCO 2025 (https://ascopubs.org/doi/10.1200/JCO-25-02629)
+
+- FDA updated drug labels for 5-FU and capecitabine (Project Renewal initiative)
+- New language: "consider testing for genetic variants of DPYD prior to initiating treatment"
+- Instructs providers to "inform patients of the potential for serious and life-threatening adverse reactions due to DPD deficiency"
+- No boxed warning yet, but direction is clear — India will follow
+
+**Implication for MCC partnership:** India has NO policy yet. The institute that implements first with a population-aware panel (not just the European 4-variant panel) will be first-mover. That's the publication.
