@@ -5,6 +5,6 @@
   "project_id": "mcc-dpyd-pilot",
   "action": "user_action",
   "actor_email": "abhimanyurbsa@gmail.com",
-  "detail": "Founder field visit to Malabar Cancer Centre (MCC), Thalassery, Kannur — oncology-first DPYD / fluoropyrimidine-toxicity pilot discovery. Logged PilotLead (status: discovery_scheduled). Tier-1 ask: anonymized PCR + toxicity spreadsheet (~400-500 patients), exact 7-variant panel, and the count of Grade 3+ toxicity among panel-all-negative patients. Left behind: one-pager + MOU outline. Demo: DPYD/5-FU flow incl. honest refusal on non-core South-Asian variants. Visit date: TBD.",
-  "description": "MCC oncology DPYD pilot — founder discovery visit. See anukriti_docs/mcc-visit/ for the full visit pack (pilot lead record, one-pager, structured ask, demo script, MOU outline)."
+  "detail": "Founder field visit to Malabar Cancer Centre (MCC), Thalassery, Kannur — oncology-first DPYD / fluoropyrimidine-toxicity pilot discovery. Logged PilotLead (status: discovery_scheduled). Tier-1 ask: anonymized PCR + toxicity spreadsheet (~400-500 patients), exact 7-variant panel, and the count of Grade 3+ toxicity among panel-all-negative patients. Left behind: one-pager + MOU outline. Live run: MCC's real DPYD genotype routed through production POST /runs/from-pcr (deterministic phenotype + named refusal on non-core South-Asian variants). Visit date: TBD.",
+  "description": "MCC oncology DPYD pilot — founder discovery visit. See anukriti_docs/mcc-visit/ for the full visit pack (pilot lead record, one-pager, structured ask, live-flow runbook, MOU outline)."
 }

@@ -15,7 +15,7 @@
 | `01_pilot_lead_record.json` | Ready-to-paste `PilotLead` record matching the portal schema | Drop into the Pilot Leads portal to formally log MCC as a prospect |
 | `02_one_pager_leave_behind.md` | One-page leave-behind, MCC/oncology/DPYD-tailored | Print / PDF and hand over at the visit |
 | `03_structured_ask.md` | Exactly what we want from MCC, tiered | Keep open during the conversation; drives the meeting |
-| `04_demo_script.md` | Step-by-step DPYD/5-FU product walkthrough | Run the live demo without fumbling |
+| `04_live_flow_runbook.md` | Real production flow — run MCC's **actual** DPYD genotypes through `POST /runs/from-pcr`. No mock data. | Show the live engine on real input at the visit |
 | `05_data_sharing_mou_outline.md` | Data-sharing / MOU skeleton | Frame the data handoff; hand to MCC's admin/ethics |
 | `06_audit_log_entry.json` | Ready-to-paste `ProjectAuditLog` entry for the visit | Log the visit as a formal action in the portal |
 
