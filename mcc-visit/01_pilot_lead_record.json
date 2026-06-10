@@ -1,0 +1,15 @@
+{
+  "_schema": "PilotLead (anukriti-main/base44/entities/PilotLead.jsonc)",
+  "_note": "Paste the fields below into the Pilot Leads portal. Fields match the live entity schema (name, org, role, email, pilot_objective, expected_cohort_size, target_timeline, cta_source, status, notes). Update email/role once the MCC point-of-contact is confirmed.",
+
+  "name": "Dr. Roshan (MCC point of contact — confirm full name)",
+  "org": "Malabar Cancer Centre (MCC), Thalassery, Kannur, Kerala",
+  "role": "Oncology clinician / research-center collaborator",
+  "email": "TBD — capture at visit",
+  "pilot_objective": "Turn MCC's existing real-time PCR DPYD dataset (~400-500 patients) plus toxicity follow-up into a genotype-to-toxicity map. Identify Grade 3+ fluoropyrimidine-toxicity patients who were negative on the current 7-variant PCR panel (missed-risk cases), assess whether the panel should add South-Asian candidate variants, and scope a joint Indian-cohort publication.",
+  "expected_cohort_size": "~400-500 DPYD-tested oncology patients (5-FU / capecitabine; colorectal, head & neck, breast, gastric)",
+  "target_timeline": "Phase 1 (anonymized PCR + toxicity spreadsheet -> deterministic classification + discordance review): 4-6 weeks from data handoff. Phase 2 (PCR-negative / toxicity-positive discovery subset): contingent on Phase 1. Phase 3 (publication): post-analysis.",
+  "cta_source": "founder-visit-mcc-2026-06",
+  "status": "discovery_scheduled",
+  "notes": "Oncology-first wedge: DPYD -> fluoropyrimidine toxicity. MCC tests on real-time PCR (NOT NGS) with a 7-variant panel — Anukriti must accept structured PCR input, VCF not required. Highest-value question: count of Grade 3+ toxicity among all-7-negative patients. Collaboration framing: MCC = lead clinical institution + owns clinical interpretation; Anukriti = analytical engine + reproducible pipeline + audit trail. Honesty boundary: non-core variants (*9A/rs1801265, *4/rs1801158, *5/rs1801159, *6/rs1801160, M166V/rs2297595) labelled 'outcome-correlation needed', not over-claimed. Prior discovery call notes: founder-research/mcc_roshan/. Source CTA history: this is a warm, founder-led relationship; an RCC-network intro lead (Adhi Narayanan) is tracked separately."
+}
