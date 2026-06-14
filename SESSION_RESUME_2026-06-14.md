@@ -176,3 +176,34 @@ All repos clean + pushed. Today's commits, newest last per repo:
 
 Test totals (all green): pgx-core **132** · api **134** · swarm **267** ·
 anukriti SV/benchmark **46**.
+
+
+---
+
+## Addendum (later 2026-06-14) — shipped past the migration
+
+All committed + pushed; all 8 repos clean.
+
+| What | Where | Commit |
+|---|---|---|
+| **Azure redeploy** with the new endpoint | anukriti-api rev **`0000032`**, image `git-dbcc0ef-0a920a-fd8601-26e624` | (deploy) |
+| `/cyp2d6/sv-ingest` **verified live** in OpenAPI (auth-enforced) | Azure | — |
+| Frontend **api client wire** `api.cyp2d6.svIngest()` | anukriti-main `src/lib/api.js` | `b971c61` |
+| **Paper draft v0.3** (CYP2D6/DPYD/warfarin validation) | `papers/2026-06-14-cyp2d6-dpyd-warfarin-validation-DRAFT-v0.3.md` | `47a3257` |
+| **`AZURE_VM_SETUP.md`** — genomics compute sandbox runbook | anukriti_docs | `8229116` |
+
+Decisions locked:
+- **DPYD fully wired** to the frontend (MtbReportCard, live). **CYP2D6 SV has
+  NO UI surface** — deliberate design task for when a long-read input flow
+  exists; the api client helper is enough for now.
+- **Paper draft** has an editor's fact-check note (PyPI 0.6.0 not 0.2.1;
+  corrected Turner 2023 + Gaedigk citations; warfarin stat method still open).
+  Tracked in `papers/`, not the gitignored `drafts/`.
+- **Azure VM** = `Standard_D16s_v5` (16 vCPU/64 GB), 512 GB Premium SSD + Blob.
+  First job documented: HG01190 (SRR25583344) → minimap2 → slice → StarPhase
+  → score. The ENA path needs the **full** GRCh38 FASTA (whole-genome
+  alignment), unlike the chr22-only local StarPhase path.
+
+**Single open external step:** spin up the Azure VM per `AZURE_VM_SETUP.md`
+and run HG01190 to fill the SAS equity row (expect 1.000/1.000). Everything
+else is shipped and live.
