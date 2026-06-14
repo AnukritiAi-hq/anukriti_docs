@@ -46,8 +46,14 @@
 
 **Corresponding author:** Abhimanyu R B — abhimanyu@anukritiai.com
 
-**Status:** Draft v0.3 — June 14, 2026.
-**Pending:** HG01190 SAS sample (EC2 run, ENA FASTQ SRR25583344, minimap2 required — script ready). All other sections complete.
+**Status:** Draft v0.4 — June 14, 2026.
+**Update (v0.4):** HG01190 (SAS) completed on the Azure genomics VM
+(SRR25583344 → minimap2 → CYP2D6 slice → StarPhase). Result: **phenotype
+concordance 1.000 (Poor Metabolizer, correct), diplotype concordance 0.000**
+— StarPhase resolved a different but functionally-equivalent all-no-function
+SV configuration (`*68+*4x2/*68+*4`) versus the GeT-RM truth (`*68+*4/*5`).
+The SAS equity cell is now populated; warfarin statistical method remains the
+one open item.
 
 ---
 
@@ -55,7 +61,7 @@
 
 Pharmacogenomic (PGx) screening has the potential to prevent drug-induced harm at scale, yet its clinical adoption remains constrained by two persistent gaps: the absence of deterministic, auditable infrastructure for regulatory-grade deployment, and systematic underrepresentation of non-European ancestry populations in validation datasets. Here we present Anukriti, a deterministic pharmacogenomics engine that processes patient genome files to assign star allele diplotypes, metabolizer phenotypes, and CPIC-graded drug recommendations with full provenance tracing across 16 genes and 38+ drugs. Every output cites a versioned guideline, a PharmVar allele definition, and a population frequency source; evidence-insufficient cases are handled through a taxonomy of 31 named refusal rules rather than defaulting to standard assumptions.
 
-We report validation across three domains. First, application to the International Warfarin Pharmacogenomics Consortium dataset (n=5,700) demonstrated that engine-assigned CYP2C9/VKORC1 risk tiers correlated with physician-prescribed stable warfarin doses without access to dose information at inference time; 467 patients (8.2%) were identified as warranting clinical action under CPIC guidelines. Second, DPYD variant calling against the four CPIC Level A actionable variants — with zygosity-based 5-fluorouracil dose guidance and an extended Indian subcontinent variant panel — produced MTB-ready clinical outputs traceable to CPIC and ClinVar evidence grades. Third, CYP2D6 structural variant diplotyping using StarPhase 1.4.2 on GIAB/GeT-RM long-read reference samples achieved diplotype and phenotype concordance of 1.000 on two verified samples (HG002: *2/*4 → IM; HG001/NA12878: *3/*68+*4 → PM), with the hybrid-tandem SV genotype in HG001 — the class of case most likely to fail short-read heuristics — called correctly. A South Asian ancestry sample (HG01190, *68+*4/*5 → PM) is staged for a single EC2 alignment run to complete the equity evaluation cell.
+We report validation across three domains. First, application to the International Warfarin Pharmacogenomics Consortium dataset (n=5,700) demonstrated that engine-assigned CYP2C9/VKORC1 risk tiers correlated with physician-prescribed stable warfarin doses without access to dose information at inference time; 467 patients (8.2%) were identified as warranting clinical action under CPIC guidelines. Second, DPYD variant calling against the four CPIC Level A actionable variants — with zygosity-based 5-fluorouracil dose guidance and an extended Indian subcontinent variant panel — produced MTB-ready clinical outputs traceable to CPIC and ClinVar evidence grades. Third, CYP2D6 structural variant diplotyping using StarPhase 1.4.2 on GIAB/GeT-RM long-read reference samples achieved diplotype and phenotype concordance of 1.000 on two verified samples (HG002: *2/*4 → IM; HG001/NA12878: *3/*68+*4 → PM), with the hybrid-tandem SV genotype in HG001 — the class of case most likely to fail short-read heuristics — called correctly. A South Asian ancestry sample (HG01190) was subsequently completed on a cloud genomics VM via whole-genome long-read alignment: StarPhase resolved an all-no-function CYP2D6 structural configuration (*68+*4x2/*68+*4) yielding the correct Poor Metabolizer phenotype (phenotype concordance 1.000), though differing from the GeT-RM consensus diplotype (*68+*4/*5) at the structural level — a functionally-equivalent disagreement that illustrates both the value and the current limits of automated SV diplotyping for the equity-critical SAS cell.
 
 Together, these results establish that deterministic, population-aware PGx screening is computationally tractable and clinically interpretable across ancestry groups historically excluded from PGx reference panels. The Anukriti engine is available as an open-source Python library (anukriti-pgx-core, PyPI v0.2.1) and as a production API, providing accessible infrastructure for pre-trial cohort stratification and clinical pharmacogenomics research.
 
@@ -141,16 +147,18 @@ Clinical output was formatted for Molecular Tumour Board (MTB) submission, inclu
 |--------|-----------|-------------|---------------|-------------|----------------------|-----------------------|
 | HG002 | Ashkenazi Jewish | 45 reads | *2/*4 | *2.001/*4.014 | ✅ 1.000 | ✅ IM |
 | HG001 (NA12878) | CEU (EUR) | 273 reads / 1.7 MB | *3/*68+*4 | *3/*68+*4 | ✅ 1.000 | ✅ PM |
-| HG01190 | SAS | — | pending EC2 | *68+*4/*5 → PM | pending | pending |
+| HG01190 | SAS | 373 reads | *68+*4x2/*68+*4 | *68+*4/*5 → PM | ✗ 0.000 (diff. SV config) | ✅ PM (1.000) |
 | *22 carrier | — | — | — | uncertain function | REFUSED (U4) | named refusal ✅ |
 | HG005 (NA24631) | Chinese | — | not scored | no GeT-RM consensus | excluded | excluded |
 
-**Overall (scored samples): diplotype concordance 1.000, phenotype concordance 1.000**
-*(denominator = 2 samples with authoritative GeT-RM truth; *22 refusal correct by design; HG01190 pending)*
+**Overall (3 scored samples): phenotype concordance 1.000; diplotype concordance 0.667 (2/3)**
+*(HG002 + HG001 match diplotype + phenotype; HG01190 matches phenotype (PM) but StarPhase resolved a different all-no-function SV configuration than the GeT-RM diplotype. *22 refusal correct by design; HG005 excluded — no GeT-RM consensus.)*
 
 The most significant result is HG001 (NA12878). This sample carries a hybrid-tandem structural variant diplotype (*3/*68+*4) — a configuration that the legacy short-read heuristic scored at 0.333 (SV-blind, calling *1/*1 Normal Metabolizer). StarPhase called the full SV diplotype correctly, resolving to Poor Metabolizer, matching the authoritative Gaedigk et al. 2019 GeT-RM truth. The locus slice was retrieved in 15 seconds (273 reads, 1.7 MB); StarPhase and scoring ran in minutes. This demonstrates that hybrid-tandem SV cases — the class most likely to fail short-read callers — are handled correctly by the StarPhase → normalize → ingest chain.
 
 A pre-existing SV-blind truth entry for NA12878 (*1/*1, Normal Metabolizer) was identified and removed from the truth set during this analysis; the replacement with the authoritative SV diplotype is documented in commit 765a43d. HG005 was excluded after a full scan of Gaedigk et al. 2019 Tables 3 and 4 confirmed no GeT-RM CYP2D6 consensus for NA24631.
+
+The South Asian equity cell (HG01190) was completed on a dedicated Azure genomics VM (Standard_D16s_v5, Ubuntu 22.04): the ENA FASTQ (SRR25583344, ~7.6 GB) was aligned whole-genome to GRCh38 with minimap2 (-ax map-ont), the CYP2D6 locus sliced (373 reads), and StarPhase run. StarPhase called *68+*4x2/*68+*4 — a tandem-duplication configuration of two all-no-function alleles — resolving to **Poor Metabolizer**, which **matches the GeT-RM phenotype** (truth *68+*4/*5 → PM). The two diplotypes disagree at the structural level (StarPhase placed the *68+*4 hybrid-tandem on both haplotypes rather than opposite a *5 deletion), so diplotype concordance for this sample is 0.000 while phenotype concordance is 1.000. Because all constituent alleles in both the called and the truth diplotype are no-function (*68 = 0, *4 = 0, *5 = 0), the clinically actionable output — Poor Metabolizer, warranting CYP2D6-substrate avoidance — is identical. This is an honest and instructive result: for the equity-critical SAS sample, automated SV diplotyping reached the correct clinical phenotype but not the exact structural call, underscoring that phenotype-level concordance and diplotype-level concordance are distinct metrics and that the former is the clinically decisive one. It also flags structural-call divergence on complex hybrid-tandem/deletion configurations as a target for caller refinement and orthogonal confirmation.
 
 ---
 
@@ -182,7 +190,7 @@ This contrasts with tools that default uncertain cases to a normal metabolizer a
 
 ### 4.5 Limitations and Future Directions
 
-The CYP2D6 SV benchmarking is currently based on two scored GIAB reference samples (HG002, HG001); the South Asian equity cell (HG01190) requires an external minimap2 alignment run on EC2 and is pending. Additional 1000 Genomes samples (AFR: NA19317, EAS: NA18545) follow the same ENA FASTQ path. The IWPC warfarin cohort, while large (n=5,700), is skewed toward European and East Asian ancestry; SAS representation is limited. Population frequency data for genes beyond CYP2D6 and CYP2C19 remain to be populated from IndiGen and gnomAD SAS subsets.
+The CYP2D6 SV benchmarking now covers three scored samples (HG002, HG001, and the SAS cell HG01190). HG01190 reached the correct Poor Metabolizer phenotype but diverged from the GeT-RM consensus at the structural-diplotype level (a functionally-equivalent all-no-function configuration); confirming the exact structural call would require orthogonal long-range validation. Additional 1000 Genomes samples (AFR: NA19317, EAS: NA18545) follow the same ENA FASTQ → VM-alignment path and remain to be scored. The IWPC warfarin cohort, while large (n=5,700), is skewed toward European and East Asian ancestry; SAS representation is limited. Population frequency data for genes beyond CYP2D6 and CYP2C19 remain to be populated from IndiGen and gnomAD SAS subsets.
 
 Future work will expand the gene panel to 25+ drugs optimized for South Asian populations, integrate ClinVar pathogenicity tiers for variants below CPIC evidence grade, validate the MTB-ready output format in a prospective clinical setting at Malabar Cancer Centre, and complete the five-sample cross-ancestry concordance table.
 
@@ -235,6 +243,6 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 
 ---
 
-*Document status: Draft v0.3 | June 14, 2026*
-*Remaining blanks: HG01190 SAS concordance row (one EC2 minimap2 run), warfarin statistical method confirmation*
-*Ready to circulate to co-authors. One EC2 run away from a complete concordance table.*
+*Document status: Draft v0.4 | June 14, 2026*
+*HG01190 SAS cell completed on Azure VM (phenotype 1.000 / diplotype divergent). Remaining blank: warfarin statistical method confirmation.*
+*Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1); AFR + EAS cells next via the same VM path.*
