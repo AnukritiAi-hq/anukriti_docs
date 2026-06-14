@@ -247,3 +247,32 @@ Paper updated to **v0.4** (`ededa7b`) with the real SAS result.
 **Next:** AFR (NA19317) + EAS (NA18545) cells via the same VM path; warfarin
 stat method; consider orthogonal confirmation of the HG01190 structural call.
 To fully tear down: `az group delete -n anukriti-genomics-rg --yes`.
+
+
+---
+
+## Addendum 3 (2026-06-14 ~22:15) — AFR/EAS cells: data investigation (no run)
+
+Investigated long-read data for the remaining truth-set ancestry cells
+**before** spending VM compute. Finding: the obvious ENA sources are NOT
+usable, so I did **not** run them (a run would produce no CYP2D6 coverage →
+no-call, wasting compute).
+
+| Sample | Pop | Truth | Best ENA long-read found | Verdict |
+|---|---|---|---|---|
+| NA19317 | AFR | `*5/*5` → PM | ERR12095532 (PRJEB66174, PromethION) | ❌ **17 reads / 56 kb** — empty/placeholder run |
+| NA18545 | EAS | `*5/*36x2+*10x2` → IM | ERR14901054 (PRJEB82358, Sequel II) | ❌ **WGA, 67k reads, ~0.04× genome** — won't cover the locus |
+
+Neither is the multi-Gb WGS long-read dataset that worked for HG01190
+(SRR25583344). They are NOT in PRJNA1003794 (the Deserranno project, which
+only covered HG001/HG002/HG005/HG01190/NA19785).
+
+**Concrete follow-up path (next session):** HPRC (Human Pangenome Reference
+Consortium) has PacBio HiFi + ONT WGS for 232 diverse 1000G individuals incl.
+AFR/EAS ancestries — the right source for proper AFR/EAS long-read WGS.
+Action: check HPRC sample list for truth-set overlap (or pick HPRC AFR/EAS
+samples with published GeT-RM/PharmVar CYP2D6 truth), then run via the same
+VM path. https://humanpangenome.org/hprc-data-release-2
+
+**Current honest table:** EUR ×2 (HG001, HG002) + SAS ×1 (HG01190). AFR/EAS
+cells remain open pending a proper long-read source — documented, not faked.
