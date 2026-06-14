@@ -2,15 +2,21 @@
 
 > **Audience:** founder + the session that builds CYP2D6 SV calling.
 >
-> **Last updated:** 2026-06-02
+> **Last updated:** 2026-06-14
 >
-> **Status:** Plan. Companion to [`DETECTION_ROADMAP.md`](DETECTION_ROADMAP.md)
-> (this is Rung 2). All three candidate tools and their papers are now in
-> [`papers/`](papers/README.md) (entries 8–10). No code written yet.
+> **Status:** In progress. Phase A (truth-set repair) and Phase C (the
+> `ingest_sv_diplotype` seam) have **landed** (2026-06-02). Phase B (the
+> caller bake-off) is the remaining open step and has been **reframed**
+> (2026-06-14) around long-read + StarPhase — see **Phase B′** — after
+> four new papers (#14–#17) were added to [`papers/`](papers/README.md).
+> The reframe lightens the bake-off from a ~70-sample WGS pull to a
+> few-GB single-tool run on public GIAB long-read data.
 >
 > **Companion docs:**
 >   - [`DETECTION_ROADMAP.md`](DETECTION_ROADMAP.md) — the 6-rung ladder; this is Rung 2
->   - [`papers/README.md`](papers/README.md) — Cyrius (#8), StellarPGx (#9), Aldy (#10)
+>   - [`papers/README.md`](papers/README.md) — short-read/WGS callers: Cyrius (#8),
+>     StellarPGx (#9), Aldy (#10); long-read path: StarPhase (#14),
+>     TAS-LRS Gan (#15), ONT-AS Deserranno (#16), PharmVar SV standard (#17)
 >   - [`DETERMINISTIC_ENGINE_DEEP_DIVE.md`](DETERMINISTIC_ENGINE_DEEP_DIVE.md) — where star-allele → phenotype happens
 
 ---
@@ -137,6 +143,68 @@ not assume: Cyrius/StellarPGx ≫ our current heuristic on SV samples.
 
 ---
 
+## Phase B′ — Reframed bake-off: long-read + StarPhase (2026-06-14 update)
+
+> **Why this section exists.** The original Phase B (three short-read/WGS
+> callers, 70-sample WGS pull) is **partly overtaken** by 2024–2025
+> long-read work. Three papers added to `papers/` (#14–#17) converge on a
+> path that is both *more accurate on SVs* and *far cheaper to run* than the
+> Cyrius/StellarPGx/Aldy WGS bake-off. This section is the lighter primary
+> path; the original Phase B is retained as the short-read fallback.
+
+**What changed in the field:**
+
+- **StarPhase** (#14, Holt 2024) — one tool diplotypes all CPIC Level-A
+  genes **including CYP2D6 and HLA**, building consensus haplotypes
+  **straight from the BAM** (no separate SV+SNP+assembly pipeline). It
+  collapses the three-tool matrix into one.
+- **TAS-LRS** (#15, Gan 2025) — adaptive sampling enriches PGx genes
+  **in silico during sequencing**: PCR-free, no capture kit, no WGS.
+  Reported **SV >95%, metabolizer-phenotype 98.0%** concordance.
+- **ONT-AS vs Twist** (#16, Deserranno 2025) — proves StarPhase recovers
+  **correct CYP2D6 star-alleles on all five public GIAB samples** (HG001,
+  HG01190, NA19785, HG002, HG005), including the hard hybrids
+  (`*5/*4+*68`, `*68+*4.001/*3`).
+- **PharmVar SV tutorial** (#17, Turner 2023) — the **reporting standard**
+  any caller's SV output must be normalised to before it enters our engine.
+
+**The data-burden collapse.** The original Phase B estimated ~70–120 GB
+(70 WGS BAMs, chr22-sliced) plus a Nextflow/multi-tool environment. The
+reframed path uses the **five public GIAB long-read datasets** from
+Deserranno 2025 — small, already-targeted, carrying the exact SV diplotypes
+our Phase-A truth set needs. Order **a few GB, one tool**, no 70-sample pull.
+
+- **B′1.** Pull the five GIAB long-read reference datasets (ONT-AS:
+  ArrayExpress E-MTAB-15248 / BioProject PRJNA1003794; Twist comparators
+  from the PacBio public bucket). chr22 / CYP2D6-locus scope.
+- **B′2.** Run **StarPhase** on them → CYP2D6 diplotype per sample
+  (single tool; consumes BAM directly).
+- **B′3.** Score against the repaired Phase-A SV truth set, **normalising
+  diplotype strings to PharmVar SV nomenclature** (#17) first. Report
+  overall + SV-only + by-population (SAS = NA19785 is the equity cell).
+- **B′4.** Decision: StarPhase-on-long-read as the **primary** Rung-2
+  caller vs Cyrius as the **short-read WGS fallback** (for users who only
+  have Illumina WGS). Both feed the *same* `ingest_sv_diplotype` seam that
+  already landed in Phase C — so the integration work is caller-agnostic.
+
+**Honest caveats (do not overstate):**
+
+- StarPhase's *raw* GeT-RM concordance is **73.8%**; the high numbers come
+  *after* accounting for truth-set errors + ONT rebasecalling. Promising,
+  not a finished slam-dunk — which is exactly why we benchmark it rather
+  than assume it.
+- Long-read input is **Rung 3 territory** (BAM/CRAM ingestion). B′ borrows
+  it scoped to CYP2D6; a general read-level path is still its own step.
+- These papers predate (or are contemporaneous with) the original plan;
+  this is a re-weighting of the candidate set, not a discovery that the
+  original Phase B was wrong. Cyrius remains the best *short-read* option.
+
+**Done when:** a StarPhase-vs-truth SV-split table exists on the public
+GIAB samples, normalised to PharmVar nomenclature, with a documented
+primary/fallback caller choice — achieved without the 70-sample WGS pull.
+
+---
+
 ## Phase C — Integration (off-by-default, predictor-annotates)
 
 > **C — SEAM LANDED (2026-06-02).** `anukriti/src/cyp2d6_sv_ingest.py` —
@@ -207,12 +275,14 @@ existing signature is byte-identical.
 
 | Phase | Work | Rough effort |
 |---|---|---|
-| A | Truth-set SV repair + provenance | 0.5 day (data curation) |
-| B | Three-tool bake-off on chr22 BAMs | 1–1.5 days (mostly data pull + runtime) |
-| C | Integrate chosen caller off-by-default | 1 day |
+| A | Truth-set SV repair + provenance | ✅ landed (0.5 day) |
+| B′ | StarPhase on public GIAB long-read (primary) | 0.5–1 day (few-GB pull + single tool) |
+| B | Three-tool WGS bake-off (short-read fallback) | 1–1.5 days (70-sample pull + Nextflow) — defer unless B′ insufficient |
+| C | Integrate chosen caller off-by-default | ✅ seam landed (`ingest_sv_diplotype`) |
 
-**~3 days.** Phase A is the cheap, high-leverage start (it also makes our
-*existing* CYP2D6 benchmark honest, independent of which tool we pick).
+**Remaining work ≈ 0.5–1 day** (Phase B′), since A and C are done. The
+reframed B′ replaces the heavy WGS bake-off as the primary path; the
+original Phase B stays on the shelf as the short-read fallback.
 
 ---
 
@@ -228,3 +298,10 @@ existing signature is byte-identical.
 3. **Hybrid truth data:** public GeT-RM hybrid reference samples are
    limited. Acceptable to validate deletions+duplications now and flag
    hybrids as "detected, not yet truth-validated"?
+4. **Primary path = long-read?** (2026-06-14) Phase B′ proposes StarPhase
+   on public GIAB long-read data as the *primary* Rung-2 caller, with the
+   short-read Cyrius/StellarPGx/Aldy WGS bake-off demoted to fallback.
+   This trades a ~70-sample WGS pull for a few-GB single-tool run and
+   better SV accuracy — but assumes our users can produce (or we can
+   ingest) long-read data. If the near-term deployment is Illumina-WGS
+   only, Cyrius stays primary. Which input do we optimise for first?

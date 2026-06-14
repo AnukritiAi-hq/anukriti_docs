@@ -152,6 +152,51 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
+### 14. Holt-2024-bioRxiv-StarPhase-Phase-Aware-PGx-Diplotyper-LongRead.pdf — StarPhase (single-tool CYP2D6 + HLA diplotyper)
+
+- **Title:** StarPhase: comprehensive phase-aware pharmacogenomic diplotyper for long-read sequencing data
+- **Authors:** James M. Holt, John Harting, Xiao Chen, Daniel Baker, Christopher T. Saunders, Zev Kronenberg (PacBio)
+- **Journal:** bioRxiv preprint 2024.12.10.627527 (2024) · GitHub: PacBio/pb-StarPhase
+- **DOI:** [10.1101/2024.12.10.627527](https://doi.org/10.1101/2024.12.10.627527)
+- **Summary:** A single tool that diplotypes **all CPIC Level-A genes (except IFNL4) plus HLA** from long-read data. For SV-prone loci (CYP2D6, HLA) it builds **consensus haplotypes directly from the alignment BAM** — no separate VCF/variant-calling step — collapsing the multi-stage SV+SNP+assembly pipeline into one. Authors report 73.8% raw GeT-RM concordance; incongruences trace to truth-set errors, updated nomenclature, and phasing artifacts (known GeT-RM limitations).
+- **Relevance:** **Rung 2 — the simplifying front-runner.** Replaces the three-tool short-read bake-off (Cyrius/StellarPGx/Aldy) with one long-read diplotyper that already covers DPYD, CYP2D6, and HLA. Independently validated by Deserranno 2025 (#16) which got CYP2D6 correct in all five reference samples after StarPhase. Primary candidate if Rung-2 pivots to long-read input.
+
+---
+
+### 15. Gan-2025-medRxiv-Targeted-Adaptive-Sampling-Clinical-PGx-Genome-Wide-Genotyping.pdf — TAS-LRS (no-WGS adaptive sampling)
+
+- **Title:** Targeted adaptive sampling enables clinical pharmacogenomics testing and genome-wide genotyping
+- **Authors:** Pamela Gan Hui Peng, Yeo Han Lin, ... Mar Gonzalez-Porta (Nalagenetics, Singapore)
+- **Journal:** medRxiv preprint 2025.05.05.25326970v2 (2025) · CC-BY-NC
+- **DOI:** [10.1101/2025.05.05.25326970](https://doi.org/10.1101/2025.05.05.25326970)
+- **Summary:** End-to-end PGx workflow on Targeted Adaptive Sampling–Long Read Sequencing (TAS-LRS): ONT adaptive sampling enriches the PGx genes **in silico during sequencing** — PCR-free, no separate capture kit, three samples multiplexed per flow cell. Includes a novel CYP2D6 caller. Across 17 reference/clinical samples: **small-variant 99.9%, structural-variant >95%, phased-diplotype 97.7%, metabolizer-phenotype 98.0% concordance**; off-target reads also support genome-wide imputation.
+- **Relevance:** **Rung 2 — the data-burden simplifier.** This is the "don't download terabytes of WGS" answer: the data is targeted at the source, so the truth set shrinks from 70 WGS BAMs to a handful of small enriched runs. Directly demonstrates SV + phenotype concordance at the levels Rung 2 needs.
+
+---
+
+### 16. Deserranno-2025-FrontPharmacol-ONT-Adaptive-Sampling-vs-Twist-LongRead-PGx.pdf — ONT-AS vs Twist long-read benchmark
+
+- **Title:** Comparative evaluation of Oxford Nanopore Technologies' adaptive sampling and the Twist long-read PGx panel for pharmacogenomic profiling
+- **Authors:** Koen Deserranno, Laurentijn Tilleman, Dieter Deforce, Filip Van Nieuwerburgh (Ghent University)
+- **Journal:** Frontiers in Pharmacology 16:1653999 (09 Sept 2025) · Open access (CC-BY)
+- **DOI:** [10.3389/fphar.2025.1653999](https://doi.org/10.3389/fphar.2025.1653999)
+- **Summary:** Re-analyses prior ONT adaptive-sampling data on five GIAB reference samples (HG001, HG01190, NA19785, HG002, HG005) with current basecalling (Dorado) + StarPhase, and benchmarks against the Twist Alliance long-read PGx panel (PacBio + ONT). After rebasecalling, **StarPhase recovers correct CYP2D6 star-alleles in all five samples** — including the hard SV/hybrid cases (\*5/\*4+\*68, \*68+\*4.001/\*3). Perfect star-allele match between ONT-AS and Twist for all CPIC Level-A genes; ONT-AS gives ~3× more variants per phasing block. Flags that the Twist *Dark Genes* panel's narrow CYP2D6 capture region calls complex configurations wrong.
+- **Relevance:** **Rung 2 — proves the simpler path works on PUBLIC data.** These five GIAB samples are small, public, already-sliced long-read datasets carrying the exact SV diplotypes our truth set needs — a few GB, single-tool, no 70-sample WGS pull. The concrete recipe for a lightweight Rung-2 bake-off (StarPhase on public GIAB long reads).
+
+---
+
+### 17. Turner-2023-CPT-PharmVar-Tutorial-CYP2D6-Structural-Variation-Citation.txt — CYP2D6 SV reporting standard
+
+- **Title:** PharmVar Tutorial on CYP2D6 Structural Variation Testing and Recommendations on Reporting
+- **Authors:** Amy J. Turner, Charity Nofziger, ... Andrea Gaedigk (PharmVar CYP2D6 SV Working Group)
+- **Journal:** Clinical Pharmacology & Therapeutics 114(6):1220-1237 (2023)
+- **DOI:** [10.1002/cpt.3044](https://doi.org/10.1002/cpt.3044) · **PMID:** [37669183](https://pubmed.ncbi.nlm.nih.gov/37669183/) · **PMCID:** PMC10840842
+- **Summary:** The authoritative PharmVar consensus on how CYP2D6 structural variation (deletions \*5, duplications \*1xN, CYP2D6-CYP2D7 hybrids, tandems) should be tested and **reported** — canonical nomenclature and the expected SV diplotype-reporting format.
+- **Relevance:** **Rung 2 — the reporting/interpretation STANDARD** (the CYP2D6 analogue of the CPIC tables we pin elsewhere). Whatever caller we adopt, its SV output must be normalised to this nomenclature before it enters the deterministic engine. Pin as provenance for the CYP2D6 SV → star-allele → phenotype mapping.
+- **Storage note:** PDF not in repo (Wiley/CPT paywall); citation `.txt` stored instead — same convention as Martin-2019 (#3). Pull from PMC10840842 when needed.
+
+---
+
 ## 📰 Companion Document
 
 - **human-pangenome-reference-2023.md** — Press release / paper summary on the Human Pangenome Reference Consortium (Liao et al., Nature 2023; Eimear Kenny co-author).
@@ -169,6 +214,8 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 | Indian clinical phenotype + genetics | Kerdoncuff 2025 |
 | Agentic AI for genomics / pharmacogenomics | Zack 2026 |
 | Star-allele / SV-CNV callers (Rung 2) | Cyrius 2021, StellarPGx 2021, Aldy 2018 |
+| Long-read / adaptive-sampling CYP2D6 SV (Rung 2, simplified path) | StarPhase 2024, Gan TAS-LRS 2025, Deserranno ONT-AS 2025 |
+| CYP2D6 SV reporting / nomenclature standard (Rung 2) | PharmVar Tutorial 2023 |
 | Targeted PGx panel / input format (Rung 1) | ClinPharmSeq 2022 |
 | Variant frequency / constraint baseline (Rung 4) | GenomeAsia100K 2019, gnomAD constraint 2020 |
 
@@ -176,4 +223,4 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-*Last updated: 2026-06-02*
+*Last updated: 2026-06-14*
