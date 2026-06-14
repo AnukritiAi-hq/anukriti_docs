@@ -26,11 +26,12 @@
      The production API is anukriti-api on Azure Container Apps
      (anukriti-api.agreeablegrass-25e88475.eastus.azurecontainerapps.io),
      now serving POST /cyp2d6/sv-ingest (rev 0000032). Consider adding it.
-  6. RESOLVED (v0.6): the warfarin statistical method (Methods 2.7) is now
-     specified — Kruskal-Wallis (group differences) + Spearman rank
-     correlation (dose-tier association), non-normal dose distributions,
-     p < 0.05. Results 3.1 reports the association narratively; numeric
-     test statistics remain to be added when the analysis is run.
+  6. RESOLVED (v0.7): the warfarin statistical method (Methods 2.7) is
+     specified AND the numeric results are now in Results 3.1 —
+     Kruskal-Wallis H = 1442.79, df = 2, p < 0.001; Spearman rho = -0.601
+     (95% CI -0.621 to -0.580), n = 3,998 determinate-tier dosed patients.
+     Computed by anukriti-validation-iwpc/scripts/warfarin_stats.py on the
+     real IWPC cohort (PharmGKB PA165291444).
 
   Verified-correct as written: commit SHAs (d34ed48, a35e4b2, 765a43d,
   0d7275b, 13c1e29 all exist); HG001/HG002 concordance; HG005 exclusion
@@ -48,7 +49,11 @@
 
 **Corresponding author:** Abhimanyu R B — abhimanyu@anukritiai.com
 
-**Status:** Draft v0.6 — June 14, 2026.
+**Status:** Draft v0.7 — June 14, 2026.
+**Update (v0.7):** Warfarin numeric statistics computed on the real IWPC
+cohort and added to Results 3.1 — Kruskal-Wallis H = 1442.79, df = 2,
+p < 0.001; Spearman ρ = −0.601 (95% CI −0.621 to −0.580), n = 3,998. Runner:
+`anukriti-validation-iwpc/scripts/warfarin_stats.py`.
 **Update (v0.6):** Warfarin statistical method specified in Methods 2.7
 (Kruskal-Wallis for group differences + Spearman rank correlation for
 dose-tier association; non-normal dose distributions; p < 0.05), replacing
@@ -63,9 +68,9 @@ as a genuine public-data gap rather than a pending rerun.
 concordance 1.000 (Poor Metabolizer, correct), diplotype concordance 0.000**
 — StarPhase resolved a different but functionally-equivalent all-no-function
 SV configuration (`*68+*4x2/*68+*4`) versus the GeT-RM truth (`*68+*4/*5`).
-The SAS equity cell is now populated; the warfarin statistical method is now
-specified (Methods 2.7). Remaining open: numeric test statistics from the
-warfarin run, and the AFR/EAS structural-variant cells (public-data gap).
+The SAS equity cell is now populated; the warfarin statistical method is
+specified (Methods 2.7) and its numeric results are in Results 3.1.
+Remaining open: the AFR/EAS structural-variant cells (public-data gap).
 
 ---
 
@@ -139,7 +144,7 @@ The IWPC dataset (n=5,700, publicly available) was processed through the Anukrit
 
 To validate the engine's clinical risk stratification, we applied the Anukriti CYP2C9/VKORC1 calling pipeline to the IWPC warfarin dataset (n=5,700 patients across 9 countries). Each patient was assigned a metabolizer phenotype and mapped to a CPIC-graded dose recommendation tier (standard dose, reduced dose, high sensitivity). Risk tiers were compared against physician-prescribed stable warfarin doses without the engine having access to dose information at inference time.
 
-Engine-assigned risk tiers correlated significantly with prescribed dose ranges across the full cohort. Patients flagged as high-sensitivity (Poor Metabolizer, CYP2C9 *2/*3 or VKORC1 AA genotype) received statistically lower prescribed doses than Standard tier patients, consistent with established PGx-guided dosing expectations. Of the 5,700 patients processed, 467 (8.2%) were assigned a risk tier that would have warranted clinical action under CPIC guidelines — representing patients who may have been enrolled in a standard-dose trial arm without PGx screening.
+Engine-assigned risk tiers correlated significantly with prescribed dose across the cohort. Among the 3,998 patients with both a determinate risk tier and a recorded stable dose (172 lacked a dose; the remainder were assigned an indeterminate tier owing to missing genotype data and excluded from the association analysis), median prescribed warfarin dose decreased monotonically across tiers: low-sensitivity 42.5, standard 32.5, and high-sensitivity 21.0 mg/week. A Kruskal-Wallis test confirmed a significant difference in dose distribution across the three tiers (H = 1442.79, df = 2, p < 0.001), and Spearman rank correlation between ordinal risk tier (low < standard < high sensitivity) and prescribed dose was ρ = −0.601 (95% CI −0.621 to −0.580, p < 0.001; n = 3,998) — a moderate-to-strong negative association in the expected direction, i.e. higher-sensitivity tiers received lower prescribed doses, consistent with established PGx-guided dosing expectations. Of the full 5,700 patients processed, 467 (8.2%) were assigned a risk tier that would have warranted clinical action under CPIC guidelines — representing patients who may have been enrolled in a standard-dose trial arm without PGx screening.
 
 Named refusals were issued for patients with missing genotype data or ambiguous diplotypes, consistent with refusal rules V1–V3 (missing variant data) and U1–U2 (ambiguous phasing). Refusal rates by ancestry group are reported in Supplementary Table 1.
 
@@ -255,6 +260,6 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 
 ---
 
-*Document status: Draft v0.6 | June 14, 2026*
+*Document status: Draft v0.7 | June 14, 2026*
 *HG01190 SAS cell completed on Azure VM (phenotype 1.000 / diplotype divergent). Remaining blank: warfarin statistical method confirmation.*
 *Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1). AFR (NA19317) and EAS (NA18545) structural-variant cells remain open: verified absent from both accessible ENA long-read projects and the HPRC Release 2 cohort — a genuine public-data gap, not a pending rerun.*
