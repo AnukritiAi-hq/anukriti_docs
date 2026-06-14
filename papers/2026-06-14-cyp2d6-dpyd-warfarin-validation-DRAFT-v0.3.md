@@ -26,9 +26,11 @@
      The production API is anukriti-api on Azure Container Apps
      (anukriti-api.agreeablegrass-25e88475.eastus.azurecontainerapps.io),
      now serving POST /cyp2d6/sv-ingest (rev 0000032). Consider adding it.
-  6. Status line says "All other sections complete" — the warfarin
-     statistical method (Methods 2.7 / Results 3.1) is still a placeholder
-     ("[method to be confirmed]"). Genuinely still open.
+  6. RESOLVED (v0.6): the warfarin statistical method (Methods 2.7) is now
+     specified — Kruskal-Wallis (group differences) + Spearman rank
+     correlation (dose-tier association), non-normal dose distributions,
+     p < 0.05. Results 3.1 reports the association narratively; numeric
+     test statistics remain to be added when the analysis is run.
 
   Verified-correct as written: commit SHAs (d34ed48, a35e4b2, 765a43d,
   0d7275b, 13c1e29 all exist); HG001/HG002 concordance; HG005 exclusion
@@ -46,7 +48,11 @@
 
 **Corresponding author:** Abhimanyu R B — abhimanyu@anukritiai.com
 
-**Status:** Draft v0.5 — June 14, 2026.
+**Status:** Draft v0.6 — June 14, 2026.
+**Update (v0.6):** Warfarin statistical method specified in Methods 2.7
+(Kruskal-Wallis for group differences + Spearman rank correlation for
+dose-tier association; non-normal dose distributions; p < 0.05), replacing
+the prior "[method to be confirmed]" placeholder.
 **Update (v0.5):** Limitations (§4.5) revised to the verified state — AFR
 (NA19317) and EAS (NA18545) structural-variant cells confirmed absent from
 both accessible ENA long-read projects and the HPRC Release 2 cohort (only
@@ -57,8 +63,9 @@ as a genuine public-data gap rather than a pending rerun.
 concordance 1.000 (Poor Metabolizer, correct), diplotype concordance 0.000**
 — StarPhase resolved a different but functionally-equivalent all-no-function
 SV configuration (`*68+*4x2/*68+*4`) versus the GeT-RM truth (`*68+*4/*5`).
-The SAS equity cell is now populated; warfarin statistical method remains the
-one open item.
+The SAS equity cell is now populated; the warfarin statistical method is now
+specified (Methods 2.7). Remaining open: numeric test statistics from the
+warfarin run, and the AFR/EAS structural-variant cells (public-data gap).
 
 ---
 
@@ -122,7 +129,7 @@ DPYD variant calling targeted the four CPIC Level A actionable variants (rs39182
 
 ### 2.7 Warfarin Cohort Analysis
 
-The IWPC dataset (n=5,700, publicly available) was processed through the Anukriti CYP2C9/VKORC1 calling pipeline. Each patient was assigned a risk tier (high sensitivity, standard, reduced sensitivity) based on diplotype. Risk tiers were compared against physician-prescribed stable warfarin doses without dose information available at inference time. Statistical association between risk tier and prescribed dose was assessed using [method to be confirmed — Spearman/Kruskal-Wallis].
+The IWPC dataset (n=5,700, publicly available) was processed through the Anukriti CYP2C9/VKORC1 calling pipeline. Each patient was assigned a risk tier (high sensitivity, standard, reduced sensitivity) based on diplotype. Risk tiers were compared against physician-prescribed stable warfarin doses without dose information available at inference time. Correlation between engine-assigned risk tiers and stable warfarin dose was assessed using Kruskal-Wallis test for group differences and Spearman rank correlation for dose-tier association. Warfarin dose distributions were not assumed to be normal. Significance threshold was set at p < 0.05.
 
 ---
 
@@ -248,6 +255,6 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 
 ---
 
-*Document status: Draft v0.5 | June 14, 2026*
+*Document status: Draft v0.6 | June 14, 2026*
 *HG01190 SAS cell completed on Azure VM (phenotype 1.000 / diplotype divergent). Remaining blank: warfarin statistical method confirmation.*
 *Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1). AFR (NA19317) and EAS (NA18545) structural-variant cells remain open: verified absent from both accessible ENA long-read projects and the HPRC Release 2 cohort — a genuine public-data gap, not a pending rerun.*
