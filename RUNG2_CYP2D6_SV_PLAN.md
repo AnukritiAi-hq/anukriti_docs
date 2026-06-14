@@ -4,13 +4,14 @@
 >
 > **Last updated:** 2026-06-14
 >
-> **Status:** In progress. Phase A (truth-set repair) and Phase C (the
-> `ingest_sv_diplotype` seam) have **landed** (2026-06-02). Phase B (the
-> caller bake-off) is the remaining open step and has been **reframed**
-> (2026-06-14) around long-read + StarPhase — see **Phase B′** — after
-> four new papers (#14–#17) were added to [`papers/`](papers/README.md).
-> The reframe lightens the bake-off from a ~70-sample WGS pull to a
-> few-GB single-tool run on public GIAB long-read data.
+> **Status:** In progress. Phase A (truth-set repair), Phase C (the
+> `ingest_sv_diplotype` seam), and the **Phase B′ harness** (nomenclature
+> table + StarPhase scoring runner) have **landed**. The only remaining
+> step is the external StarPhase run on public GIAB long-read data
+> (needs the long-read BAMs + the StarPhase tool — external compute). The
+> reframe (2026-06-14) was driven by four new papers (#14–#17, now all in
+> [`papers/`](papers/README.md)) and lightens the bake-off from a
+> ~70-sample WGS pull to a few-GB single-tool run.
 >
 > **Companion docs:**
 >   - [`DETECTION_ROADMAP.md`](DETECTION_ROADMAP.md) — the 6-rung ladder; this is Rung 2
@@ -202,6 +203,34 @@ our Phase-A truth set needs. Order **a few GB, one tool**, no 70-sample pull.
 **Done when:** a StarPhase-vs-truth SV-split table exists on the public
 GIAB samples, normalised to PharmVar nomenclature, with a documented
 primary/fallback caller choice — achieved without the 70-sample WGS pull.
+
+> **B′ HARNESS LANDED (2026-06-14).** Two pieces shipped against the
+> PharmVar tutorial (#17), so the only remaining step is the external
+> StarPhase run itself:
+>
+> 1. **`src/cyp2d6_sv_nomenclature.py`** — paper-pinned CYP2D6 SV
+>    activity-value table + `normalize_diplotype()` (canonicalizes the
+>    varied caller string shapes). `*41` corrected to 0.25 per the CPIC
+>    March-2023 downgrade the tutorial documents. (+22 tests.)
+> 2. **`src/benchmark/cyp2d6_starphase_runner.py`** — parses StarPhase
+>    call JSON → normalize → ingest (existing Phase-C seam) → score vs the
+>    SV truth set, SV-split + by-population. `--self-check` proves the
+>    wiring end-to-end (diplotype 1.000) before real data lands. (+13 tests.)
+>
+> The ingestion seam's `*41` was likewise corrected; SV-caller ingestion
+> phenotype concordance is unchanged at 0.857. HG01190 (SAS) is both in our
+> truth set and one of the five public GIAB samples StarPhase was validated
+> on in Deserranno 2025 — so the SAS equity cell scores the moment its
+> StarPhase call is dropped in.
+>
+> **To run once StarPhase output exists** (one `*.json` per sample, e.g.
+> `HG01190.starphase.json`):
+> ```bash
+> cd anukriti && source venv/bin/activate
+> python -m src.benchmark.cyp2d6_starphase_runner --calls-dir path/to/calls
+> # wiring smoke test (no data needed):
+> python -m src.benchmark.cyp2d6_starphase_runner --self-check
+> ```
 
 ---
 

@@ -185,15 +185,15 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
-### 17. Turner-2023-CPT-PharmVar-Tutorial-CYP2D6-Structural-Variation-Citation.txt — CYP2D6 SV reporting standard
+### 17. Turner-2023-CPT-PharmVar-Tutorial-CYP2D6-Structural-Variation.pdf — CYP2D6 SV reporting standard
 
 - **Title:** PharmVar Tutorial on CYP2D6 Structural Variation Testing and Recommendations on Reporting
 - **Authors:** Amy J. Turner, Charity Nofziger, ... Andrea Gaedigk (PharmVar CYP2D6 SV Working Group)
 - **Journal:** Clinical Pharmacology & Therapeutics 114(6):1220-1237 (2023)
 - **DOI:** [10.1002/cpt.3044](https://doi.org/10.1002/cpt.3044) · **PMID:** [37669183](https://pubmed.ncbi.nlm.nih.gov/37669183/) · **PMCID:** PMC10840842
 - **Summary:** The authoritative PharmVar consensus on how CYP2D6 structural variation (deletions \*5, duplications \*1xN, CYP2D6-CYP2D7 hybrids, tandems) should be tested and **reported** — canonical nomenclature and the expected SV diplotype-reporting format.
-- **Relevance:** **Rung 2 — the reporting/interpretation STANDARD** (the CYP2D6 analogue of the CPIC tables we pin elsewhere). Whatever caller we adopt, its SV output must be normalised to this nomenclature before it enters the deterministic engine. Pin as provenance for the CYP2D6 SV → star-allele → phenotype mapping.
-- **Storage note:** PDF not in repo (Wiley/CPT paywall); citation `.txt` stored instead — same convention as Martin-2019 (#3). Pull from PMC10840842 when needed.
+- **Relevance:** **Rung 2 — the reporting/interpretation STANDARD** (the CYP2D6 analogue of the CPIC tables we pin elsewhere). Whatever caller we adopt, its SV output must be normalised to this nomenclature before it enters the deterministic engine. **Now pinned** as the provenance source for `src/cyp2d6_sv_nomenclature.py` (the CYP2D6 SV → activity-value → phenotype mapping), the same way `DPYD_CLINICAL_ACTIONS` cites the CPIC fluoropyrimidine guideline.
+- **Storage note:** PDF in repo (manually retrieved from PMC10840842 author manuscript). §3.2 is the source for the pinned activity values; §4 for the nomenclature the normalizer enforces.
 
 ---
 
