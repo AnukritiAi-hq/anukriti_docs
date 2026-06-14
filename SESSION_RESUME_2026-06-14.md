@@ -142,3 +142,37 @@ curl -X POST localhost:8000/cyp2d6/sv-ingest \
 - `RUNG2_CYP2D6_SV_PLAN.md` — the plan/roadmap (Phase A/B′/C)
 - `papers/README.md` — method papers #14–#17 (StarPhase, TAS-LRS, ONT-AS, PharmVar)
 - `SESSION_RESUME_2026-06-13.md` — prior session (DPYD clinical-action tier)
+
+---
+
+## Commit ledger (2026-06-14) — exact SHAs to resume from
+
+All repos clean + pushed. Today's commits, newest last per repo:
+
+| Repo | SHA | Summary |
+|---|---|---|
+| anukriti-pgx-core | `26e6240` | **release v0.6.0** — CYP2D6 SV ingestion (tag `v0.6.0`, on PyPI) |
+| anukriti | `76339ce` | pin CYP2D6 SV nomenclature + normalizer (PharmVar 2023) |
+| anukriti | `241b2e6` | StarPhase scoring runner (Phase B′) |
+| anukriti | `d34ed48` | GIAB CYP2D6 long-read region fetcher |
+| anukriti | `a35e4b2` | parse real StarPhase schema; HG002 verified e2e |
+| anukriti | `765a43d` | HG001 GeT-RM truth + first scored row; ENA runner |
+| anukriti | `f9f7d29` | consume SV modules from pgx-core 0.6.0; sandbox README |
+| anukriti-api | `76c1cdd` | DPYD `clinical_action` through `/runs` |
+| anukriti-api | `dbcc0ef` | **`POST /cyp2d6/sv-ingest`** endpoint (pgx-core 0.6.0) |
+| anukriti-swarm | `5227f96` → `0a920a3` | pin → 0.5.0 → 0.6.0 |
+| anukriti-main | `ee2c6da` | MTB-ready DPYD clinical-action card |
+| anukriti_docs | `24ebaf8 … ce4f421` | papers #14–#17, plan reframe, STARPHASE_SETUP, CYP2D6_SV_PIPELINE, this resume |
+
+## Live deployment state (end of 2026-06-14)
+
+- **pgx-core 0.6.0** — published on PyPI ✅
+- **anukriti-api** — Azure Container App revision **`anukriti-api--0000032`**,
+  image `git-dbcc0ef-0a920a-fd8601-26e624`, 100% traffic. `/cyp2d6/sv-ingest`
+  live in OpenAPI (auth-enforced). DPYD `clinical_action` also live.
+- **anukriti-main** — Vercel, product.anukritiai.com (base44 + DPYD MTB card).
+- **anukriti (research repo)** — not deployed (sandbox); CYP2D6 benchmark
+  harness lives here, runs locally.
+
+Test totals (all green): pgx-core **132** · api **134** · swarm **267** ·
+anukriti SV/benchmark **46**.
