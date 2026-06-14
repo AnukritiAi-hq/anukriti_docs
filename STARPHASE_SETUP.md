@@ -2,9 +2,15 @@
 
 One page to go from zero to a scored CYP2D6 call in **under 30 minutes** on a
 local machine or a small AWS EC2 instance. This procedure was **executed and
-verified end-to-end on HG002** (2026-06-14): StarPhase called `*2/*4`, which
-our ingestion seam phenotyped as **Intermediate Metabolizer (AS 1.0)** —
-matching the GeT-RM truth.
+verified end-to-end** (2026-06-14):
+
+- **HG002** (no truth-set entry): StarPhase called `*2/*4` → ingestion
+  phenotyped **Intermediate Metabolizer** (matches GeT-RM).
+- **HG001 / NA12878** (truth-set SV sample): StarPhase called the hard
+  hybrid-tandem `*3/*68 + *4` → **Poor Metabolizer**, **exactly matching the
+  authoritative GeT-RM consensus** (Gaedigk 2019 Table 3). First real scored
+  row: **diplotype 1.000, phenotype 1.000** on an SV sample — the case the
+  legacy heuristic gets wrong.
 
 > Why this doc exists: `pbstarphase` installs cleanly via conda, but the
 > `pbstarphase build` step (which queries the live CPIC API) is **broken**
@@ -65,9 +71,24 @@ python scripts/fetch_giab_cyp2d6_longread.py HG002
 
 **The SAS sample HG01190 is NOT on GIAB** — it is a 1000 Genomes line whose
 long-read data lives at **ArrayExpress E-MTAB-15248 / BioProject
-PRJNA1003794** (Deserranno 2025). Fetch its BAM from ENA, slice chr22
-42,100,000–42,160,000 with `samtools view -b <bam> chr22:42100000-42160000`,
-and index it. Same for NA19785.
+PRJNA1003794** (Deserranno 2025), run **SRR25583344**.
+
+> ### ENA QUIRK (gotcha, parallels the prebuilt-DB one)
+> HG01190's ENA data is **raw whole-genome ONT FASTQ only (7.6 GB), with no
+> aligned BAM and no index.** The remote index-slice trick used for the GIAB
+> samples **cannot** be applied — you can't fetch "just chr22" from an
+> unaligned FASTQ. You must download the full FASTQ and **align the whole
+> genome with minimap2** (`-ax map-ont`) before slicing the locus. That is
+> real external compute (a multi-GB download + whole-genome ONT alignment),
+> which is exactly why it belongs on EC2/local, not a sandbox.
+>
+> Turnkey script (verified accession + minimap2 command baked in):
+> ```bash
+> ./scripts/fetch_ena_cyp2d6_longread.sh /path/to/GRCh38.fa data/giab_cyp2d6
+> ```
+> Produces `HG01190_CYP2D6_GRCh38.bam`; then run StarPhase (step 5) and score
+> (step 6). HG01190 truth = `*68+*4/*5` → Poor Metabolizer (SAS equity cell).
+> Same applies to NA19785 and the other 1000G truth-set samples.
 
 ## 5. Run StarPhase, CYP2D6 only (~3 min)
 
