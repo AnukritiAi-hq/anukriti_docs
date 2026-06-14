@@ -207,3 +207,43 @@ Decisions locked:
 **Single open external step:** spin up the Azure VM per `AZURE_VM_SETUP.md`
 and run HG01190 to fill the SAS equity row (expect 1.000/1.000). Everything
 else is shipped and live.
+
+
+---
+
+## Addendum 2 (2026-06-14 ~22:10) — Azure VM provisioned + HG01190 SAS run
+
+**Provisioned the genomics compute sandbox** (per `AZURE_VM_SETUP.md`) and ran
+the first job end-to-end.
+
+- **VM:** `anukriti-lrs-01`, `Standard_D16s_v5`, Ubuntu 22.04, **centralindia**,
+  RG `anukriti-genomics-rg`, IP `20.198.83.214`. 512 GB Premium SSD at
+  `/mnt/work`. SSH locked to my IP. Storage `anukritigx3533` / container
+  `genomics-archive` mounted via BlobFuse2 at `/mnt/work/archive`.
+- **Toolchain:** conda + `lrs` env (minimap2 2.31, samtools 1.23.1) + `starphase`
+  env (pbstarphase 1.4.2) + full GRCh38 + chr22 + StarPhase prebuilt DB.
+  (Gotcha hit: new conda needs `conda tos accept` for Anaconda channels.)
+- **Repo on VM:** `Abm32/Synthatrial` is private → cloned failed; copied the
+  ENA script + benchmark package via scp instead. Benchmark `__init__.py`
+  emptied so the runner imports standalone.
+- **HG01190 job:** ENA SRR25583344 (7.6 GB) → minimap2 whole-genome →
+  CYP2D6 slice (373 reads) → StarPhase → score. Ran detached.
+
+**RESULT (the SAS equity cell):**
+- StarPhase: `*68+*4x2/*68+*4` → **Poor Metabolizer**
+- GeT-RM truth: `*68+*4/*5` → Poor Metabolizer
+- **Phenotype concordance 1.000** (correct PM); **diplotype concordance 0.000**
+  (StarPhase resolved a different but all-no-function SV configuration).
+  Honest result: functionally equivalent, structurally divergent. 3-sample
+  table now phenotype 1.000, diplotype 0.667 (2/3).
+
+**Housekeeping:** whole-genome BAM (7.7 GB) archived to Blob; HG01190 slice +
+StarPhase JSON + score copied to `anukriti/data/giab_cyp2d6/` (gitignored).
+**VM DEALLOCATED** (compute billing stopped; disks + Blob retained — restart
+with `az vm start -g anukriti-genomics-rg -n anukriti-lrs-01`).
+
+Paper updated to **v0.4** (`ededa7b`) with the real SAS result.
+
+**Next:** AFR (NA19317) + EAS (NA18545) cells via the same VM path; warfarin
+stat method; consider orthogonal confirmation of the HG01190 structural call.
+To fully tear down: `az group delete -n anukriti-genomics-rg --yes`.
