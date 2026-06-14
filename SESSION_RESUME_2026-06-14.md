@@ -276,3 +276,84 @@ VM path. https://humanpangenome.org/hprc-data-release-2
 
 **Current honest table:** EUR ×2 (HG001, HG002) + SAS ×1 (HG01190). AFR/EAS
 cells remain open pending a proper long-read source — documented, not faked.
+
+
+---
+
+## Addendum 4 (2026-06-14 ~22:30) — HPRC overlap resolved: EAS cell runnable, AFR/EAS-SV blocked
+
+Followed Addendum 3's pointer and **resolved the HPRC question concretely**.
+Baseline first re-verified: VM `anukriti-lrs-01` **deallocated** (no compute
+billing), RG `anukriti-genomics-rg` clean (no stray/duplicate resources from
+the interrupted redeploy — the unexpected shutdown happened before any Azure
+object was created), all active repos clean + tracking remotes.
+
+### What I checked
+Pulled the HPRC Release 2 sequencing index tables
+(`human-pangenomics/hprc_intermediate_assembly` → `data_tables/sequencing_data/`)
+and cross-referenced **all 232 HPRC samples** (every one has HiFi ~60x + ONT
+~30x) against the GeT-RM CYP2D6 truth set in
+`anukriti/src/benchmark/getrm_truth.py`. HPRC data is on the **public,
+no-sign-request** bucket `s3://human-pangenomics/` — verified anonymously
+listable (`aws s3 --no-sign-request ls …`), so the VM can pull it directly.
+
+### Findings (verified against the index CSVs)
+
+| Truth sample | Pop | CYP2D6 truth | In HPRC? | Verdict |
+|---|---|---|---|---|
+| **NA19317** | AFR | `*5/*5` → PM (**SV**) | ❌ not in HPRC | AFR-SV cell still blocked |
+| **NA18545** | EAS | `*5/*36x2+*10x2` → IM (**SV**) | ❌ not in HPRC | EAS-SV cell still blocked |
+| HG00097 | EUR | `*1/*41` → NM (non-SV) | ✅ HiFi+ONT | redundant (EUR already covered) |
+| HG00099 | EUR | `*1/*4` → NM (non-SV) | ✅ HiFi+ONT | redundant (EUR already covered) |
+| **NA18959** | **EAS** | `*1/*1` → NM (**non-SV**) | ✅ HiFi+ONT | **RUNNABLE — fills the EAS *ancestry* cell** |
+
+Only **3** GeT-RM CYP2D6 truth samples overlap HPRC, and **NA18959 is the
+only non-EUR overlap**. There is **no AFR overlap at all**.
+
+### Honest read of what this gets us
+- NA18959 closes the **EAS ancestry** cell, but it is a **non-SV `*1/*1`**
+  case — it does **not** close an EAS *structural-variant* cell. Expectation
+  is a clean `*1/*1` → Normal Metabolizer (phenotype 1.000, diplotype 1.000).
+- The two genuinely-SV equity targets (NA18545 EAS, NA19317 AFR) remain
+  **blocked**: not in HPRC, and (per Addendum 3) no usable public long-read
+  WGS on ENA. Not faked — documented as open.
+
+### Concrete run path (next VM session) — EAS via NA18959
+New turnkey script committed: **`anukriti/scripts/fetch_hprc_cyp2d6_longread.sh`**
+(mirrors the ENA HG01190 script; differences: public-S3 source via
+`aws s3 --no-sign-request`, **PacBio HiFi** so minimap2 preset is `map-hifi`,
+4 input FASTQs ~80 GB total streamed into one alignment).
+
+```bash
+az vm start -g anukriti-genomics-rg -n anukriti-lrs-01      # restart sandbox
+# on the VM (lrs env: minimap2, samtools, awscli):
+THREADS=16 ./scripts/fetch_hprc_cyp2d6_longread.sh /mnt/work/GRCh38.fa data/giab_cyp2d6
+conda activate starphase
+pbstarphase diplotype --database pbstarphase_db.json --reference chr22.fa \
+  --bam data/giab_cyp2d6/NA18959_CYP2D6_GRCh38.bam \
+  --include-set include_cyp2d6.txt \
+  --output-calls data/giab_cyp2d6/NA18959.starphase.json
+python -m src.benchmark.cyp2d6_starphase_runner --calls-dir data/giab_cyp2d6
+az vm deallocate -g anukriti-genomics-rg -n anukriti-lrs-01  # stop billing
+```
+Source paths (verified live on the public bucket):
+- HiFi: `s3://human-pangenomics/submissions/B25289BC-5C70-4C42-B2EC-6E742BC82EE1--AMED_HPRC_collaboration/NA18959/raw_data/PacBio_HiFi/` (4 FASTQs)
+- ONT (optional 2nd-tech confirm): `s3://human-pangenomics/working/HPP/AMED/NA18959/raw_data/nanopore/`
+
+### Remaining true blockers (for AFR + EAS-SV)
+NA19317 (AFR-SV) and NA18545 (EAS-SV) need a long-read WGS source that
+neither ENA nor HPRC provides. Next leads to try: AoU/1000G-ONT releases,
+PharmVar-cited datasets, or substituting a *different* AFR/EAS GeT-RM **SV**
+sample that does appear in HPRC's 232 (none of the current truth-set SV IDs
+do — would require adding a new HPRC AFR/EAS sample with independently
+published CYP2D6 SV truth to `getrm_truth.py`).
+
+### Table state after the NA18959 run would be
+EUR ×2 (HG001, HG002, both SV) + SAS ×1 (HG01190, SV) + **EAS ×1 (NA18959,
+non-SV)**. AFR cell and any EAS/AFR *SV* cell remain open — honestly.
+
+### Housekeeping noted (not done)
+- Stray `HG01190.bam.bai` in the workspace root (`SynthaTrial-repo/`) —
+  leftover from the HG01190 run; safe to delete.
+- The orphaned parent-dir git repo at `SynthaTrial-repo/` (no remote, legacy
+  wrapper showing 521 deletions) is **not** one of the active repos; left as-is.

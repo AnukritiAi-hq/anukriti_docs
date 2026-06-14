@@ -46,7 +46,12 @@
 
 **Corresponding author:** Abhimanyu R B — abhimanyu@anukritiai.com
 
-**Status:** Draft v0.4 — June 14, 2026.
+**Status:** Draft v0.5 — June 14, 2026.
+**Update (v0.5):** Limitations (§4.5) revised to the verified state — AFR
+(NA19317) and EAS (NA18545) structural-variant cells confirmed absent from
+both accessible ENA long-read projects and the HPRC Release 2 cohort (only
+non-EUR overlap is NA18959, a non-SV EAS sample). These cells are now framed
+as a genuine public-data gap rather than a pending rerun.
 **Update (v0.4):** HG01190 (SAS) completed on the Azure genomics VM
 (SRR25583344 → minimap2 → CYP2D6 slice → StarPhase). Result: **phenotype
 concordance 1.000 (Poor Metabolizer, correct), diplotype concordance 0.000**
@@ -190,9 +195,9 @@ This contrasts with tools that default uncertain cases to a normal metabolizer a
 
 ### 4.5 Limitations and Future Directions
 
-The CYP2D6 SV benchmarking now covers three scored samples (HG002, HG001, and the SAS cell HG01190). HG01190 reached the correct Poor Metabolizer phenotype but diverged from the GeT-RM consensus at the structural-diplotype level (a functionally-equivalent all-no-function configuration); confirming the exact structural call would require orthogonal long-range validation. Additional 1000 Genomes samples (AFR: NA19317, EAS: NA18545) lack usable whole-genome long-read data in accessible ENA projects — the only ONT/PacBio runs located are an empty PromethION run (NA19317, 17 reads) and a low-coverage whole-genome-amplified PacBio run (NA18545, ~0.04× genome), neither of which yields CYP2D6 locus coverage. Completing the AFR and EAS cells therefore requires sourcing proper long-read WGS from the Human Pangenome Reference Consortium (HPRC, 232 diverse 1000G individuals) or an equivalent project, which is planned follow-up rather than a rerun of the present pipeline. The IWPC warfarin cohort, while large (n=5,700), is skewed toward European and East Asian ancestry; SAS representation is limited. Population frequency data for genes beyond CYP2D6 and CYP2C19 remain to be populated from IndiGen and gnomAD SAS subsets.
+The CYP2D6 SV benchmarking now covers three scored samples (HG002, HG001, and the SAS cell HG01190). HG01190 reached the correct Poor Metabolizer phenotype but diverged from the GeT-RM consensus at the structural-diplotype level (a functionally-equivalent all-no-function configuration); confirming the exact structural call would require orthogonal long-range validation. The two structural-variant truth samples that would extend the table to African and East Asian ancestry — AFR: NA19317 (*5/*5 → Poor Metabolizer) and EAS: NA18545 (*5/*36x2+*10x2 → Intermediate Metabolizer), both gene-deletion/hybrid genotypes from Gaedigk et al. 2019 — have no usable public whole-genome long-read data available. The only ENA ONT/PacBio runs located for them are an empty PromethION run (NA19317, 17 reads) and a low-coverage whole-genome-amplified PacBio run (NA18545, ~0.04× genome), neither of which yields CYP2D6 locus coverage. We further verified that neither sample is included in the Human Pangenome Reference Consortium (HPRC) Release 2 long-read cohort (232 diverse 1000 Genomes individuals, each with ~60× PacBio HiFi and ~30× Oxford Nanopore): cross-referencing the full HPRC sequencing index against the GeT-RM CYP2D6 truth set, only one non-European truth sample overlaps the cohort (NA18959, EAS, *1/*1 → Normal Metabolizer), and it is a non-structural-variant genotype that does not exercise the SV-resolution capability under evaluation. Consequently, the AFR and EAS structural-variant cells remain a genuine gap in the cross-ancestry SV concordance table — not a deferred rerun of the present pipeline, but a limitation imposed by the absence of suitable public long-read reference data for these specific structural-variant truth samples. Closing them would require either a future public long-read release covering NA19317/NA18545, or the adoption of alternative AFR/EAS samples that carry both an independently published CYP2D6 structural-variant truth call and accessible whole-genome long-read data. The IWPC warfarin cohort, while large (n=5,700), is skewed toward European and East Asian ancestry; SAS representation is limited. Population frequency data for genes beyond CYP2D6 and CYP2C19 remain to be populated from IndiGen and gnomAD SAS subsets.
 
-Future work will expand the gene panel to 25+ drugs optimized for South Asian populations, integrate ClinVar pathogenicity tiers for variants below CPIC evidence grade, validate the MTB-ready output format in a prospective clinical setting at Malabar Cancer Centre, and complete the five-sample cross-ancestry concordance table.
+Future work will expand the gene panel to 25+ drugs optimized for South Asian populations, integrate ClinVar pathogenicity tiers for variants below CPIC evidence grade, validate the MTB-ready output format in a prospective clinical setting at Malabar Cancer Centre, and extend the cross-ancestry concordance table to African and East Asian structural-variant cells as suitable public long-read reference data for those samples becomes available.
 
 ---
 
@@ -243,6 +248,6 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 
 ---
 
-*Document status: Draft v0.4 | June 14, 2026*
+*Document status: Draft v0.5 | June 14, 2026*
 *HG01190 SAS cell completed on Azure VM (phenotype 1.000 / diplotype divergent). Remaining blank: warfarin statistical method confirmation.*
-*Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1); AFR + EAS cells next via the same VM path.*
+*Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1). AFR (NA19317) and EAS (NA18545) structural-variant cells remain open: verified absent from both accessible ENA long-read projects and the HPRC Release 2 cohort — a genuine public-data gap, not a pending rerun.*
