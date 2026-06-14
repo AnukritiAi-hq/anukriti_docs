@@ -4,16 +4,21 @@
 >
 > **Last updated:** 2026-06-14
 >
-> **Status:** In progress. Phase A (truth-set repair), Phase C (the
-> `ingest_sv_diplotype` seam), and the **Phase B′ harness** (nomenclature
-> table + StarPhase scoring runner) have **landed**. The only remaining
-> step is the external StarPhase run on public GIAB long-read data
-> (needs the long-read BAMs + the StarPhase tool — external compute). The
-> reframe (2026-06-14) was driven by four new papers (#14–#17, now all in
-> [`papers/`](papers/README.md)) and lightens the bake-off from a
-> ~70-sample WGS pull to a few-GB single-tool run.
+> **Status:** **Shipped (engine + endpoint), 2026-06-14.** Phase A
+> (truth-set repair), Phase C (the `ingest_sv_diplotype` seam), and the
+> Phase B′ harness have all landed — and the SV ingestion was **migrated
+> into anukriti-pgx-core 0.6.0 (live on PyPI)** and exposed via
+> **`POST /cyp2d6/sv-ingest`** on anukriti-api. StarPhase was run
+> end-to-end on real GIAB data: **HG001 `*3/*68+*4` → Poor Metabolizer,
+> 1.000/1.000 vs GeT-RM.** Remaining: run the SAS sample HG01190 (ENA
+> align/slice, external compute) and redeploy anukriti-api with the new
+> endpoint. See [`CYP2D6_SV_PIPELINE.md`](CYP2D6_SV_PIPELINE.md) for the
+> end-to-end map. The 2026-06-14 reframe was driven by four new papers
+> (#14–#17, now in [`papers/`](papers/README.md)).
 >
 > **Companion docs:**
+>   - [`CYP2D6_SV_PIPELINE.md`](CYP2D6_SV_PIPELINE.md) — end-to-end map (engine + endpoint + benchmark)
+>   - [`STARPHASE_SETUP.md`](STARPHASE_SETUP.md) — verified StarPhase run recipe + ENA quirk
 >   - [`DETECTION_ROADMAP.md`](DETECTION_ROADMAP.md) — the 6-rung ladder; this is Rung 2
 >   - [`papers/README.md`](papers/README.md) — short-read/WGS callers: Cyrius (#8),
 >     StellarPGx (#9), Aldy (#10); long-read path: StarPhase (#14),
