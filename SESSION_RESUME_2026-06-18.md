@@ -88,21 +88,53 @@ activity), **use the raw AlphaMissense score directly**, not the classifier.
 
 ---
 
-## State / artifacts
+## State / artifacts (end of day, all pushed)
 
 | Where | What |
 |---|---|
-| `anukriti` repo, `clinical-grade-pgx` (pushed) | v2 `43a520f`, v3 `88f01b2` |
-| `anukriti_docs`, `main` | `DPYD_ML_CLASSIFIER_SCAFFOLDING.md` (v2 section), this resume |
-| `gs://anukriti-ml-artifacts/dpyd-classifier/` | root=v1, `v2/`, `v3/` |
-| huggingface.co/abhimanyu12/dpyd-classifier | v1/v2/v3 + model card |
-| local `dpyd_models_backup/` | the reorganized upload tree (untracked) |
+| `anukriti` repo, `clinical-grade-pgx` (pushed) | v2 `43a520f` · v3 `88f01b2` · `ml/README.md` two-tier state `ffc3eed` |
+| `anukriti_docs`, `main` (pushed) | scaffolding doc v2 section `71142b3` · this resume `4922fe8` · paper two-tier update `a99f91d` |
+| Validation paper | `papers/2026-06-14-…-validation-DRAFT-v0.3.md` — **Methods §2.8** + **Discussion §4.5** (two-tier); Limitations renumbered §4.6 |
+| `gs://anukriti-ml-artifacts/dpyd-classifier/` | root=v1, `v2/`, `v3/` (retained — not deleted) |
+| huggingface.co/abhimanyu12/dpyd-classifier | v1/v2/v3 + model card (public) |
+| local `dpyd_models_backup/` | the reorganized upload tree (untracked, repo root) |
 
-## Follow-ups
-1. **Rotate the HF token** — it was shared in plaintext this session.
-2. Verify the model-card Zenodo DOI (`10.5281/zenodo.20727790`) resolves before
-   relying on it publicly.
-3. Update `DPYD_ML_CLASSIFIER_SCAFFOLDING.md` with a v3 section (currently only
+## Two-tier inference — the decided architecture
+- **Classifier tier:** variants WITH ClinVar significance / measured activity →
+  use the v3 classifier (decreased_function F1 = 0.66, XGB).
+- **AlphaMissense tier:** novel population-discovery variants (no ClinVar, no
+  activity, e.g. Scaria 2025) → use the raw AlphaMissense score directly
+  (c.704G>A AM = 0.93 > 0.564 actionable; frameshifts → deterministic LoF).
+- Classifier training is **paused**. Next on the model side: a separate methods
+  paper on two-tier PGx inference.
+
+## Verified this session
+- HF upload: all 3 version folders + model card live on the public repo.
+- Zenodo DOI `10.5281/zenodo.20727790` **resolves** — real published record
+  ("GIAB CYP2D6 Long-Read Validation Artifacts — Anukriti PGx Engine v0.6.0",
+  Abhimanyu R B, CC-BY-4.0). Note: it's the **CYP2D6 long-read** artifact
+  deposit, not a DPYD-classifier-specific record — fine as a project citation.
+
+## Follow-ups (pick up tomorrow)
+1. **Rotate the HF token** — `hf_…GByTJ` was shared in plaintext this session
+   (huggingface.co/settings/tokens). HIGH priority.
+2. **Validation paper → co-authors.** Pushed to `anukriti_docs/main`; co-authors
+   (Aagneye Syam, Johan George, Atul Alexander, Deepak Roshan V G) can review via
+   repo. If a different channel is wanted (email/export), set it up.
+3. (Optional) Rename HF repo `abhimanyu12/dpyd-classifier` → `abhimanyurb/…` if
+   that account is yours and preferred.
+4. Update `DPYD_ML_CLASSIFIER_SCAFFOLDING.md` with a v3 section (currently only
    through v2).
-4. If a class change on novel variants is truly wanted, evaluate the deferred
-   feature-set redesign (drop sentinels-dominant features).
+5. Deferred model-design question (NOT a patch): drop `activity_pct` /
+   `clnsig_norm` so novel variants aren't pinned to no_function by sentinels —
+   only if single-classifier behaviour on novel variants is revisited.
+
+## How to resume
+```bash
+# code branch (clinical-grade-pgx, pushed):
+cd anukriti && git log --oneline -3      # ffc3eed, 88f01b2, 43a520f
+cat ml/README.md                         # two-tier current state
+# models (public): https://huggingface.co/abhimanyu12/dpyd-classifier
+# paper: anukriti_docs/papers/2026-06-14-cyp2d6-dpyd-warfarin-validation-DRAFT-v0.3.md
+#        -> Methods §2.8, Discussion §4.5
+```
