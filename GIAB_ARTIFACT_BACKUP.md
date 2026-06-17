@@ -210,7 +210,7 @@ Last verified: **2026-06-17 — 18/18 OK, 0 mismatches.**
   cd anukriti/data/giab_cyp2d6
   sha256sum -c checksums.sha256 && md5sum -c checksums.md5
   ```
-- **DOI mirror:** ✅ **published (2026-06-17).** Citable Zenodo deposit (StarPhase
+- **DOI mirror:** ✅ **PUBLISHED — June 17, 2026.** Citable Zenodo deposit (StarPhase
   call JSONs, score, checksums, scoring script — BAM/BAI excluded):
   **https://doi.org/10.5281/zenodo.20727790** (CC-BY-4.0; DOI resolves live).
   Public mirror repo: **https://github.com/AnukritiAi-hq/anukriti-validation**
