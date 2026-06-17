@@ -49,7 +49,7 @@
 
 **Corresponding author:** Abhimanyu R B — abhimanyu@anukritiai.com
 
-**Status:** Draft v0.7 — June 14, 2026.
+**Status:** Draft v0.8 — June 17, 2026.
 **Update (v0.7):** Warfarin numeric statistics computed on the real IWPC
 cohort and added to Results 3.1 — Kruskal-Wallis H = 1442.79, df = 2,
 p < 0.001; Spearman ρ = −0.601 (95% CI −0.621 to −0.580), n = 3,998. Runner:
