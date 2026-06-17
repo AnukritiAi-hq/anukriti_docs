@@ -242,7 +242,10 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 - StarPhase setup procedure: `STARPHASE_SETUP.md` (commit 13c1e29, anukriti_docs repo)
 - StarPhase runner + scorer: `cyp2d6_starphase_runner.py` (commit a35e4b2)
 - StarPhase version: 1.4.2 | Reference DB: pbstarphase_20250515.json.gz (prebuilt, v1.4.0)
-- Code repository: available on request
+- Archived validation artifacts (BAM slices, StarPhase JSON calls, score files, pinned reference DB): Azure Blob Storage container `giab-cyp2d6-artifacts` (account `anukritilrs79730`, RG `anukriti-lrs-01`, `centralindia`), base URL `https://anukritilrs79730.blob.core.windows.net/giab-cyp2d6-artifacts/`. Backup procedure + per-file manifest: `GIAB_ARTIFACT_BACKUP.md` (anukriti_docs). Container is private; reviewer access via read-only SAS or DOI mirror on request.
+- Citable data deposit (StarPhase call JSONs, score, checksums, scoring script): Zenodo **https://doi.org/10.5281/zenodo.20727790** (CC-BY-4.0; BAM/BAI excluded — see source accessions below)
+- Public validation repository (scoring script + StarPhase outputs + provenance): **https://github.com/AnukritiAi-hq/anukriti-validation** (Apache 2.0)
+- Source read data (excluded from the deposit/repo): HG01190 — ENA `SRR25583344` (ArrayExpress `E-MTAB-15248`); HG001/HG002 — GIAB FTP (`https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/`)
 
 ---
 
@@ -260,6 +263,6 @@ The authors thank Dr. Deepak Roshan V G (Malabar Cancer Centre) for clinical inp
 
 ---
 
-*Document status: Draft v0.7 | June 14, 2026*
+*Document status: Draft v0.8 | June 17, 2026*
 *HG01190 SAS cell completed on Azure VM (phenotype 1.000 / diplotype divergent). Remaining blank: warfarin statistical method confirmation.*
 *Three-sample cross-ancestry concordance table populated (EUR ×2, SAS ×1). AFR (NA19317) and EAS (NA18545) structural-variant cells remain open: verified absent from both accessible ENA long-read projects and the HPRC Release 2 cohort — a genuine public-data gap, not a pending rerun.*
