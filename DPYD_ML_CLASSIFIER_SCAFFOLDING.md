@@ -6,14 +6,18 @@
 > (`anukriti-pgx-core`) stays the source of truth for CPIC-assigned variants;
 > this model only triages the rest.
 >
-> **Status (2026-06-17):** SCAFFOLDING COMPLETE — **not trained.** Data pulled,
-> pipeline written + syntax-checked + feature-eng smoke-tested. Training is
-> invoked explicitly (`run.sh`), never during scaffolding, and **not** on a
-> Vertex AI Workbench (avoids idle-instance billing).
+> **Status (2026-06-17):** SCAFFOLDING COMPLETE; **trained — v1 baseline + v2
+> retrain shipped.** The original scaffolding (data pulled, pipeline written)
+> is below for history; the v1 run and the **v2 retrain** are documented in
+> [§v2 Retrain (Jun 17 2026)](#v2-retrain-jun-17-2026). Training is invoked
+> explicitly (`run.sh`), never during scaffolding, and **not** on a Vertex AI
+> Workbench (avoids idle-instance billing).
 >
-> **Mandatory model label on any output:** *baseline classifier,
-> AF + categorical features only* (SIFT / PolyPhen / CADD / conservation were
-> deliberately dropped — they require dbNSFP, which is not staged).
+> **Mandatory model label on any output:** v1 — *baseline classifier,
+> AF + categorical features only*; v2 — *classifier v2, AF + categorical +
+> protein features (aa_position/domain/activity); no SIFT/PolyPhen/CADD*.
+> SIFT / PolyPhen / CADD / conservation remain deliberately dropped (they
+> require dbNSFP, which is not staged). All metrics carry a small-N caveat.
 
 ---
 
@@ -138,6 +142,90 @@ Outputs a training run will add to the bucket:
 2. Provide the **GCP billing-account ID** → set the $50 budget alert.
 3. (Optional) Stage **dbNSFP** → add SIFT/PolyPhen/CADD/conservation and
    re-label the model beyond "baseline".
+
+---
+
+## v2 Retrain (Jun 17 2026)
+
+The baseline (v1) could not predict `decreased_function` at all — only 4
+training examples, per-class F1 = 0.0. The v2 retrain fixes that by adding
+labeled functional data and protein-level features, plus explicit
+class-imbalance handling. **`decreased_function` CV F1: 0.0 → 0.66.**
+
+> **Model label (v2):** *classifier v2, AF + categorical + protein features
+> (aa_position/domain/activity); no SIFT/PolyPhen/CADD.* Metrics remain
+> **small-N (illustrative/labeled)** — not production-validating.
+
+### Training data
+- **392 rows** (v1 was 273): 259 ClinVar + 14 CPIC + **37 Offer et al. 2014**
+  (functional assays; 6 `increased_function` rows dropped as out-of-3-class
+  scope) + **82 PharmVar** alleles (only rows with a non-empty
+  `functional_class`).
+- Class balance: `no_function` 192 · `normal_function` 177 ·
+  **`decreased_function` 23** (was 4).
+
+### New features
+Added to the feature matrix (present on every row, sentinels where unknown):
+
+| Feature | Meaning | Sentinel |
+|---|---|---|
+| `aa_position` | residue position from the functional source | `0` (unknown / splice / intronic) |
+| `domain_encoded` | protein domain, ordinal: I=1, II_III=2, IV=3, V=4, splice/intronic=5 | `0` (unknown) |
+| `activity_pct` | measured % enzyme activity (Offer 2014) | `-1` (not measured) |
+
+These carry the signal for the supplemental (protein-level) rows, which have
+no genomic coordinates or gnomAD AF.
+
+### Class balancing
+- **RandomForest + LightGBM:** `class_weight="balanced"`.
+- **XGBoost:** balanced per-sample weights — the multiclass analog of
+  `scale_pos_weight` (which is **binary-only** and a no-op under
+  `multi:softprob`).
+- **SMOTE:** applied to the **train fold only** (never the validation fold),
+  `k_neighbors` auto-clamped below the minority count; refit-on-full also
+  SMOTEd.
+- **Honesty guard:** `MIN_PER_CLASS` lowered 5 → 3 (decreased_function now has
+  23 examples). Metrics still stamped with the small-N caveat.
+
+### Results (5-fold stratified CV)
+
+| Model | F1 `decreased_function` | F1 `no_function` | F1 `normal_function` | Accuracy |
+|---|---|---|---|---|
+| **XGBoost** | **0.66** | 0.92 | 0.91 | 0.90 |
+| RandomForest | 0.63 | 0.93 | 0.91 | 0.90 |
+| LightGBM | 0.60 | 0.93 | 0.91 | 0.90 |
+
+- **Macro one-vs-rest AUC-ROC ≈ 0.96** (all three models).
+- v1 `decreased_function` F1 was **0.0** across the board.
+- Artifacts: `gs://anukriti-ml-artifacts/dpyd-classifier/v2/` (models +
+  `cv_metrics_v2.json`). Model `.pkl` binaries are gitignored — they live in
+  GCS, not git.
+
+### Honest caveat — Scaria variants still predict `no_function`
+Re-running v2 inference on the 25 novel Indian (Scaria) variants produced
+**0/25 class changes** vs v1 — all 25 still `no_function`. This is expected
+and must not be hidden: those variants are supplied **without protein-level
+annotations**, so `aa_position`, `domain_encoded`, and `activity_pct` all fall
+to their sentinels (`0`, `0`, `-1`) and `consequence` is `other`. The features
+that drive the new `decreased_function` signal are absent for them, so the CV
+gain does **not** transfer to these unannotated variants. The v2 model is more
+capable; the Scaria input is simply too sparse to exercise that capability.
+
+---
+
+## Next Steps
+
+1. **Annotate the Scaria variants with protein-level features.** Derive
+   `aa_position` (and ideally the protein domain) from each variant's HGVS
+   coding notation (`NM_000110.4:c.*`) → predicted protein consequence
+   (`p.*`) → residue number, then map the residue to a DPYD domain (I /
+   II_III / IV / V) to populate `domain_encoded`. This is the missing input
+   that prevents the v2 `decreased_function` signal from firing on these rows.
+2. **Re-run v2 inference** on the annotated Scaria set and re-compare against
+   v1/v2-unannotated. Only then is a class change (e.g. → `decreased_function`)
+   meaningful for these variants.
+3. (Stretch) Stage **dbNSFP** to add SIFT/PolyPhen/CADD/conservation and
+   re-label the model beyond the AF+categorical+protein scope.
 
 ---
 
