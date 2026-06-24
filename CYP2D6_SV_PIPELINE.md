@@ -187,3 +187,12 @@ python -m src.benchmark.cyp2d6_starphase_runner --calls-dir data/giab_cyp2d6
 - **StarPhase** — Holt et al. 2024 (bioRxiv 2024.12.10.627527).
 - **Method papers** — StarPhase (#14), TAS-LRS Gan 2025 (#15), ONT-AS
   Deserranno 2025 (#16) in [`papers/README.md`](papers/README.md).
+
+---
+
+## 7. Archived artifacts
+
+The validation artifacts produced by Layer C (BAM slices, StarPhase JSON
+calls, score files, pinned StarPhase reference DB) are backed up to Azure Blob
+Storage for permanent paper references. Full manifest + per-file URLs +
+reproduce/verify procedure: [`GIAB_ARTIFACT_BACKUP.md`](GIAB_ARTIFACT_BACKUP.md).

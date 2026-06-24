@@ -287,4 +287,5 @@ az group delete -n "$RG" --yes --no-wait
 - `STARPHASE_SETUP.md` — StarPhase install + prebuilt-DB gotcha + scoring.
 - `CYP2D6_SV_PIPELINE.md` — the end-to-end engine/endpoint/benchmark map.
 - `RUNG2_CYP2D6_SV_PLAN.md` — the roadmap (Phase A/B′/C).
+- `GIAB_ARTIFACT_BACKUP.md` — Azure Blob backup of the validation artifacts (note: `anukriti-lrs-01` is a **resource group** there, vs. a **VM** name here).
 - `anukriti/scripts/fetch_ena_cyp2d6_longread.sh` — the ENA align/slice runner.
