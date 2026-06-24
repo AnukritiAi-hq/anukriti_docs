@@ -155,6 +155,41 @@ A diagnostic analysis of this configuration (hereafter the mixed-feature model) 
 
 ---
 
+### 2.9 CYP2C9 MAVE-Derived Labels and Clinical Phenotype Divergence
+
+To test whether multiplexed assay of variant effect (MAVE) data could supply training labels for a CYP2C9 functional classifier, we obtained 13,345 CYP2C9 MAVE variants (paired Click-seq and VAMP-seq libraries) from MaveDB. After filtering ambiguous and conflicting rows, 8,050 variants were retained for classifier development. Functional labels (no_function / decreased_function / normal_function) were assigned by thresholding the MAVE scores.
+
+A v1 scaffold trained directly on these labels achieved a 5-fold cross-validation accuracy of 0.996 (XGBoost) but was **circular by construction**: the Click-seq and VAMP-seq scores from which the labels were thresholded accounted for ~77% of feature importance, so the model was reproducing its own label-generation rule rather than learning variant function. A leave-anchors-out test confirmed this — all four testable CPIC anchors (\*2, \*3, \*6, \*11) were misclassified once the 500× anchor upweighting was removed. v1 is therefore a MAVE-threshold reproducer, not a clinical predictor.
+
+The decisive observation is that the MAVE assay function and the CPIC clinical phenotype **disagree at every testable anchor**. For the four CYP2C9 alleles with both MAVE measurements and an established CPIC functional assignment:
+
+| Allele | CPIC clinical | CLICK-seq | VAMP-seq | MAVE assay implies |
+|--------|---------------|-----------|----------|--------------------|
+| \*2  | decreased    | 0.834 | 0.950 | normal |
+| \*3  | no_function  | 0.445 | 0.782 | decreased |
+| \*6  | no_function  | 0.732 | 0.739 | normal |
+| \*11 | decreased    | 0.108 | 0.244 | no_function |
+
+In none of the four cases does the single-assay MAVE label agree with the CPIC clinical phenotype, demonstrating that single-assay MAVE labels are insufficient as a training target for CYP2C9 clinical-phenotype prediction.
+
+To break the circularity, a v2 model replaced the Click-seq/VAMP-seq score features with an independent signal — AlphaMissense pathogenicity (genomic-coordinate-corrected) plus CADD — while retaining only non-circular features (`am_genomic_score`, `cadd_phred`, `click_sd`, `vamp_sd`, `aa_position`, `cyp2c9_domain`, `has_both`). AlphaMissense coverage on the MAVE library reached only **31.3%**: 67.5% of the library's variants encode multi-nucleotide amino-acid changes, which AlphaMissense scores only for single-nucleotide-reachable positions by design. No query method can exceed this ceiling for a codon-saturation library, so the intended >85% coverage gate is structurally unattainable for CYP2C9 MAVE data.
+
+Where AlphaMissense scores are available (n = 2,520), they separate the clinical classes monotonically — the signal the MAVE scores never produced:
+
+| Class | mean AM | median AM |
+|-------|---------|-----------|
+| no_function       | 0.648 | 0.712 |
+| decreased_function| 0.438 | 0.408 |
+| normal_function   | 0.213 | 0.149 |
+
+AlphaMissense is thus discriminative where present; coverage, not feature quality, is the blocker.
+
+A v2 model was trained on the SNV-reachable subset (n = 2,514 after removing the clinical holdout) using the non-circular feature set. Removing the circular features collapsed the inflated v1 score to a believable 5-fold cross-validation AUC of ~0.88 (XGBoost 0.886). On a held-out clinical test of six CPIC-labeled alleles never seen in training, however, the model scored **1/6 (17%)** — only \*11 was predicted correctly. The bottleneck is therefore the **label definition**, not the features or the model architecture: removing circularity restores an honest cross-validation score but cannot recover clinical phenotype from labels that diverge from it.
+
+We conclude that MAVE functional-assay labels do not generalize to CPIC clinical phenotype for CYP2C9. No amount of independent feature engineering on MAVE-derived labels recovers clinical phenotype; the result motivates training on clinically-labeled data drawn from real genotype–phenotype cohorts (e.g. the MCC retrospective dataset) rather than functional-assay surrogates.
+
+---
+
 ## 3. Results
 
 ### 3.1 Warfarin Dose Prediction — IWPC Cohort (n=5,700)
