@@ -363,43 +363,119 @@ of the 3 EUR-maximum genes this platform's data surfaced, at least 2
 generalizability concern. CYP2C9's own case has not yet been checked with
 this same rigor — see the revised open items below.
 
-### 7.3 Still open
+### 7.3 [Closed] CYP2C9's own case — a real, but structurally different,
+### third example
+
+The natural next check named in the previous update: does CYP2C9, the
+third EUR-maximum gene from §7.1's table, show the same generalizability
+gap as SLCO1B1 and DPYD? Checked via primary literature, same discipline
+as §5 and §7.2.
+
+**Real gnomAD numbers, re-verified for this check:** CYP2C9's tracked
+\*2/\*3 risk alleles are at 0.0346 (AFR) and 0.0341 (EAS) — nearly tied at
+the bottom, both ~5.7x lower than EUR's 0.1960. This matches §7.1's
+finding that EUR is the population maximum for this gene.
+
+**Real, primary-source confirmation found**, and it directly matches the
+frequency pattern: Perera et al. 2013, *"Genetic variants associated with
+warfarin dose in African-American individuals: a genome-wide association
+study,"* *Lancet* 382(9894):790-796 (PMID 23755828) — states as
+established background, in its own abstract: *"VKORC1 and CYP2C9 are
+important contributors to warfarin dose variability, but explain less
+variability for individuals of African descent than for those of
+European or Asian descent."* This is a direct, primary-source statement
+of the same reduced-applicability pattern found for SLCO1B1 and DPYD, in
+the population (AFR) where the platform's own gnomAD data shows the
+lowest \*2/\*3 frequency.
+
+**Where CYP2C9's case is genuinely different from SLCO1B1's and DPYD's —
+important not to flatten this into an identical story:** for SLCO1B1 and
+DPYD, the documented response was a demonstrated *reduced applicability*
+with no described population-specific remedy found in this pass. For
+CYP2C9/warfarin, the same 2013 Perera et al. paper's own actual
+contribution was to **go looking for, and find, a real, independent,
+African-ancestry-specific genetic marker that recovers predictive
+power**: a novel SNP (rs12777823, in the CYP2C gene cluster but distinct
+from CYP2C9\*2/\*3) that improved warfarin dose-variability explained by
+21% (relative) in African-American patients specifically, independent of
+\*2/\*3. A separate, well-established third marker — **CYP2C9\*5** —
+exists specifically because it is *"found almost exclusively in
+populations of African ancestry"* (per a separate real source, PMID
+35108398), with its own dedicated clinical dosing literature.
+
+**Neither rs12777823 nor CYP2C9\*5 is present anywhere in this platform's
+own pinned gnomAD artifact for CYP2C9** — verified by direct inspection:
+the only contributing alleles tracked for CYP2C9 in every population row
+are \*2 and \*3. This means the platform's own CYP2C9 population-frequency
+comparison is not merely showing a generalizability gap the field has
+not addressed (as with SLCO1B1/DPYD) — it is missing markers the field
+*has* already found and validated specifically to close a
+population-specific gap. **Checked before treating this as a quick fix**:
+this is not a gap this platform's own code (a lookup table, a mapping
+dict) could close by itself — the pinned artifact file is the actual
+upstream source of the gap, and re-deriving it with \*5 included from
+gnomAD directly is a materially larger task than the SLCO1B1/DPYD
+findings required. Still a real, concrete, more specific gap than the
+other two cases' "the literature hasn't solved this yet" — but "more
+concrete" is not the same as "quick," and this document does not overstate
+which.
+
+**Answer to the open question**: CYP2C9 is a real third case of a
+EUR-maximum gene with documented reduced non-EUR applicability — but
+structurally distinct from SLCO1B1 and DPYD. All three genes are
+EUR-maximum by this platform's own gnomAD data and all three have real,
+independent primary-source confirmation of the underlying concern. But
+CYP2C9's specific manifestation (population-specific rescue markers
+existing but untracked) is a more concrete, more directly actionable gap
+than the other two, where no comparable rescue marker was found in this
+pass.
+
+### 7.4 Still open
 
 1. **[Closed, see §7.2]** DPYD's EUR-maximum status — confirmed as a
    second real case, not a coincidence.
-2. **CYP2C9's own case** — the third EUR-maximum gene from §7.1's table —
-   has not yet been checked with the same rigor as SLCO1B1 and DPYD. Given
-   two of three EUR-maximum genes now show a real, independently-confirmed
-   generalizability gap, CYP2C9 is the natural next check: does its own
-   foundational warfarin/NSAID pharmacogenomic evidence base carry a
-   similar ancestry-restricted discovery history, and is there a real
-   clinical-outcome study (like Kanai et al. 2023 for DPYD) testing CYP2C9
-   variant-toxicity association specifically in a non-European cohort? Not
-   checked in this pass. Note this platform's own human review already
-   established CYP2C9's mechanism was *rejected* for the aspirin candidate
-   specifically (COX-1-dominant, not CYP2C9-mediated) — so this check would
-   be about CYP2C9's broader evidence base (e.g. warfarin dosing, where
-   CYP2C9 genotype is CPIC-actionable), not the aspirin candidate.
-3. **[Partially closed, see §5]** Whether the *later* studies CPIC's 2021
+2. **[Closed, see §7.3]** CYP2C9's own case — confirmed as a third real
+   case, structurally different (a documented, field-validated rescue
+   marker exists but is untracked by this platform) rather than an
+   unaddressed gap.
+3. **New item from §7.3, verified before finalizing — not as fixable as
+   first assumed**: the natural next step was to add CYP2C9\*5 to this
+   platform's gnomAD-derived CYP2C9 population comparison. Checked before
+   claiming this as an actionable fix: **CYP2C9\*5 is not present anywhere
+   in the pinned gnomAD v2.1.1 artifact** (`anukriti-swarm/datasets/
+   pharmfreq/gnomad_v2_1_1_frequencies.jsonl`) — verified by direct
+   inspection; the file's only CYP2C9 rows are \*2 and \*3, in every
+   population. This is not a config/mapping-table gap this platform's own
+   code could close (unlike, say, a `mechanistic_prior.py` table edit) —
+   it is an upstream data-artifact gap: the pinned file itself would need
+   to be re-derived from gnomAD with \*5 included, a materially bigger
+   task than adding a row to a lookup table. Named honestly as a real,
+   but harder-than-first-assumed, next step — not silently downgraded to
+   "easy" after finding out otherwise.
+4. **[Partially closed, see §5]** Whether the *later* studies CPIC's 2021
    multi-statin guideline (PMC9035072) relies on for atorvastatin
    specifically carried the same European-ancestry restriction as the 2008
    SEARCH discovery/replication cohorts, or whether more recent, more
    diverse cohorts (e.g. PMC9303592, the real-world-care study cited in the
    human review) have begun to close this gap. Not checked in this pass.
-4. **Extend the population comparison to CYP2C19 and CYP2C9's other
+5. **Extend the population comparison to CYP2C19 and CYP2C9's other
    drug pairs** for completeness — CYP2C19/omeprazole (refused on signal
    grounds, allele-enriched in SAS at 2.22x, and per §7.1's table EAS is
    actually the true maximum, not EUR or SAS) and CYP2C9/ibuprofen
    (mechanism not rejected the way aspirin's was).
-5. **A real, checkable pattern is now emerging across 2 of 11 genes** —
-   worth stating plainly as a hypothesis for future verification, not yet
-   a conclusion: PGx associations discovered in ancestry-restricted or
-   ancestry-skewed European cohorts appear to correlate with real,
-   independently-confirmed reduced applicability in populations where the
-   relevant risk allele is rare. This is currently n=2 (SLCO1B1, DPYD) with
-   real primary-source support for each. It is not yet n=large enough to
-   call a general law, and CYP2C9 (item 2 above) is the immediate next
-   data point that could strengthen or weaken it.
+6. **A real, checkable pattern is now emerging across all 3 of the
+   EUR-maximum genes** — worth stating plainly as a hypothesis for future
+   verification, not yet a conclusion: PGx associations discovered in
+   ancestry-restricted or ancestry-skewed European cohorts appear to
+   correlate with real, independently-confirmed reduced applicability in
+   populations where the relevant risk allele is rare. This is currently
+   n=3 (SLCO1B1, DPYD, CYP2C9) with real primary-source support for each
+   — every EUR-maximum gene this platform's own audit found now has an
+   independently-confirmed generalizability concern. This is still not
+   evidence that non-EUR-maximum genes are exempt from similar concerns
+   (they were not checked with this rigor) — it is evidence that, for this
+   specific pattern (EUR-maximum + real applicability gap), 3 real,
+   independent checks have now all confirmed rather than refuted it.
 
 ## 8. Reproduction
 
