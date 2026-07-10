@@ -173,13 +173,35 @@ population data, named now before such a composition is built, not after.
 
 ## 7. What a further pass should check next
 
-1. **Check gnomAD v2.1.1's own public data directly** (not this
-   platform's extracted artifact) for Canton (rs72554664), Kaiping
-   (rs72554665), and Mahidol (rs137852328) frequency data in the EAS
-   population. If present, this becomes a concrete, scoped data-pipeline
-   fix (re-extract with these variants included) rather than a
-   fundamental gnomAD limitation. Not checked in this pass — named as the
-   literal next action, not vague future work.
+1. **[Partially answered]** Check gnomAD v2.1.1's own public data directly
+   for Canton (rs72554665, confirmed against a real, independent GWAS
+   citation — see below; Kaiping and Mahidol's rsIDs were not
+   independently re-verified with the same rigor in this pass and should
+   not be treated as confirmed) frequency data in the EAS population.
+   **Real, convergent evidence found for Canton specifically, but not a
+   direct gnomAD-browser/API confirmation**: a real, independent GWAS
+   study (*"Association of G6PD variants with hemoglobin A1c and impact on
+   diabetes diagnosis in East Asian individuals,"* cited via Medscape,
+   sourced from a real East Asian cohort, n=2,844) reports a specific
+   minor allele frequency for G6PD Canton (rs72554665) of 2.2% directly
+   from population sequencing data, not a clinical case series — meaning
+   Canton is a real, catalogued genomic position with an assigned rsID
+   and directly measured East Asian population frequency in the modern
+   genomics literature. This is strong, but not conclusive, evidence that
+   the variant would also be present in gnomAD's own release (gnomAD v2.1
+   EAS cohort is a real, comparably-sized 9,977-individual sample — the
+   same order of magnitude this platform's own pinned artifact already
+   draws EAS frequencies from for every other gene). **What was not done
+   in this pass**: a direct query against gnomAD's own browser or GraphQL
+   API for rs72554665 specifically — attempted, blocked by the gnomAD
+   website being a JavaScript-rendered single-page app and its API
+   requiring a POST-based GraphQL query this session's tooling could not
+   construct and submit. **This remains the literal next action for a
+   session with the right tooling** (a Python `requests` POST to
+   `gnomad.broadinstitute.org/api` with a proper GraphQL query body, or
+   direct use of gnomAD's downloadable VCF/Hail Table files) — named
+   precisely so it is not re-litigated as "unknown," only as "not yet
+   executed with the right tool."
 2. **Audit every other gene in the pinned artifact for the same failure
    mode** — this session checked G6PD because its extreme AFR/EAS ratio
    made the omission suspicious enough to investigate, but the same
