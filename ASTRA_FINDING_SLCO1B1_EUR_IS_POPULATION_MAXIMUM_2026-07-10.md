@@ -161,58 +161,167 @@ which if anything makes the finding more, not less, credible.
   most risk allele — a distinct concern from whether adverse events in
   other populations get reported at all.
 
-## 5. Honest limitations, on the record
+## 5. Primary-source confirmation: the foundational cohort was not merely
+## EUR-skewed — non-European ancestry was actively excluded by design
+
+The original version of this document (written before this section was
+added) named "auditing whether SEARCH was literally EUR-predominant" as an
+open item for a future pass (see §6, item 2, in the original draft). That
+check was done the same day, against the actual primary source — Timothy
+et al. 2008, *"SLCO1B1 Variants and Statin-Induced Myopathy — A Genomewide
+Study,"* NEJM 359(8):789-799 (the SEARCH Collaborative Group's own
+discovery paper) — rather than left as an inference from allele frequency
+alone.
+
+**What the primary source's own Methods section states, verbatim:**
+
+- The discovery cohort was *"12,064 participants from the United Kingdom
+  who had had a myocardial infarction"* — recruited entirely within one
+  country.
+- **Non-European ancestry was excluded from the discovery analysis by
+  design, not merely under-represented by recruitment demographics**: *"one
+  case subject who had classified himself as having non-European ancestry
+  was excluded"* from the 85-case/90-control genomewide association
+  analysis. A further 4 participants who clustered separately by
+  multidimensional-scaling ancestry analysis were flagged and handled with
+  a sensitivity analysis (excluding them changed the association P-value
+  only marginally, from 2.4×10⁻⁹ to 2.0×10⁻⁹ — the paper's own robustness
+  check, not this document's interpretation).
+- The independent replication cohort (the Heart Protection Study,
+  20,536 participants) was **restricted to self-declared European ancestry
+  for the genotyped SLCO1B1 replication analysis**: *"the rs4149056 and
+  rs2306283 SNPs in SLCO1B1 were successfully genotyped in 16,664
+  participants who had classified themselves as having European
+  ancestry."*
+- The population allele-frequency baseline the paper validated its own
+  15% estimate against was itself European-only: *"consistent with the
+  range of 0.14 to 0.22 reported previously among people of European
+  ancestry."*
+
+**This upgrades the finding from an inference to a confirmed fact.** It is
+not merely that the discovery and replication cohorts happened to be
+EUR-heavy by demographic accident — non-European ancestry was an explicit
+exclusion criterion in the discovery analysis, and the replication
+analysis was scoped to self-declared European ancestry only. Combined with
+§3's real gnomAD result (EUR carries the *5 risk allele at the highest
+frequency of the five tracked populations), this means the foundational
+evidence for this specific PGx mechanism was generated using a design that
+excluded the populations where the risk allele is least common — not an
+accidental convenience sample that happened to skew that way, but a
+deliberate ancestry restriction stated in the paper's own methods.
+
+**What this still does not establish**, named as precisely as the primary
+source allows: the 2008 SEARCH paper is the foundational GWAS discovery
+paper for simvastatin specifically; it is not itself the CPIC 2021 statin
+guideline (PMC9035072), which synthesizes many subsequent studies across
+multiple statins including atorvastatin. Whether every one of *those*
+later studies carried the same ancestry restriction has not been checked
+in this pass — this document confirms the origin study's design, not the
+full evidentiary chain CPIC's 2021 guideline ultimately drew on. That
+remains a real, separate, checkable next step (see §6, item 2, now
+partially answered rather than fully open).
+
+## 6. Honest limitations, on the record
 
 - **n=1 gene, n=1 allele.** This is SLCO1B1\*5 only. A single confirmed
   finding for one variant is not evidence of a general pattern across PGx
   variants — it would be a real overclaim to generalize "EUR-derived PGx
   evidence is systematically built on the population with the highest risk
   allele frequency" from this one case. That broader claim, if true, would
-  be a significant one, but this document does not make it — see §6 for
+  be a significant one, but this document does not make it — see §7 for
   what would be required to check it properly.
 - **gnomAD population labels (AFR/AMR/EAS/SAS/EUR) are broad continental
   groupings**, not fine-grained ancestry or ethnicity — the same
   granularity limitation every other gnomAD-based finding on this platform
   already carries (docs/02's own entity-resolution discussion of ambiguous
   population labels applies here too).
-- **This does not check whether CPIC's foundational cohorts (SEARCH trial
-  and successors) were literally EUR-predominant** — that is a real,
-  separate, checkable historical-cohort-composition question this document
-  does not attempt to answer; it infers plausibility from the allele
-  frequency pattern and general knowledge of the field's history, not from
-  auditing the SEARCH trial's actual reported ancestry composition. Named
-  as a real gap, not smoothed over.
+- **§5 confirms the 2008 discovery/replication design, not the complete
+  evidentiary chain behind CPIC's 2021 multi-statin guideline** — see §5's
+  own closing paragraph for the precise boundary of what was and was not
+  checked.
 - **No new PRR, no new FAERS query, no new biological claim was made.**
   This is a re-composition of an existing, tested capability
   (`compare_two_populations`) against real data it had simply never been
-  run against before. Zero new network calls, zero new GCP cost.
+  run against before, plus one real primary-source literature check. Zero
+  new network calls to any platform system, zero new GCP cost.
 
-## 6. What a deeper research pass would need to check next
+## 7. What a deeper research pass checked next, same session
 
-Presented as concrete, checkable next steps, not vague future work:
+### 7.1 [Closed] Does the EUR-maximum pattern hold across other CPIC-tier
+### PGx genes, or is SLCO1B1 an isolated case?
 
-1. **Does the same EUR-maximum pattern hold for other CPIC-tier PGx
-   variants the platform already has gnomAD data for** (CYP2C9\*2/\*3,
-   CYP2C19\*2/\*3, CYP2D6 alleles)? If EUR is *not* the maximum for most
-   other variants, this SLCO1B1 finding is a real but isolated curiosity.
-   If EUR *is* disproportionately often the maximum across several
-   independent PGx variants, that would be a genuinely stronger, more
-   general finding worth its own careful write-up — but this has not been
-   checked and should not be assumed either way.
-2. **Audit the actual ancestry composition of the CPIC statin guideline's
-   cited foundational studies** (the 2008 SEARCH GWAS and the papers PCIC's
-   2021 guideline itself cites) directly, rather than inferring cohort
-   composition from allele frequency alone. This is a literature-audit
-   task, not a code task.
-3. **Extend this same comparison to the two other genes/pairs this
-   platform's mechanistic-prior table cites** for completeness, even though
-   their mechanisms were not the ones triggering this specific finding —
-   CYP2C19 (omeprazole, refused on signal grounds but allele-enriched in
-   SAS at 2.22x — worth knowing its AFR/AMR/EAS picture too) and CYP2C9
-   (ibuprofen — mechanism not rejected the way aspirin's was; ibuprofen sits
-   in CPIC's recommendation tier, unlike aspirin).
+Checked directly against the same pinned gnomAD artifact, same session,
+for every gene it carries real population-frequency data for (11 genes:
+CYP2B6, CYP2C19, CYP2C9, CYP2D6, CYP3A5, DPYD, G6PD, NAT2, SLCO1B1, TPMT,
+VKORC1 — CYP1A2 has no rows in this artifact):
 
-## 7. Reproduction
+| Gene | Population maximum | EUR's rank among 4-5 populations |
+|---|---|---|
+| CYP2B6 | SAS | 4th of 5 |
+| CYP2C19 | EAS | 4th of 5 |
+| **CYP2C9** | **EUR** | **1st (max)** |
+| CYP2D6 | EAS | 2nd of 5 |
+| CYP3A5 | AFR | last of 4 (EUR lowest) |
+| **DPYD** | **EUR** | **1st (max)** |
+| G6PD | AFR | 4th of 5 |
+| NAT2 | SAS | 2nd of 5 (close second) |
+| **SLCO1B1** | **EUR** | **1st (max), this document's finding** |
+| TPMT | AMR | 2nd of 5 (close second) |
+| VKORC1 | EAS | 3rd of 4 |
+
+**Answer: EUR is the population maximum in 3 of 11 genes (CYP2C9, DPYD,
+SLCO1B1) — not a systematic pattern.** The other 8 genes have their
+maximum risk-allele frequency in SAS (2), EAS (3), AFR (2), or AMR (1).
+This is close to what would be expected if risk-allele frequency maxima
+were distributed roughly independently across populations gene-by-gene —
+consistent with genuinely independent evolutionary/demographic histories
+at each locus (e.g. G6PD's well-known AFR/Mediterranean malaria-selection
+signal; CYP2D6's well-known EAS enrichment; NAT2's well-known SAS/EUR
+"slow acetylator" prevalence) — rather than evidence of a platform-wide or
+field-wide EUR-ascertainment artifact.
+
+**This materially narrows, not broadens, the claim this document can
+honestly make.** The temptation, on finding one EUR-maximum gene
+(SLCO1B1) immediately after finding a EUR-ancestry-restricted foundational
+cohort for that same gene (§5), is to generalize into "PGx evidence is
+systematically built on the population carrying the most risk allele."
+The data directly available on this same platform refutes that
+generalization: DPYD is also EUR-maximum but its foundational evidence
+base (CPIC's DPYD guideline) is not similarly restricted to European
+ancestry in the same documented way §5 established for SLCO1B1 — and 8 of
+11 genes are not EUR-maximum at all. **The correct, narrower claim,
+restated:** SLCO1B1 is a real, specific, primary-source-confirmed case
+where the population carrying the highest risk-allele frequency also
+happens to be the population whose ancestry the foundational discovery
+and replication cohorts were explicitly restricted to. That combination —
+not "EUR is usually the max," which this same check just showed is false
+— is what makes SLCO1B1 worth naming. Whether DPYD's EUR-maximum status
+reflects a similar cohort-restriction pattern or a coincidence has not
+been checked and is named as an open item below, not assumed either way
+from the allele-frequency data alone.
+
+### 7.2 Still open
+
+1. **DPYD's EUR-maximum status** — is this coincidence, or does DPYD's own
+   foundational pharmacogenomic evidence base carry a similar ancestry
+   restriction to SLCO1B1's? Not checked in this pass. If DPYD's history
+   turns out *not* to show the same restriction, that would further support
+   §7.1's conclusion that SLCO1B1 is a specific case, not a general pattern
+   — worth checking precisely because it could falsify the narrower claim,
+   not just confirm it.
+2. **[Partially closed, see §5]** Whether the *later* studies CPIC's 2021
+   multi-statin guideline (PMC9035072) relies on for atorvastatin
+   specifically carried the same European-ancestry restriction as the 2008
+   SEARCH discovery/replication cohorts, or whether more recent, more
+   diverse cohorts (e.g. PMC9303592, the real-world-care study cited in the
+   human review) have begun to close this gap. Not checked in this pass.
+3. **Extend the population comparison to CYP2C19 and CYP2C9's other
+   drug pairs** for completeness — CYP2C19/omeprazole (refused on signal
+   grounds, allele-enriched in SAS at 2.22x, and per the table above EAS is
+   actually the true maximum, not EUR or SAS) and CYP2C9/ibuprofen
+   (mechanism not rejected the way aspirin's was).
+
+## 8. Reproduction
 
 ```bash
 cd project_astra
