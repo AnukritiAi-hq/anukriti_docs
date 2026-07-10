@@ -335,6 +335,114 @@ shipped, not live version assertions, and are left as-is.
    work.
 3. Esomeprazole/rabeprazole — unchanged, permanently by design.
 
+## 10. Update — 2026-07-10, evening: the real end-to-end backend gap
+## found and closed
+
+A direct audit ("is this all properly wired to anukriti-main?") found
+that §9a's pin-bump work was necessary but not sufficient — it verified
+the *installed package* worked, but never checked whether
+**anukriti-api's own workflow tables** and **anukriti-main's own
+UI-to-backend routing map** had been updated at all. They had not.
+Concretely, three real, separate wiring gaps existed simultaneously:
+
+1. **`anukriti-api/app/adapters.py`** — `WORKFLOW_TO_SCOPE` and
+   `WORKFLOW_RSIDS` are hardcoded dicts with no entries for
+   `omeprazole`/`pantoprazole`/`lansoprazole`/`dexlansoprazole`.
+   `POST /runs` with any of these workflow names returned a **422**.
+2. **`call_diplotype()`** (same file) is a hardcoded if/elif dispatcher,
+   one branch per workflow — not table-driven. Even with the scope
+   tables fixed, there was no code path that would call
+   `CYP2C19Caller().call(variants, drug="omeprazole")` and surface
+   `ppi_action`.
+3. **`anukriti-main/src/lib/SimulationContext.jsx`** — `BACKEND_WORKFLOW`
+   (the UI-key → backend-short-key map) had no entries for the 4 PPI
+   workflows either. Even if the backend had been fixed, the frontend
+   would still send the wrong (long-form) workflow key.
+
+**Real, concrete impact before this fix:** a user selecting Omeprazole in
+the wizard got a working *client-side* simulation (pgxRules.js — real
+CPIC-verified genotype math and dosing text, unaffected by any of this)
+but every backend-dependent feature silently failed:
+- The "shareable permalink" backend augment in `startRun()` always 422'd,
+  swallowed by its own try/catch (`console.warn` only — no user-visible
+  error).
+- **Real-samples mode** (`startRunFromSamples`, real 1000 Genomes cohorts)
+  and **PCR lab-upload mode** (`startRunFromPcr`) have **no client-side
+  fallback** — these would have hard-failed for any of the 4 PPI drugs.
+
+### What was fixed
+
+**`anukriti-api`** (commit `ae62ec8`):
+- 4 new `WORKFLOW_TO_SCOPE` + `WORKFLOW_RSIDS` entries, same rsID panel
+  as clopidogrel (same gene, same star alleles).
+- New dedicated PPI branch in `call_diplotype()` — calls
+  `CYP2C19Caller().call(variants, drug=workflow)` and surfaces
+  `ppi_action` in the returned `details` dict. Clopidogrel's own branch
+  is untouched and stays separate (verified it never gains a
+  `ppi_action` key).
+- Both `per_sample_rows` builders in `app/routers/runs.py`
+  (`/runs/from-samples` at ~line 600, `/runs/from-pcr` at ~line 904) —
+  each already extracted `evidence_level`/`clinical_action` from the
+  calling details but was missing `ppi_action`; added identically to
+  both. The main `POST /runs` response returns `calling` verbatim, so no
+  fix was needed there — the `adapters.py` fix alone was sufficient.
+- 19 new tests (`tests/test_ppi_workflows.py`): `call_diplotype` unit
+  coverage per drug × PM/UM phenotype, evidence_level A/B verification,
+  esomeprazole/rabeprazole confirmed absent from `WORKFLOW_TO_SCOPE`,
+  full `/runs` end-to-end tests per drug, 422 on the unknown workflow
+  (esomeprazole) and on a missing required SNP. 153 tests pass total
+  (134 pre-existing + 19 new).
+
+**`anukriti-main`** (commit `ba9fba1`):
+- Extracted `BACKEND_WORKFLOW` from a local `const` inside
+  `SimulationProvider` to a module-level, exported `const` in
+  `SimulationContext.jsx` — testable independently, reusable by other
+  components. Added the 4 new mappings
+  (`omeprazole_cyp2c19 → omeprazole`, etc.) matching
+  `anukriti-api`'s real `WORKFLOW_TO_SCOPE` keys exactly.
+- 3 new regression tests directly asserting `BACKEND_WORKFLOW`'s
+  contents — the exact class of gap that caused this entire issue (a
+  workflow present in `pgxRules.js`/`drugs.js` but silently missing from
+  this one map). 49/49 vitest tests pass (was 46), production build
+  succeeds.
+- **Git housekeeping note:** `anukriti-main`'s `origin/main` had moved
+  11 commits ahead (a "guided tour" feature landing for real) since the
+  repo's local working tree was left dirty by an unrelated prior
+  session. Verified none of the 4 files this fix touches
+  (`SimulationContext.jsx`, `pgxRules.js`, `drugs.js`,
+  `SpecialtyFilter.jsx`) were touched by those 11 upstream commits —
+  staged and committed only this fix's own files, rebased cleanly onto
+  the real `origin/main`, and preserved the pre-existing guided-tour WIP
+  in a named git stash (`stash@{0}`, message: "pre-existing guided-tour
+  WIP, not mine, preserving before rebase") rather than resolving or
+  discarding someone else's unrelated, unfinished work. That stash now
+  conflicts with the real `index.html`/`seoMeta.js`/`Home.jsx` already on
+  `origin/main` and needs the guided-tour feature's own owner to resolve.
+
+### Real re-verification, end to end
+
+```bash
+cd anukriti-api
+export PYTHONPATH="$(pwd)/../anukriti-swarm:$PYTHONPATH"
+python3 -c "
+from app.adapters import call_diplotype
+r = call_diplotype('omeprazole', [{'id': 'rs4244285', 'genotype': 'AA'}])
+print(r)
+# {'diplotype': '*2/*2', 'details': {'CYP2C19': {'diplotype': '*2/*2',
+#  'phenotype': 'Poor Metabolizer', 'activity_score': 0.0,
+#  'evidence_level': 'A', 'ppi_action': 'STANDARD_CONSIDER_REDUCE_CHRONIC'}}}
+"
+```
+
+### Corrected "what remains open" — the 3 items from §9a's list are
+### unchanged; nothing new is open after this fix
+
+The 3 gaps closed in this section were the actual, complete backend/UI
+wiring gap. §9a's original list of 3 open items still stands unchanged:
+`drug=` threading in `anukriti` (product, distinct from `anukriti-api`),
+`clinical_interpreter.py`'s hardcoded `evidence_level`, and the permanent
+esomeprazole/rabeprazole exclusion.
+
 ## 9. Re-verification commands
 
 ```bash
