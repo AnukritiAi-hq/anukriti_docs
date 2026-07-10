@@ -300,26 +300,106 @@ reflects a similar cohort-restriction pattern or a coincidence has not
 been checked and is named as an open item below, not assumed either way
 from the allele-frequency data alone.
 
-### 7.2 Still open
+### 7.2 [Closed] DPYD's EUR-maximum status: coincidence, or the same
+### pattern as SLCO1B1?
 
-1. **DPYD's EUR-maximum status** — is this coincidence, or does DPYD's own
-   foundational pharmacogenomic evidence base carry a similar ancestry
-   restriction to SLCO1B1's? Not checked in this pass. If DPYD's history
-   turns out *not* to show the same restriction, that would further support
-   §7.1's conclusion that SLCO1B1 is a specific case, not a general pattern
-   — worth checking precisely because it could falsify the narrower claim,
-   not just confirm it.
-2. **[Partially closed, see §5]** Whether the *later* studies CPIC's 2021
+This was the single open item §7.1 flagged as most worth checking, because
+it could have gone either way — confirming or refuting whether SLCO1B1's
+pattern generalizes to at least one more case. Checked via primary
+literature, not inferred from allele frequency alone.
+
+**Real gnomAD numbers, re-verified precisely for this check:** the pooled
+CPIC-actionable DPYD risk-allele frequency (\*2A + HapB3 + c.2846A>T) is
+**0.000163 in EAS versus 0.031663 in EUR — a 194-fold depletion**, the
+single largest population gap of any gene checked in §7.1's table. This
+is not a modest difference; the CPIC-actionable variant set is close to
+absent in this dataset's EAS sample (n=9,187).
+
+**Real, independent clinical-outcome confirmation found**: Kanai et al.
+2023, *"Poor association between dihydropyrimidine dehydrogenase (DPYD)
+genotype and fluoropyrimidine-induced toxicity in an Asian population,"*
+*Cancer Medicine* 12(7):7808-7814 (PMID 36524458, PMC10134304) — a real
+GWAS cohort of 1,364 Japanese colorectal-cancer patients treated with
+fluoropyrimidine chemotherapy. The paper's own abstract states the
+premise it tests explicitly: *"DPYD genotype is closely associated with
+fluoropyrimidine (FP)-induced toxicities in Caucasian population"* — named
+by the authors themselves as a Caucasian-derived association being tested
+for transfer to an Asian cohort. Their results, verbatim from the
+abstract:
+
+- Of the 82 CPIC-registered DPYD variants, 74 were genotyped in this
+  cohort, but only 7 nonsynonymous CPIC variants were actually present.
+- **None of the four recurrent, CPIC-guideline-actionable variants
+  (\*2A, c.2846A>T, c.1679T>G, c.1236G>A/HapB3) were present in this
+  cohort at all.**
+- Of the 7 CPIC variants that were present, **none showed a significant
+  correlation with fluoropyrimidine-related toxicity.**
+- The authors' own conclusion: *"the DPYD genotype registered in CPIC
+  plays a minor role in FP-related toxicities in an Asian population."*
+
+**This is a stronger, more direct confirmation than SLCO1B1's own case.**
+For SLCO1B1, §5 confirmed the *foundational cohort's design* excluded
+non-European ancestry — a design fact, one step removed from a direct
+demonstration that the association fails to transfer. For DPYD, an
+independent, real clinical study directly tested the CPIC-actionable
+variants in a non-European cohort and found both that the variants barely
+occur there (consistent with, and now confirming outside gnomAD alone,
+this platform's own 194x frequency gap) and that the association does not
+hold where they do occur. Two independent lines of evidence — a
+population-genetics frequency gap and a real clinical-outcome study —
+converge on the same conclusion for DPYD.
+
+**Answer to §7.1's open question**: DPYD's EUR-maximum status is not a
+coincidental artifact unrelated to SLCO1B1's pattern — it is a second,
+independently-confirmed real case of the same underlying issue (a
+CPIC-actionable PGx association characterized in a population where the
+risk variant is common, showing materially reduced applicability in a
+population where it is rare-to-absent). This still does not establish
+that EUR-maximum genes are *systematically* under-evidenced elsewhere
+(n=2 of 11 genes checked with this level of rigor is not a general law),
+but it does mean **the SLCO1B1 finding is not an isolated curiosity** —
+of the 3 EUR-maximum genes this platform's data surfaced, at least 2
+(SLCO1B1, DPYD) now have independent, real, checkable evidence of the same
+generalizability concern. CYP2C9's own case has not yet been checked with
+this same rigor — see the revised open items below.
+
+### 7.3 Still open
+
+1. **[Closed, see §7.2]** DPYD's EUR-maximum status — confirmed as a
+   second real case, not a coincidence.
+2. **CYP2C9's own case** — the third EUR-maximum gene from §7.1's table —
+   has not yet been checked with the same rigor as SLCO1B1 and DPYD. Given
+   two of three EUR-maximum genes now show a real, independently-confirmed
+   generalizability gap, CYP2C9 is the natural next check: does its own
+   foundational warfarin/NSAID pharmacogenomic evidence base carry a
+   similar ancestry-restricted discovery history, and is there a real
+   clinical-outcome study (like Kanai et al. 2023 for DPYD) testing CYP2C9
+   variant-toxicity association specifically in a non-European cohort? Not
+   checked in this pass. Note this platform's own human review already
+   established CYP2C9's mechanism was *rejected* for the aspirin candidate
+   specifically (COX-1-dominant, not CYP2C9-mediated) — so this check would
+   be about CYP2C9's broader evidence base (e.g. warfarin dosing, where
+   CYP2C9 genotype is CPIC-actionable), not the aspirin candidate.
+3. **[Partially closed, see §5]** Whether the *later* studies CPIC's 2021
    multi-statin guideline (PMC9035072) relies on for atorvastatin
    specifically carried the same European-ancestry restriction as the 2008
    SEARCH discovery/replication cohorts, or whether more recent, more
    diverse cohorts (e.g. PMC9303592, the real-world-care study cited in the
    human review) have begun to close this gap. Not checked in this pass.
-3. **Extend the population comparison to CYP2C19 and CYP2C9's other
+4. **Extend the population comparison to CYP2C19 and CYP2C9's other
    drug pairs** for completeness — CYP2C19/omeprazole (refused on signal
-   grounds, allele-enriched in SAS at 2.22x, and per the table above EAS is
+   grounds, allele-enriched in SAS at 2.22x, and per §7.1's table EAS is
    actually the true maximum, not EUR or SAS) and CYP2C9/ibuprofen
    (mechanism not rejected the way aspirin's was).
+5. **A real, checkable pattern is now emerging across 2 of 11 genes** —
+   worth stating plainly as a hypothesis for future verification, not yet
+   a conclusion: PGx associations discovered in ancestry-restricted or
+   ancestry-skewed European cohorts appear to correlate with real,
+   independently-confirmed reduced applicability in populations where the
+   relevant risk allele is rare. This is currently n=2 (SLCO1B1, DPYD) with
+   real primary-source support for each. It is not yet n=large enough to
+   call a general law, and CYP2C9 (item 2 above) is the immediate next
+   data point that could strengthen or weaken it.
 
 ## 8. Reproduction
 
