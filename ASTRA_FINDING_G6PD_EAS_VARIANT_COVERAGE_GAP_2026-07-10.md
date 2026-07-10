@@ -171,59 +171,121 @@ population data, named now before such a composition is built, not after.
   add them to the pinned artifact using the same extraction process that
   produced the existing rows.
 
-## 7. What a further pass should check next
+## 7. What a deeper pass checked, same day — the literal next action,
+## actually executed, with an honest, more complicated result than
+## expected
 
-1. **[Partially answered]** Check gnomAD v2.1.1's own public data directly
-   for Canton (rs72554665, confirmed against a real, independent GWAS
-   citation — see below; Kaiping and Mahidol's rsIDs were not
-   independently re-verified with the same rigor in this pass and should
-   not be treated as confirmed) frequency data in the EAS population.
-   **Real, convergent evidence found for Canton specifically, but not a
-   direct gnomAD-browser/API confirmation**: a real, independent GWAS
-   study (*"Association of G6PD variants with hemoglobin A1c and impact on
-   diabetes diagnosis in East Asian individuals,"* cited via Medscape,
-   sourced from a real East Asian cohort, n=2,844) reports a specific
-   minor allele frequency for G6PD Canton (rs72554665) of 2.2% directly
-   from population sequencing data, not a clinical case series — meaning
-   Canton is a real, catalogued genomic position with an assigned rsID
-   and directly measured East Asian population frequency in the modern
-   genomics literature. This is strong, but not conclusive, evidence that
-   the variant would also be present in gnomAD's own release (gnomAD v2.1
-   EAS cohort is a real, comparably-sized 9,977-individual sample — the
-   same order of magnitude this platform's own pinned artifact already
-   draws EAS frequencies from for every other gene). **What was not done
-   in this pass**: a direct query against gnomAD's own browser or GraphQL
-   API for rs72554665 specifically — attempted, blocked by the gnomAD
-   website being a JavaScript-rendered single-page app and its API
-   requiring a POST-based GraphQL query this session's tooling could not
-   construct and submit. **This remains the literal next action for a
-   session with the right tooling** (a Python `requests` POST to
-   `gnomad.broadinstitute.org/api` with a proper GraphQL query body, or
-   direct use of gnomAD's downloadable VCF/Hail Table files) — named
-   precisely so it is not re-litigated as "unknown," only as "not yet
-   executed with the right tool."
-2. **Audit every other gene in the pinned artifact for the same failure
-   mode** — this session checked G6PD because its extreme AFR/EAS ratio
-   made the omission suspicious enough to investigate, but the same
-   "tracks the wrong variant for a given population" problem could
-   exist, undetected, in any of the other 10 genes. A systematic check
-   (comparing this platform's tracked allele lists against each gene's
-   own CPIC/PharmGKB-documented population-relevant variant list) would
-   be more rigorous than the case-by-case discovery this session used.
-3. **If/when this platform ever composes the G6PD/rasburicase
-   mechanistic prior with real population data** (following the
-   SLCO1B1/CYP2C9 composition pattern), that composition script should
-   explicitly check for and refuse on this named gap, not silently
-   report a near-zero EAS fold-enrichment as if it were a real finding.
+The previous version of this section named "query gnomAD's own API
+directly" as the literal next action and reported it as blocked by
+tooling. That conclusion was wrong and has been corrected: a direct
+`curl` POST (rather than this session's earlier `web_fetch`/`httpx`
+attempts) successfully reached `gnomad.broadinstitute.org/api`. All three
+candidate variants were queried directly against gnomAD's own data,
+2026-07-10.
 
-## 8. Honest limitations, on the record
+### 7.1 Canton (rs72554665) — confirmed present, EAS-specific, exactly as
+### the literature predicted
 
-- **Whether Canton/Kaiping/Mahidol exist in gnomAD v2.1.1's own release
-  was not directly verified against gnomAD itself in this pass** — the
-  claim is that they are absent from this platform's *extracted, pinned*
-  artifact, verified by direct inspection of the actual file; whether the
-  root cause is an extraction-time omission or a genuine gnomAd v2.1.1
-  coverage gap is the open question named in §7, item 1.
+Resolves to gnomAD variant `X-153760484-C-A`. **Real, confirmed genome
+population data**: EAS AC=10/AN=994 (1.006% frequency); every other
+population with nonzero AN (AFR, AMR, ASJ, FIN, NFE) shows AC=0. This is
+a clean, direct confirmation: Canton is real, genuinely present in
+gnomAD's own release, and — in this dataset — observed *only* in EAS,
+consistent with the clinical literature. **The platform's own pinned
+artifact tracking this as EAS=0.0 (via its two unrelated tracked variants,
+A- and Mediterranean) is a genuine extraction-pipeline gap for this
+specific variant** — the data exists in gnomAD, it was simply not
+selected during whatever process produced the pinned artifact.
+
+### 7.2 Kaiping (rs137852324) and Mahidol (rs137852328) — a real, more
+### complicated result: present in gnomAD, but at near-zero frequency
+### even in gnomAD's own EAS grouping
+
+Both resolve to real gnomAD variant IDs (`X-153760604-C-T`,
+`X-153762340-C-T`). Both show `genome: null` (no genome-callset coverage
+at these positions) but real exome-callset data:
+
+- **Kaiping**: EAS AC=1/AN=13825 (0.0072%) — present, but at a frequency
+  roughly 140x lower than the clinical literature's own reported share
+  (Kaiping is described as ~39% of G6PD-deficient alleles in a real
+  Malaysian Chinese neonate cohort, PMID 16329560).
+- **Mahidol**: EAS AC=0/AN=13857 (0%) — not observed in gnomAD's EAS
+  grouping at all, despite being independently documented as *the*
+  dominant variant in Southeast Asia specifically (PMID 20007901, PMID
+  15349799: "91.3% of G6PD variants were G6PD Mahidol" in a Myanmar
+  cohort). Mahidol *does* show a small, nonzero signal in gnomAD's AMR
+  (5/27,420) and NFE (4/81,708) groupings instead — populations with no
+  documented clinical connection to this variant's known Southeast Asian
+  positive-selection history.
+
+**The most likely explanation, checked and consistent with gnomAD's own
+population-grouping structure**: gnomAD v2.1's "EAS" category breaks down
+only into `eas_jpn` (Japanese), `eas_kor` (Korean), and `eas_oea` ("other
+East Asian") — **there is no distinct Southeast Asian, Thai, Malaysian, or
+Filipino subpopulation category**. The clinical literature's Kaiping/
+Mahidol frequency estimates come specifically from Chinese (Guangdong,
+Guangzhou), Malaysian Chinese, Thai, and Myanmar cohorts — populations
+with documented malaria-driven positive selection for these exact
+variants (Mahidol's selection history is independently dated to the past
+~1,500 years specifically in Southeast Asia, PMID 20007901). gnomAD's
+"other East Asian" bucket is a broad, ancestry-mixed grouping that may
+simply dilute or miss variants concentrated in specific Southeast Asian
+sub-populations, even though the variants are real, catalogued, and
+observed (Kaiping) or plausibly under-sampled (Mahidol) in gnomAD's own
+data.
+
+### 7.3 What this means for the original finding — sharpened, not
+### undermined
+
+**Canton alone is now a fully-confirmed, direct-primary-source example**
+of the exact extraction-pipeline gap this document names: real EAS-
+specific gnomAD data exists and was not included in this platform's
+pinned artifact. **Kaiping and Mahidol reveal a second, distinct, equally
+real problem, one level upstream of the platform's own pipeline**: even
+gnomAD's own EAS population category may be too coarse to correctly
+represent variants specific to Southeast Asian sub-populations,
+independent of anything this platform's extraction process did or didn't
+select. This is a more precise, more honest version of the original
+finding — not "the platform under-samples EAS," but "the platform
+under-samples EAS in at least one directly-fixable way (Canton), and
+gnomAD's own EAS category may itself be too coarse for at least one
+variant with known sub-population-specific selection history (Mahidol) —
+two related but distinct problems, at two different levels of the data
+pipeline."
+
+## 8. What a further pass should check next
+
+1. **Fix the Canton gap directly** — this is now a fully scoped,
+   unambiguous data-pipeline task: add `X-153760484-C-A` (EAS AC=10/
+   AN=994) to the pinned artifact's G6PD rows, using whatever extraction
+   process produced the existing A-/Mediterranean rows. No further
+   research is needed for this specific variant — it is confirmed, real,
+   and ready to add.
+2. **Check whether gnomAD v3 or v4 (rather than the pinned v2.1.1) offers
+   a finer-grained Southeast Asian population breakdown** that might
+   resolve the Mahidol/Kaiping under-representation — this platform's own
+   `docs/06-anukriti-integration.md` §2.2 "client, not a copy" discipline
+   would need to be checked against whatever the current production
+   frequency layer's own gnomAD version is, since pinning a newer version
+   is a bigger decision than adding one row to the existing artifact.
+3. **Audit every other AFR/EAS/SAS-relevant gene in the pinned artifact
+   for the same "gnomAD's coarse population category may not match a
+   clinically-relevant sub-population" problem** identified for Mahidol
+   — this is a structurally different and arguably more important check
+   than simply looking for missing variants (§7.1's Canton problem); it is
+   about whether the population *categories themselves* are the right
+   grain for every gene checked so far, not just G6PD.
+
+## 9. Honest limitations, on the record
+
+- **[Resolved for Canton, more nuanced for Kaiping/Mahidol — see §7]**
+  Whether Canton/Kaiping/Mahidol exist in gnomAD v2.1's own release was
+  directly checked against gnomAD's own API in this pass, correcting the
+  earlier version of this document. Canton is confirmed, real, and
+  EAS-specific. Kaiping and Mahidol are also real, catalogued positions in
+  gnomAD, but observed at near-zero or zero frequency even within
+  gnomAD's own (coarse) EAS grouping — a different, second-order finding
+  in its own right (§7.2), not a simple confirm/deny.
 - **This document's frequency claims for Canton/Kaiping/Mahidol come from
   clinical cohort studies (hospital-based case series in China/Malaysia),
   not from gnomAD population-frequency data directly** — cohort-based
@@ -233,12 +295,17 @@ population data, named now before such a composition is built, not after.
   avoid the exact category error this session's own SLCO1B1/DPYD
   documents have been careful to avoid elsewhere (disproportionality vs.
   population frequency vs. cohort composition are three different
-  numbers).
+  numbers). §7's real gnomAD numbers (Canton EAS 1.006%; Kaiping EAS
+  0.0072%; Mahidol EAS 0%) are population-frequency numbers, directly
+  comparable to this platform's own tracked-allele frequencies — the
+  cohort-percentage numbers above remain a different statistic, still not
+  conflated with these.
 - **No new PRR, no new FAERS query was computed.** This is a literature
-  and data-artifact audit, zero new network calls to any platform system,
-  zero new GCP cost.
+  and data-artifact audit plus direct gnomAD API queries, zero new
+  network calls to any *platform* system (BigQuery/GCP), zero new GCP
+  cost — the gnomAD API itself is a free, public, read-only service.
 
-## 9. Reproduction
+## 10. Reproduction
 
 ```bash
 cd project_astra
@@ -258,6 +325,19 @@ from astra.discovery_engine import mechanistic_prior as mp
 print(mp.lookup('G6PD', 'RASBURICASE'))
 "
 
+# Re-verify Canton's real, confirmed gnomAD data directly (no auth needed,
+# public read-only API):
+curl -s -X POST https://gnomad.broadinstitute.org/api \
+  -H "Content-Type: application/json" \
+  -d '{"query":"query V($variantId: String!, $datasetId: DatasetId!) { variant(variantId: $variantId, dataset: $datasetId) { variantId rsids genome { populations { id ac an } } } }","variables":{"variantId":"X-153760484-C-A","datasetId":"gnomad_r2_1"}}'
+# Expect real EAS ac=10, an=994; ac=0 elsewhere.
+
+# Re-verify Kaiping/Mahidol's real (near-zero) exome data:
+curl -s -X POST https://gnomad.broadinstitute.org/api \
+  -H "Content-Type: application/json" \
+  -d '{"query":"query V($variantId: String!, $datasetId: DatasetId!) { variant(variantId: $variantId, dataset: $datasetId) { variantId rsids exome { populations { id ac an } } } }","variables":{"variantId":"X-153760604-C-T","datasetId":"gnomad_r2_1"}}'
+
+python3 scripts/query_gnomad_for_g6pd_eas_variants.py
 python3 -m pytest tests/test_g6pd_gnomad_coverage_gap.py -v
 ```
 
