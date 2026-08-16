@@ -165,8 +165,8 @@ partner-facing.** It must be corrected before any further outreach; see §6.4.
 
 | # | Limitation | Concrete evidence | Mitigation |
 |---|---|---|---|
-| L1 | Substitution accuracy is per-allele | \*2 34% vs \*3 0.3% (§1.1) | **Divergence reporting**: query all available sources, report the spread per allele rather than picking one. |
-| L2 | Super-populations hide clines | 2.9× within SAS (§1.2) | **`clinality_index`** on each frequency record: within-super-population spread, computed from `1kg:*` subpop IDs in one query. Flag any allele whose internal spread exceeds its cross-source divergence — "SAS" is a misleading unit for that allele. |
+| L1 | Substitution accuracy is per-allele | \*2 34% vs \*3 0.3% (§1.1) | **Divergence reporting**: query all available sources, report the spread per allele rather than picking one. Shipped as `astra/discovery_engine/frequency_divergence.py`. |
+| L2 | Super-populations hide clines | 2.9× within SAS (§1.2) | **`clinality_index`** on each frequency record: within-super-population spread, computed from `1kg:*` subpop IDs in one query. Flag any allele whose internal spread exceeds its cross-source divergence — "SAS" is a misleading unit for that allele. **⚠️ SUPERSEDED 2026-08-16 by `PANEL_CLINALITY_AUDIT_2026-08-16.md`:** the fold-spread metric does not survive a sampling null (CYP2C9 \*2's 2.94× has p = 0.33) and a 1.5× threshold flags 69% of the testable panel. Ship the **Cochran-Armitage trend z** instead — same inputs, and it isolates 4 alleles rather than 9. Also require an informativeness floor first: 7 of 20 pinned alleles have too few observations to test, including two of four CPIC DPYD variants. |
 | L3 | Pooled national cohorts still hide community structure | Kerdoncuff 2025 (*Cell* 188(13):3389-3404): BCHE L307P at 0.28% overall in India but **5.3% in Telangana Vysya**; LASI-DAD n=2,762 carries ~24M SNVs + ~2.2M indels absent from gnomAD/1000G | Do not claim community-level resolution from IndiGenomes (single pooled India-wide frequency). State the resolution ceiling of each source explicitly in its provenance record. |
 | L4 | Hand-written numbers enter through the plug point | The 52-day incident (§2) | Already mitigated: `frequencies.py` rejects any allele lacking rsID + `alt_observed` + `total_alleles` + `source`, and hard-fails on round-number sentinels. Keep this as the non-negotiable contract on every new source. |
 | L5 | Callset composition is not like-for-like | v2.1.1 exome 0.0467 vs v3.1 genome 0.0388 for the same allele | Require `callset` in provenance. An exome-vs-genome comparison is not a version comparison — the 2026-07-21 pilot was misled by exactly this. |
@@ -347,6 +347,13 @@ Concretely:
    per-allele divergence reported against gnomAD SAS.
 2. `clinality_index` on frequency records — within-super-population spread from
    `1kg:*` subpopulations, computed for every pinned allele.
+   **Done 2026-08-16, and the result changed the specification** — see
+   `PANEL_CLINALITY_AUDIT_2026-08-16.md`. The spread metric was measured
+   against a sampling null and failed; the shipped metric is the
+   Cochran-Armitage trend z, gated behind a 10-observation informativeness
+   floor. Four alleles show a real cline (CYP2D6 \*10, DPYD HapB3, CYP2C9 \*2,
+   NAT2 \*5), two survive Bonferroni, and 7 of 20 pinned alleles cannot be
+   tested at all.
 3. Both feed the existing named-refusal discipline: an allele whose clinality
    exceeds a threshold gets a named uncertainty flag, not a silent number.
 4. GenomeIndia FeED application filed; Genes & Health cited now, applied for

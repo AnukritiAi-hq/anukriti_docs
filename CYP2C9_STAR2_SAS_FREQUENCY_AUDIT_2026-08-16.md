@@ -171,6 +171,22 @@ callset composition named. That is what `frequency_divergence.py` now does
 
 ## 7. Next step
 
+> **Update 2026-08-16 (later same day): step 1 below is done, and it corrected
+> this document.** `PANEL_CLINALITY_AUDIT_2026-08-16.md` computed clinality
+> across all 20 pinned alleles and found that the **fold-spread metric this
+> document proposed does not work**: 2.94× for CYP2C9 \*2 has an empirical
+> p of 0.33 against a sampling null, and a 1.5× threshold flags 69% of the
+> testable panel. §6.1's own caveat — that "the **ordering** is what this audit
+> relies on" and "a formal test of trend was not run" — was the right
+> instinct. Run as a Cochran-Armitage trend test, the ordering gives
+> z = −2.50, p = 0.0062, so the finding **holds on the evidence this document
+> named** while the statistic it proposed quantifying it with does not.
+> Two further corrections: CYP2C9 \*2 is the *third* strongest cline on the
+> panel (CYP2D6 \*10 z = +3.91 and DPYD HapB3 z = −2.68 both beat it and both
+> survive Bonferroni, which \*2 does not), and 7 of 20 pinned alleles have too
+> few observations to test at all — including two of the four CPIC DPYD panel
+> variants.
+
 The mechanism is established, so the remaining work is engineering, not
 investigation:
 
