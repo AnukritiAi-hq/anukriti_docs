@@ -1223,15 +1223,19 @@ For when DPYD is done, the CPIC position is now current and citable:
   9–10.7% (Khera 2019, PGIMER, PMID 30474703, OR 4.01 p=0.002 for adverse
   events) and 16.7% (ICMR-NICHDR, Frontiers 2025). Homozygotes tolerate **8%**
   of standard mercaptopurine dose; heterozygotes 63% (Yang 2015, PMID 25624441).
-- **A subtlety a software layer must get right.** ICiCLe-ALL-14 uses
-  **60 mg/m²/day** 6-MP in maintenance, not the 75 mg/m²/day CPIC references.
-  CPIC's dose-reduction advice for intermediate metabolizers is conditioned on a
-  starting dose **≥75 mg/m²/day**, so read literally it may not trigger at the
-  Indian dose — yet Indian data show NUDT15-variant carriers already achieve only
-  ~0.50 dose intensity versus 0.79 in wild-type (p<0.0001), i.e. ~30 mg/m²/day in
-  practice. **This is exactly the kind of guideline-to-local-protocol mismatch
-  `asl` exists to surface, and it must be surfaced rather than silently
-  resolved in either direction.**
+- **A subtlety a software layer must get right — and which pass 7 corrected.**
+  ICiCLe-ALL-14 uses **60 mg/m²/day** 6-MP in maintenance, not the 75 mg/m²/day
+  CPIC references. This document originally called that a
+  guideline-to-local-protocol mismatch that `asl` should surface. **That was a
+  misreading of CPIC**, corrected in §16 C25: the recommendation is explicitly
+  dose-conditional — "*if* starting dose is ≥ 75 mg/m²/day… **if starting dose is
+  already below standard starting dose, dose reduction might not be necessary**"
+  — and CPIC states that standard starting doses vary by geographic region. At
+  ICiCLe's dose CPIC's guidance is that a reduction may be unnecessary, so there
+  is no gap to surface. Indian data showing NUDT15-variant carriers reaching only
+  ~0.50 dose intensity versus 0.79 in wild-type (p<0.0001) remains a real
+  finding about *reactive* dose reduction; it is not evidence of a guideline
+  defect.
 - ICiCLe-ALL-14 does not specify NUDT15 or TPMT testing; adjustments are
   reactive. **No Indian centre tests NUDT15 routinely as standard of care.**
   MPGx-INDALL (PMID 41843828, NCT05512169, protocol published Jan 2026) is the
@@ -1827,3 +1831,123 @@ or not the rest of the row is well-formed. 114 → 140 tests.
 3. **The MCC retrospective is now the single lever, not one of several.** Neither
    frequency data nor in-vitro work can move a call that already has a
    type-II-error thumb on the scale.
+
+---
+
+## 16. Research pass 7 — the NUDT15 workflow tested, and it does *not* inherit the DPYD thesis (2026-08-17, 00:55)
+
+The engine gap is fixed (`pgx-core` 0.8.0 adds `NUDT15Caller`), so this pass
+tested what a NUDT15 workflow would actually rest on. **Three of the four
+findings cut against our own prior reasoning.** Read the CPIC 2025 thiopurine
+guideline directly (Maillard et al., *Clin Pharmacol Ther* 2026;119(4):916–927,
+PMID 41618934).
+
+### C25 — The ICiCLe dose mismatch pass 3 flagged is **not** a mismatch. CPIC already addressed it.
+
+Pass 3 wrote that ICiCLe-ALL-14's 60 mg/m²/day 6-MP against CPIC's 75 mg/m²/day
+reference is "exactly the kind of guideline-to-local-protocol mismatch `asl`
+exists to surface." CPIC's actual recommendation, verbatim:
+
+> "Initiate therapy with decreased starting doses (30–80% of standard starting
+> dose) **if starting dose is ≥ 75 mg/m²/day** (for malignancy)… **If starting
+> dose is already below standard starting dose, dose reduction might not be
+> necessary.**"
+
+ICiCLe's 60 mg/m²/day is below 75, so CPIC's guidance at the Indian protocol dose
+is explicitly *that a reduction may not be needed*. There is no gap for a software
+layer to surface. CPIC even states the general principle: "because the level of
+thiopurine tolerance is related to genetic ancestry, **the standard starting doses
+can vary by geographic regions**."
+
+**Pass 3 read a conditional as an oversight.** The recommendation is
+dose-conditional by construction, and we had quoted only the unconditional half.
+That is the same error class this document keeps finding — a claim with its
+qualifier stripped — committed by us, about CPIC, in the direction of
+manufacturing a problem.
+
+### C26 — CPIC explicitly asserts cross-ancestry robustness for NUDT15/TPMT, which DPYD does not have
+
+This is the finding that limits the second workflow, and it is a direct
+contrast with the gene this whole document is about:
+
+| | DPYD | NUDT15 / TPMT |
+|---|---|---|
+| published position on ancestry | activity score "validated in the Caucasian population, remains **unverified** in other ethnic groups" (White 2021, PMID 34916829, cited approvingly by D-TORCH) | "given the **robustness of the genotype–phenotype associations** for both TPMT and NUDT15 **across diverse populations**… the recommendations are **not limited to any specific ancestry group**" |
+| Indian outcome data | two sources, disagreeing | consistent with East Asian; no contradicting Indian cohort found |
+
+So **the `asl` thesis does not transfer.** For DPYD, the interpretation layer is
+applying a score its own authors say is unvalidated here. For NUDT15, CPIC
+asserts the opposite, and the variant that carries the Indian signal —
+`*3`/rs116855232 — is the *most* studied variant in the gene, with CPIC calling
+its evidence "the strongest evidence for clinical implementation."
+
+That confirms, on stronger grounds than pass 3 had, that **NUDT15 is an access
+problem and not an interpretation one.** It also means a NUDT15 workflow in `asl`
+would be a *thinner* product: correct calling and provenance, but no
+residual-risk argument of the kind DPYD supports, because the guideline's own
+population caveat is absent.
+
+### C27 — But CPIC hands us the exact structural analogue of the DPYD caveat
+
+One sentence in "Other Considerations" is directly usable:
+
+> "If test results are available for only one gene (*TPMT* or *NUDT15*, but not
+> both), prescribing recommendations based on that gene's results may be
+> implemented, with the caveat that the other gene's results are missing and may
+> have important implications, with **up to 10–15% of patients having actionable
+> variants in the nontested gene**."
+
+This is the thiopurine equivalent of "a genetic test investigating only selected
+variants does not fully rule out DPD defects" — a **guideline-published residual
+risk with a number attached**, for the single most likely real-world scenario in
+India, where the ICMR-validated ARMS-PCR assay reads NUDT15 c.415C>T and TPMT`*3C`
+and nothing else. And CPIC adds a second one: a rare variant outside the test
+design means "the patient being assigned a 'wild‐type' (`*1`) genotype **by
+default**" — our founding defect, stated by the guideline.
+
+So the second workflow's honest shape is now clear: **not** "CPIC is wrong for
+Indians", but "this panel tested one of two genes, here is what that leaves
+open, quantified by CPIC."
+
+### C28 — A newly-actionable allele is not callable, and that is now on the record
+
+The 2025 update **reassigned `*4` and `*9` as clinically actionable** ("the
+accumulation of preclinical and clinical data associating some rare variants with
+thiopurine toxicity motivated their re-assignment"). Of those two:
+
+- `*4` (rs147390019) **is** callable in 0.8.0.
+- `*9` is defined by a `GAGTCG(2)` indel and is **not** callable — `pgx-core`
+  matches single plus-strand bases from a VCF.
+
+`*9`'s Central/South Asian frequency is 0.000495, so the practical impact is
+small, but the honest statement is that a *newly actionable* allele is outside the
+caller's reach, and it is recorded in the generated table header rather than left
+to be discovered. Indel-aware matching is the fix and is not attempted here.
+
+### Open item found and not closed
+
+The guideline carries a **correction notice** (*Clin Pharmacol Ther*, 28 April
+2026). Not yet read. Any figure quoted from PMID 41618934 should be checked
+against it before it reaches a clinical report — the 30–80% and 20–50% ranges
+above are from the original.
+
+### What pass 7 changes about the plan
+
+1. **Remove the ICiCLe "mismatch" from the plan.** It was our misreading. What
+   remains true and useful is narrower: an Indian protocol starting below CPIC's
+   reference dose is a case where CPIC says a reduction may be unnecessary, and a
+   tool should say *that* rather than invent a conflict.
+2. **The NUDT15 workflow is demoted in ambition, not dropped.** It becomes a
+   correct-calling-plus-coverage product built on C27's single-gene caveat, not a
+   population-interpretation argument. Which is honest: nobody has shown CPIC
+   wrong for NUDT15 in Indians, and CPIC has affirmatively argued it is right.
+3. **DPYD's uniqueness is now established by contrast rather than asserted.** The
+   reason this platform started with DPYD is that DPYD is the gene where the
+   guideline's own authors say the score is unvalidated outside Europeans. That is
+   not true of the second gene we looked at, which is a meaningful check on
+   generalising the thesis.
+
+**Verification:** `pgx-core` 235 tests pass, 2 `cpic_live` pass, NUDT15 drift
+check clean. `asl` unchanged at 140 tests and still pinned to 0.7.3 — 0.8.0 is not
+on PyPI, and `AGENTS.md` requires clinical regression review before a consumer
+adopts a new engine version.
