@@ -144,7 +144,7 @@ callset composition named. That is what `frequency_divergence.py` now does
    frequency is compared across sources — an exome-vs-genome comparison is not
    a like-for-like comparison.
 3. **Divergence reporting implemented** rather than source replacement
-   (`project_astra/astra/population/frequency_divergence.py`, and the
+   (`project_astra/astra/discovery_engine/frequency_divergence.py`, and the
    `cohortfit` fixture's `known_discrepancies` block).
 4. The pilot's second open item — reaching GenomeAsia100K from a different
    network path — remains open and untouched.
