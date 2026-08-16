@@ -14,10 +14,27 @@
 | Severe toxicity (Grade 3+) in unscreened DPD-deficient patients | **70–80%** | CPIC 2017, Henricks 2018 |
 | Treatment-related mortality in unscreened carriers | **1–2%** | CPIC 2017 (PMID:29152729) |
 | Population carrying heterozygous DPYD variant | **6–9%** | Ho 2025 |
-| DPYD *9A carrier frequency in South Indians | **27%** | Hariprakash 2018 |
-| European 4-variant panel coverage in Indians | **<0.5%** of at-risk population | gnomAD v4.0 SAS data |
+| DPYD \*9A allele frequency, South Asian | **0.2550** | gnomAD v2.1.1 exomes, live query 2026-07-28 |
+| DPYD \*9A allele frequency, European (NFE) | **0.2226** | gnomAD v2.1.1 exomes, live query 2026-07-28 |
+| DPYD \*9A allele frequency, African (population maximum) | **0.4131** | gnomAD v2.1.1 exomes, live query 2026-07-28 |
+| European 4-variant panel: SAS \*2A allele frequency | **0.0040** | gnomAD v4.1 joint, live query 2026-08-08 |
 
-**The gap:** 1 in 4 South Indian patients on capecitabine may carry *9A. European tools assign "normal function" and move on. Standard-dose toxicity follows.
+**The gap — stated precisely.** The CPIC 4-variant panel is calibrated on
+European data, and its constituent alleles are genuinely rare in South Asian
+populations (\*2A 0.0040, \*13 absent in SAS at gnomAD v4.1 sample sizes). A
+South Asian patient screened on that panel is very likely to screen negative.
+That is the real equity problem, and it does not require any allele to be
+South-Asian-enriched.
+
+> **Correction, 2026-08-16.** Earlier versions of this document claimed DPYD
+> \*9A carrier frequency of **27% in South Indians** (citing Hariprakash 2018)
+> and "1 in 4 South Indian patients." **We audited that claim and it does not
+> hold.** The 27% figure was not present in any pinned frequency artifact, and
+> real gnomAD data shows \*9A is *not* South-Asian-enriched (SAS 0.2550 vs EUR
+> 0.2226, ratio 1.15; AFR 0.4131 is the maximum). For M166V the direction is
+> actually inverted (SAS 0.0906 < EUR 0.1004). Full audit trail:
+> `anukriti_docs/DPYD_SAS_OVERRIDE_AUDIT_2026-07-28.md`. We are disclosing this
+> rather than quietly deleting it, because the audit is the product.
 
 ---
 
@@ -83,14 +100,14 @@ Works identically for **capecitabine** (the oral prodrug most Indian oncologists
 
 | What generic tools do | What Anukriti does differently |
 |-----------------------|-------------------------------|
-| Test 4 European variants only | Accept 4 core + 2 SAS-relevant (*9A, M166V) |
-| *9A → "Normal function" (silently) | **Named refusal U4** for SAS patients citing 27% frequency |
-| No population context | Real gnomAD v4.0 frequencies per population (n=15,308 SAS) |
+| Test 4 European variants only | Accept 4 core + 2 contested-evidence alleles (*9A, M166V) |
+| *9A → "Normal function" (silently) | **Named uncertainty P1_SAS_DPYD_CONTESTED** — flags the open question, cites all three conflicting studies, does not fabricate a direction |
+| No population context | Real gnomAD frequencies per population, live-queried with callset + date recorded |
 | No audit trail | Every refusal names a rule ID, every recommendation cites PMID |
 | Black-box LLM output | Deterministic engine decides; LLM only explains (GenerativeBoundary) |
 | No evidence density reporting | Surfaces WHERE evidence is thin per population |
 
-### 4C. The U4 Rule — Our Core Differentiator (Demo Slide)
+### 4C. The P1 Rule — Our Core Differentiator (Demo Slide)
 
 **European tool path:**
 ```
@@ -102,16 +119,36 @@ Output: Normal Metabolizer, Standard dose
 **Anukriti path:**
 ```
 Input:  DPYD *1/*9A, Population: South Asian
-Output: ⚠ REFUSAL — Rule U4_SAS_DPYD_OVERRIDE
+Output: ⚠ NAMED UNCERTAINTY — Rule P1_SAS_DPYD_CONTESTED
 
-"DPYD *9A assigned Normal function by CPIC (European data).
-South Asian evidence (27% carrier frequency for *9A in South
-Indian oncology cohorts) shows clinically significant toxicity
-risk not captured by the European 4-variant panel.
+"DPYD *9A is assigned Normal function by CPIC (confirmed against
+CPIC's live allele API, 2026-07-28). It is NOT South-Asian-enriched:
+gnomAD v2.1.1 SAS 0.2550 vs EUR 0.2226 (ratio 1.15); AFR 0.4131 is
+the population maximum.
 
-Population-aware refusal applied — recommend DPD phenotyping
-or expanded panel before standard-dose fluoropyrimidine."
+The South Asian clinical evidence is genuinely contested:
+  · Hariprakash 2018 — M166V associated with hand-foot syndrome
+    (OR 5.22, 95% CI 1.47-18.55, p=0.011, n=110); its *9A assay failed
+  · Naushad 2021 — pooled Indian data, no association for either
+    (*9A OR 1.03, p=0.95; M166V OR 1.54, p=0.32)
+  · Atasilp 2025 — *9A / grade 3-4 neutropenia on n=2 homozygotes,
+    not surviving its own multivariate analysis
+
+Three studies, three incompatible answers, and no population-frequency
+argument to fall back on. This is flagged as an open research question,
+NOT converted into a dose recommendation in either direction."
 ```
+
+**Why this is the differentiator.** The obvious demo would be a confident
+population-aware refusal. We shipped exactly that — `U4_SAS_DPYD_OVERRIDE`,
+justified by a hand-written "27% carrier frequency" — and it ran live for **52
+days** blocking synthesis for South Asian patients before our own audit caught
+that the number had no source. The citation was real; the number was not.
+
+The corrected behaviour is the stronger product claim: a system that
+distinguishes *contested* from *established* and refuses to manufacture
+certainty in either direction. Any vendor can show you a confident answer.
+Ask them what happens when the evidence disagrees with itself.
 
 **No other tool in the world does this.** The Ho 2025 paper itself says:
 > "DPYD allele frequencies differ across race and ethnicity... each institution's patient population inclusive of race and ethnicity should be taken into consideration when selecting which DPYD variants to test."
@@ -169,5 +206,7 @@ We are the only implementation that operationalizes this statement.
 5. **FDA 2025 Label Update:** JCO 2025. https://ascopubs.org/doi/10.1200/JCO-25-02629
 6. **ASCO 2025 Cost:** Nguyen et al. + Morris et al. (Atrium Health Levine Cancer Institute)
 7. **AMP 2024 Variant Recommendations:** Pratt VM et al. J Mol Diagn 26:851–863. PMID:39032821
-8. **Hariprakash 2018:** South Asian DPYD landscape (n>3,000). rs2297595 enrichment.
+8. **Hariprakash 2018:** South Asian DPYD landscape. PMID:29239269. n=110 Indian GI-cancer patients (36 colon + 41 rectal) for the association analysis. Reports M166V / hand-foot syndrome OR 5.22 (95% CI 1.47–18.55, p=0.011); its \*9A assay failed. **Does not support a 27% \*9A carrier frequency** — see the 2026-08-16 correction in §1.
+10. **Naushad 2021:** Pooled Indian DPYD data — no association for \*9A (OR 1.03, p=0.95) or M166V (OR 1.54, p=0.32). Cited as the counter-evidence in P1_SAS_DPYD_CONTESTED.
+11. **Atasilp 2025:** Clin Med doi:10.1016/j.clinme.2025.100443. \*9A / grade 3–4 neutropenia on n=2 homozygotes; association did not survive multivariate analysis.
 9. **Knikman 2023:** Survival with dose-individualized fluoropyrimidine. JCO 41:5411. PMID:37639651
