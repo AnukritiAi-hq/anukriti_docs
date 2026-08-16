@@ -2164,3 +2164,87 @@ running the review; the four-week CI outage came from checking whether I had
 broken CI. None would have been found by looking for them. The transferable part
 is that **the checks which fail silently are the dangerous ones** — a wrong
 answer announces itself, a vacuous review and an uninstallable suite do not.
+
+---
+
+## 19. Rollout of 0.8.1 — and the defect that only a real install could find (2026-08-17, 02:05)
+
+The admin approved the protected environment, `v0.8.1` published, and the pin
+bumps the review had already approved were executed. Three things happened that
+are worth recording, and two of them are mistakes of mine.
+
+### The rollout
+
+`0.8.1` verified from PyPI in a clean venv — not from the editable install used
+during review — re-checking the two behaviours that matter:
+
+- TPMT homozygous reference → `*1/*1` **Normal Metabolizer** (was `*3A/*3A` Poor
+  Metabolizer, i.e. "avoid thiopurines" for a patient with no variant)
+- `NUDT15Caller` present, 14 supported genes
+
+All four reviewed consumers now pin `==0.8.1`, each re-run against the
+**published** artifact: `asl` 143, `anukriti-api` 184, `anukriti-swarm` 287,
+`cohortfit` 241. `anukriti` (sandbox) and `anukriti-validation-iwpc` remain at
+0.7.3 — no runnable environment here, and a pin bumped without executing its suite
+asserts a review that was not performed.
+
+### `pip install asl` had never worked
+
+Verifying against the published package exposed a defect present since `asl`'s
+first commit. The CPIC evidence tables lived in a top-level `data/evidence/`,
+resolved via `Path(__file__).parents[2]` — **a path that walks outside the
+installed package** — and nothing declared them as package data. So the wheel
+contained no tables, and a pip-installed `asl demo` raised `EvidenceError` telling
+the user to regenerate tables that had never been shipped.
+
+**Every test passed for the package's entire life**, because the suite had only
+ever run from a source checkout, where that path happens to resolve. Fixed by
+moving the data to `src/asl/data/`, declaring `[tool.setuptools.package-data]`,
+and pinning all three properties by test — including one asserting the resolved
+path is package-relative, so a future refactor cannot satisfy it cosmetically.
+
+This is the same shape as every other finding in this document: not a wrong
+answer, but **a check that could not see the thing it was meant to protect**. The
+generalisable rule is that an editable install cannot verify a release.
+
+### There is no 0.8.0, and that was my error
+
+I tagged `v0.8.0` and `v0.8.1` in the same action, on commits that both already
+declared `version = "0.8.1"`. So `v0.8.0` built a **byte-identical artifact**, and
+PyPI correctly rejected the duplicate filename with `400 File already exists` —
+which is why that run shows as failed. A tag named `v0.8.0` pointing at a 0.8.1
+build is worse than no tag, so it is deleted. The published sequence is
+**0.7.3 → 0.8.1**, and the changelog now says so rather than implying a release
+that never existed. Rule: set the version, *then* tag.
+
+### Two pre-existing CI outages closed on the way
+
+Neither was caused by this work; both were found by checking whether it was.
+
+- **`anukriti-api` had not passed CI since 21 July** — `anukriti-chemistry==0.1.0`
+  was a hard dependency never published to PyPI, so `pip install .` failed before
+  any test ran. The code already treated it as optional and said so; only the
+  metadata disagreed. Now an extra.
+- **`anukriti-swarm` was failing its own lint gate.** CI hard-gates five
+  directories independently; three had drifted, so fixing one just moved the
+  failure to the next. All five now pass. The ~475 remaining repo-wide `ruff`
+  errors are deliberately untouched — the workflow's own comment says each
+  promoted directory should be its own cleanup PR, and bundling that into a
+  dependency bump is exactly what it warns against. **A gate that fails on its own
+  declared scope is not a gate.**
+
+All five repos now have green CI simultaneously, which had not been true at any
+point in this session.
+
+### The pattern, stated once more
+
+Four sessions, and every significant defect was found by pursuing something else:
+the TPMT inversion from reading a correction notice, the version desync from
+running the review, the four-week API outage from checking whether I had broken
+CI, and the packaging defect from verifying a published artifact rather than a
+local one. None would have been found by looking for them directly.
+
+What they share is that **they all failed silently or passed falsely**. A wrong
+answer announces itself. A vacuous review, an uninstallable suite, a wheel with no
+data, and a lint gate that never ran do not — and each survived precisely as long
+as nobody had a reason to look.
