@@ -128,10 +128,18 @@ For contrast, the same panel in Europeans: `*13` is present (0.00056) and
 c.2846A>T is 5.8× more frequent (0.00374 vs 0.00064). The panel was built where
 its variants exist.
 
-### C4 — The Indian evidence base is ~630 patients across 4+ centres, not 76 from 1
+### C4 — The Indian evidence base is larger than 76 patients, but mostly toxicity-selected
+
+> **⚠ Materially qualified by C12 (§10). Read both.** Two of the five studies
+> below tested *only* patients who had already developed grade 3+ toxicity, so
+> the pooled figure below cannot support a prevalence or association claim. The
+> defensible statement is **~451 patients across two centres genotyped without
+> toxicity selection** — and of those two, the methodologically stronger one
+> found **no** association.
 
 The 08:29 document called this its own biggest weakness ("the entire problem
-statement rests substantially on one small study"). That was too pessimistic.
+statement rests substantially on one small study"). That was too pessimistic
+about the volume, but its caution about strength was warranted.
 
 | Study | PMID / ref | Centre | n | Variants tested | Toxicity data |
 |---|---|---|---|---|---|
@@ -145,14 +153,24 @@ statement rests substantially on one small study"). That was too pessimistic.
 **Pavithran 2021 is the most important find of this research pass.** n=375 South
 Indian patients, 5× D-TORCH. 47/375 (12.5%) were variant-positive; of those,
 **32 (68.8%) carried c.496A>G / rs2297595 — a CPIC *normal-function* allele** —
-and **35/47 had grade II-III toxicity even after dose reduction** (χ², p=0.002).
+and **35/47 had grade II-III toxicity even after dose reduction**, where the
+dose reduction was **pre-emptive and activity-score-guided** (C11). Verified
+against the primary abstract.
 
-That is **independent Indian corroboration, at 5× the n, that a CPIC
-normal-function allele tracks severe toxicity.** The problem statement no longer
-rests on one 76-patient study whose tables we had to correct ourselves.
+**But it is abstract-only, its headline statistic is ambiguous, and D-TORCH
+contradicts its central allele finding** — rs2297595 appeared in 7/76 D-TORCH
+patients with no toxicity signal, and D-TORCH found no association overall
+(OR 0.71, p=0.612). See C11 and C12. **c.496A>G is contested, not established**,
+and `asl` must present it that way.
 
 Genotype-only evidence adds 1064 more patients (Patil 2019, 27.2% carrying
 rs1801160/rs1801159), useful for frequency but silent on outcome.
+
+Separately, and unaffected by the selection bias: both Tata Memorial studies
+report that **cycle-2 dose reduction cut grade 3–4 mucositis from 70% to 10%
+(p=0.02, Patil 2016) and 71% to 24% (p=0.016, Sahu 2016)**, with diarrhoea
+88% → 36% (p=0.006). That is a dose-response observation rather than a
+genotype-prediction one.
 
 ### C5 — The residual-risk statement is a CPIC quotation, not our novel claim
 
@@ -955,11 +973,20 @@ a caveat the guideline publishes.
 - **Gentile 2016's Hap7 claim is ex-vivo and clinically unreplicated** (C6).
   Wherever it appears it must carry the Kanai 2022 null.
 - **Plasma uracil phenotyping is the strongest population-agnostic
-  alternative** — it measures enzyme activity, not genotype, and would sidestep
-  this entire problem. Not proposed because no Indian lab offers it and the
-  16 ng/mL threshold is unvalidated outside French cohorts. **If a partner site
-  has LC-MS/MS, this ranking should be revisited**, and that would be a better
-  outcome than our product.
+  alternative** — it measures enzyme activity, not genotype, and would capture
+  *all* causes of reduced DPD activity regardless of ancestry, which is exactly
+  the class of patient a European-derived genotype panel misses in India. **See
+  C13 (§10): my original reasons for rejecting it were partly wrong.** CMC
+  Vellore *does* have a validated LC-MS/MS assay and has published Indian
+  uracil/DHU data (n=100 healthy adults, DOI 10.2217/pme-2022-0042). The
+  defensible reason to reject it is that a 955-patient, 17-centre Dutch study
+  **failed to validate the 16 ng/mL threshold at all** (de With 2022, PMID
+  35397172: OR 0.997, p=0.71), because the assay degrades within ~47 minutes at
+  room temperature — and no one has characterised those kinetics at Indian
+  ambient temperatures of 30–35 °C. **This remains a real gap in a genotype-only
+  approach**, and a single Indian centre with on-site LC-MS/MS could test it.
+  Note also that **CPIC is genotype-only**, so a phenotyping product would have
+  no guideline to attribute to, worsening the §6 posture.
 - **No validated multi-gene fluoropyrimidine toxicity score exists** in any
   guideline. TYMS/MTHFR/CDA have real effect sizes (Loganayagam 2013: TYMS
   3'UTR del/del OR 3.08; MTHFR 1298CC OR 9.99 for HFS) but adding them to
@@ -1027,3 +1054,200 @@ have shown it is the report that discarded it.
 uncertainty stripped off.* That is true of `pgx-core` 0.7.1, of the 08:29
 document, and of every "Normal Metabolizer" printed for an Indian patient on
 fluoropyrimidines.
+
+---
+
+## 10. Research pass 3 — four corrections to this document
+
+Written after §1–§9. Two of these qualify claims made above; recorded here rather
+than silently edited, per the platform's own method.
+
+### C11 — Pavithran 2021 verified exactly, but D-TORCH contradicts it
+
+Retrieved from the primary abstract (Pavithran K, Ariyannur P, Jayamohanan H,
+Philip A, Jose WM, Soman S. *J Clin Oncol* 2021;39(15_suppl):e15517,
+DOI 10.1200/JCO.2021.39.15_suppl.e15517). **Every number in C4 is confirmed
+verbatim**, and two details strengthen it:
+
+- **Dose reduction was pre-emptive, not reactive.** "Variants were assessed prior
+  to the initiation of the chemotherapy and dose was modified based on the
+  activity score." So the 35/47 with grade II–III toxicity occurred *despite*
+  prospective genotype-guided dose modification.
+- Cancer types: GI, breast, head and neck, treated 2019–2020. Adverse events:
+  HFS 18/47, diarrhoea 15/47, neutropenia 25/47, febrile neutropenia 4, no
+  mortality.
+
+**But three caveats that must travel with it:**
+
+1. **No full paper exists.** Searched 2021–2026; the ASCO abstract is the only
+   publication. It is ~350 words and was never peer-reviewed in full.
+2. **The "74.5%, p=0.002" statistic is ambiguous.** The abstract reads
+   "DPYD mutation had significant association with presence of severe adverse
+   reaction (74.5%, p-value. 0.002)" — 74.5% could be a chi-square statistic, a
+   proportion of carriers with toxicity, or a sensitivity. Without the full paper
+   this cannot be resolved. **We must not quote 74.5% as if its meaning were
+   established.**
+3. **D-TORCH contradicts the c.496A>G finding.** Baskarane 2026 found rs2297595
+   in 7/76 patients with **no toxicity signal**, and found no association between
+   DPYD variant status and toxicity overall (OR 0.71, 95% CI 0.26–1.98, p=0.612).
+   D-TORCH is smaller but methodologically stronger: prospective, WES-based, and
+   **unbiased with respect to toxicity selection**.
+
+### C12 — The Indian evidence base is weaker than C4 implied: severe ascertainment bias
+
+This is the correction that matters most. **Two of the five studies I counted in
+C4 tested only patients who had already developed grade 3+ toxicity:**
+
+| Study | Design | Effect on the estimate |
+|---|---|---|
+| Patil 2016 (TMH, head/neck) | 34 received TPF; **only the 12 with grade 3+ toxicity were tested**; 11/12 variant-positive | inflates variant–toxicity association enormously |
+| Sahu 2016 (TMH, GI) | 506 received capecitabine; **only the 28 meeting grade 3/4 criteria were tested**; 22 positive | ibid.; the honest denominator is 22/506 = 4.3% |
+| Pavithran 2021 (Amrita) | **all 375 genotyped pre-treatment** | unbiased, but abstract-only |
+| D-TORCH 2026 (AIIMS) | **all 76 sequenced**, unselected | unbiased, strongest method, **found no association** |
+| Varma 2020 (JIPMER) | n≈145, PK-focused | primary source inaccessible; unverified |
+
+So the correct statement is **not** "~630 patients across four-plus centres".
+It is: **~451 patients across two centres were genotyped without toxicity
+selection (Pavithran 375 + D-TORCH 76); the remainder is toxicity-selected and
+cannot support a prevalence or association claim.** And of those two unbiased
+studies, **the better-conducted one found no association.**
+
+Both Tata Memorial studies do, however, contain something useful and separate
+from the association question: **dose reduction in cycle 2 reduced grade 3–4
+mucositis from 70% to 10% (p=0.02, Patil 2016) and from 71% to 24% (p=0.016,
+Sahu 2016), with diarrhoea 88% → 36% (p=0.006).** That is a
+dose-response observation, not a genotype-prediction one, and it is not
+undermined by the selection bias.
+
+**Consequence for the product.** The residual-risk framing (§3.2) is
+*unaffected* — it rests on CPIC's own text, the Ontario HTA, and the wild-type
+toxicity rates from Henricks and Lunenburg, none of which are Indian. What is
+weakened is any claim that specific normal-function alleles *predict* Indian
+toxicity. **`asl` must therefore present c.496A>G and `*6` as contested, with
+the contradiction stated in both directions** — Pavithran positive, D-TORCH
+null — rather than as evidence of elevated risk. That is what the
+`P2_..._CONFLICT` mechanism is for, and this is now its most important use.
+
+### C13 — Uracil phenotyping: my stated reasons for rejecting it were wrong; the correct reason is stronger
+
+§7 claimed no Indian lab offers plasma uracil phenotyping and that the 16 ng/mL
+threshold is unvalidated outside French cohorts. **The first is largely wrong and
+the second is right but incomplete.**
+
+- **CMC Vellore has a validated LC-MS/MS assay and published Indian data.**
+  Sivamani P, Eriyat V, Mathew SK, et al., *Personalized Medicine*
+  2023;20(1):39-53, DOI 10.2217/pme-2022-0042 — plasma uracil, dihydrouracil and
+  DHU/U ratio in **n=100 healthy Indians**, correlated with DPYD genotype.
+  Participants with functional variants had significantly lower DHU/U ratios.
+  It is a research assay rather than an orderable clinical service, but **the
+  capability exists in India** and my §7 wording overstated its absence.
+- **The threshold has never been validated against toxicity in any Asian or
+  South Asian population.** Confirmed. Derived in French cohorts
+  (Boisdron-Celle 2007, n=252), supported at one Dutch centre
+  (Meulendijks 2017, n=550: U>16 ng/mL OR 5.3 for severe toxicity, sensitivity
+  18%, PPV 35%).
+
+**The far better reason to reject it — which §7 did not state:**
+
+> **A rigorous Dutch multicentre study failed to validate the threshold at all.**
+> de With et al., *Clin Pharmacol Ther* 2022;112(1):62-68 (PMID 35397172),
+> **n=955 across 17 centres**: median uracil varied from 7.59 to 16.30 ng/mL
+> *between centres* in wild-type patients (p<0.001); **no** correlation with PBMC
+> DPD activity (R²<0.01); **no** association with severe toxicity (p=0.73); at
+> the 16 ng/mL cutoff **OR 0.997, p=0.71** — null. The authors "urge that robust
+> clinical validation should first be performed before pretreatment plasma
+> uracil levels are used in clinical practice."
+
+And the mechanism of that failure is pre-analytical, which matters
+disproportionately in India. Thomas/Maillard et al., *Br J Clin Pharmacol*
+2023;89(2):762-772 (PMID 36104927), 14 laboratories: **uracil in whole blood
+rises +21% within 1.5 h at room temperature** (uridine phosphorylase converts
+uridine to uracil, and inhibiting DPD does not stop it); only **47 minutes**
+keeps 95% of samples within ±20%; at +4 °C the window extends to 5 h. In 573
+correctly double-sampled patients, intra-occasion CV was 22.4% and **17%
+received a discordant phenotype from their two samples** — rising to **33.8%**
+under non-compliant handling. EDTA tubes read ~14.2% higher than lithium
+heparin, enough on its own to cross the threshold. Renal impairment produces
+false positives (Gaible 2021, PMID 34515833).
+
+**Restated rejection, which is now defensible:** the assay is exquisitely
+sensitive to a pre-analytical window of under an hour at ambient temperature.
+Published stability data are at ~21 °C; **no study characterises the kinetics at
+Indian ambient temperatures of 30–35 °C**, where degradation would be faster.
+Indian oncology patients are frequently referred from peripheral centres, so
+draw-to-centrifugation routinely exceeds an hour without a cold chain. If 17
+climate-controlled Dutch hospitals could not make this reproducible, a
+multicentre Indian deployment will not.
+
+**What we must nonetheless concede, and §7 should say so:** phenotyping captures
+*all* causes of reduced DPD activity regardless of ancestry — transcriptional,
+post-transcriptional, and rare or novel variants — which is precisely the class
+of patient a European-derived genotype panel misses in India. **That is a real
+gap in a genotype-only approach.** The honest position is that uracil
+phenotyping is scientifically better in principle and impractical in Indian
+logistics today, and that a single Indian centre with on-site LC-MS/MS and a
+strict fasting/ice/30-minute protocol could test the proposition. CMC Vellore is
+the obvious partner. Also note: **CPIC is genotype-only** — it makes no
+phenotype-based dosing recommendation — so a phenotyping product would have no
+guideline to attribute to, which changes the regulatory posture in §6 unfavourably.
+
+### C14 — Indian policy assertion survived a deliberate attempt to refute it
+
+An adversarial search for any 2025–2026 CDSCO, ICMR, MoHFW, NMC or NCG document
+recommending pharmacogenomic testing before chemotherapy **found nothing**.
+Checked: CDSCO Oncology SEC minutes (29 Jul 2025) — no mention of PGx; NCG
+guidelines and Choosing Wisely India — no mention; PM-JAY HBP 2.0 package master
+— no genetic testing code; Union Budget 2025-26 cancer allocation — no mention.
+GenomeIndia (20,000 samples collected, 9,768 genotyped) has **no clinical
+implementation programme**. The Tata Institute for Genetics and Society scoping
+review (PMID 40700148) identifies 24 PGx-actionable genes and concludes that "an
+overarching need exists to establish and regulate" actionable PGx in Indian
+practice — which documents the absence rather than filling it.
+
+So the gap is real, and the strategic implication is unchanged: there is no
+mandate to comply with and no reimbursement to attach to. Adoption has to come
+through clinical usefulness at a partner site, not policy.
+
+### NUDT15 second workflow — what pass 3 established
+
+For when DPYD is done, the CPIC position is now current and citable:
+
+- **CPIC thiopurine guideline 2025 update**: Maillard M et al.,
+  *Clin Pharmacol Ther* 2026 Jan 31;119(4):916-927, PMID **41618934**,
+  DOI 10.1002/cpt.70209. Recommendations reorganised **by drug**; a new
+  **compound intermediate metabolizer** phenotype (TPMT IM + NUDT15 IM) at
+  **20–50%** of standard starting dose; `*4` and `*9` reclassified to no
+  function; `*5` to decreased function. All recommendations **Strong**.
+- NUDT15 `*3` (rs116855232) in Central/South Asian: **7–8%**; Central Asian
+  NUDT15 deficiency overall **13.6%**. Indian paediatric ALL cohorts:
+  9–10.7% (Khera 2019, PGIMER, PMID 30474703, OR 4.01 p=0.002 for adverse
+  events) and 16.7% (ICMR-NICHDR, Frontiers 2025). Homozygotes tolerate **8%**
+  of standard mercaptopurine dose; heterozygotes 63% (Yang 2015, PMID 25624441).
+- **A subtlety a software layer must get right.** ICiCLe-ALL-14 uses
+  **60 mg/m²/day** 6-MP in maintenance, not the 75 mg/m²/day CPIC references.
+  CPIC's dose-reduction advice for intermediate metabolizers is conditioned on a
+  starting dose **≥75 mg/m²/day**, so read literally it may not trigger at the
+  Indian dose — yet Indian data show NUDT15-variant carriers already achieve only
+  ~0.50 dose intensity versus 0.79 in wild-type (p<0.0001), i.e. ~30 mg/m²/day in
+  practice. **This is exactly the kind of guideline-to-local-protocol mismatch
+  `asl` exists to surface, and it must be surfaced rather than silently
+  resolved in either direction.**
+- ICiCLe-ALL-14 does not specify NUDT15 or TPMT testing; adjustments are
+  reactive. **No Indian centre tests NUDT15 routinely as standard of care.**
+  MPGx-INDALL (PMID 41843828, NCT05512169, protocol published Jan 2026) is the
+  implementation pathway to watch.
+
+### Net effect of pass 3 on the plan
+
+**The product thesis is unchanged and slightly better founded**, because the
+residual-risk argument never depended on Indian association data — it rests on
+CPIC's own caveat and on non-Indian wild-type toxicity rates (§3.2, C5).
+
+**What changed is the confidence with which we may speak about specific
+alleles.** c.496A>G and `*6` are *contested*, with Pavithran positive and D-TORCH
+null, and the toxicity-selected studies cannot arbitrate. §3.1's conflict flag is
+therefore not a nice-to-have; it is the only honest way to present them.
+
+**And the go/no-go got sharper.** If the two unbiased Indian studies disagree,
+then Phase 6 — the MCC retrospective, ~400–500 PCR-tested patients with
+toxicity follow-up — is not a confirmation exercise but the tie-breaker.
