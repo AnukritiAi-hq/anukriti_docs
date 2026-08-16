@@ -1691,3 +1691,139 @@ changed is one engine behaviour and one honest qualification:
 **Verification:** 111 tests pass (107 → 111). `ruff` clean. `--check` still
 passes against live CPIC, which is precisely the point of C19. `pgx-core` pin
 unchanged at 0.7.3.
+
+---
+
+## 15. Research pass 6 — the ledger's premise tested, and it holds for a reason we had wrong (2026-08-17, 00:30)
+
+Every prior pass tested the *problem*. This one tested the **plan** — specifically
+Capability C, the outcome ledger, whose entire value rests on an untested
+assumption: that evidence collected in India could actually change CPIC's call.
+If that route does not exist, the ledger is a filing cabinet.
+
+**It exists, it has a working precedent, and the DPYD-specific detail is the
+opposite of what we assumed.**
+
+### C22 — The reassessment route is real, and there is a precedent for our exact play
+
+CPIC's allele-function framework is now published in full: **Tibben BM, Gaedigk
+A, … Caudle KE, *Am J Hum Genet* 2025;112(12):2842–2859, PMID 41175864.** The
+mechanism, in CPIC's own words:
+
+> "Reassessment of allele clinical function status is triggered when CPIC becomes
+> aware of or receives **an inquiry which cites published literature** supportive
+> of evidence against an allele function assignment and the evidence was not
+> already assessed by experts."
+
+Then a staff member circulates an interim evidence table to the whole PCEP, and a
+new assignment requires **70% consensus**. Anyone may submit; the contact route is
+a public form.
+
+**The precedent is close to exact.** From CPIC's statin guideline page:
+
+> "October 2025: **In response to a CPIC member inquiry**, the SLCO1B1
+> pharmacogene curation expert panel was convened to reassess allele function
+> assignments for **select alleles with elevated frequencies in underrepresented
+> populations** and emerging evidence linking them to statin-induced myotoxicity."
+
+That is our argument, for a different gene, already accepted as grounds for
+convening a panel. The ledger's premise is validated — with one hard constraint
+we already had right: **it requires published literature.** A JSONL file is not
+an input to this process; a paper derived from it is. The ledger is therefore
+correctly scoped as a route to a publication, not a submission.
+
+### C23 — CPIC *already lowered* the DPYD bar, which inverts our reading of "Normal function"
+
+This is the finding that changes an argument. The framework paper documents that
+the evidence threshold is **gene-specific and modifiable**, and gives DPYD as its
+worked example:
+
+> "experts may modify this threshold based on the severity of the phenotype and
+> relative risk to the patient, such as for *DPYD*… In practice, this type of
+> modification has been made for DPYD, for which DPYD intermediate and poor
+> metabolizers are at an increased risk of severe or fatal fluoropyrimidine
+> toxicity. In this example, **the threshold of evidence for clinical
+> actionability was modified to call an allele clinical function for decreased or
+> no function alleles in the setting of limited data.**"
+
+The logic is explicit type-II-error avoidance: CPIC weighs "acting on a genotype
+which may not have been actionable" against "not acting on one which should have
+been", and for DPYD deliberately errs toward **calling an allele actionable on
+limited data**.
+
+**Every earlier pass in this document implicitly assumed the opposite** — that
+`*9A`, `*6`, `*5` and c.496A>G sit at "Normal function" because CPIC's bar is
+high and the Indian-relevant evidence had not cleared it. That reading is wrong,
+and the correct one is stronger for the field and weaker for us:
+
+- **Stronger for CPIC.** These four alleles are called Normal *against a
+  deliberately lowered bar*. `*9A` and `*5` carry **Strong** evidence, `*6` and
+  c.496A>G **Moderate**. CPIC was already leaning toward actionability and still
+  did not call them. That is a more considered position than "not yet assessed",
+  and any document of ours implying neglect was unfair.
+- **Weaker for the "just add the alleles" instinct.** §1's third rejected
+  solution — a panel asserting the opposite of CPIC — is now rejected on firmer
+  ground. It is not that CPIC has not looked; it is that CPIC looked with a
+  thumb on the scale in our direction and still said no.
+- **And it sharpens what would actually move the call.** Not more frequency data,
+  and not another in-vitro assay. A type-II argument is already priced in, so
+  what remains is **clinical outcome data in this population** — precisely and
+  only what the MCC retrospective would produce. The go/no-go was already the
+  go/no-go; this makes it the *sole* lever.
+
+Nothing in the engine changes. What changes is that `asl` should stop implying
+the Normal-function calls are under-examined, because they are not.
+
+### C24 — Two negative results from the same pass
+
+- **No biochemical/clinical divergence exists in DPYD.** CPIC publishes an
+  optional `Allele Biochemical Functional Status` that can differ from clinical
+  function (`CYP2C9*3` is the canonical case: no function clinically, decreased
+  biochemically). We already ingest the field. Checked all 84 DPYD rows carrying
+  it: **zero differ from clinical function.** So there is nothing to surface, and
+  the report is right not to render a column that would be identical throughout.
+  Worth having checked rather than assumed — it was a plausible place for a
+  hidden signal about the Indian alleles, and it is empty.
+- **No Indian genotype–outcome registry has appeared.** Searched again. What
+  exists is a *scoping review* cataloguing actionable variants for Indian practice
+  (Kulkarni et al., Tata Institute for Genetics and Society, PMC12286129 — 24
+  genes, 57 drugs) and the IPGx registry, which is **US**. The ledger's founding
+  premise — that no such registry is open to Indian sites — survives a fourth
+  search.
+
+### Engine work in the same session: the ledger's own adversarial pass
+
+`CONTRIBUTING.md` named the ledger as the untested blind spot. Driving
+site-shaped rows through it found **eight defects**, and two are severe:
+
+| | defect | why it matters |
+|---|---|---|
+| **L1** | a patient entered twice was **counted twice, in contradictory cells** | appending a corrected row is how a site edits a log; the append-only design *causes* this |
+| **L5** | a `*2A/*2A` homozygote could be recorded as "Normal Metabolizer" | the two columns then came from different sources, and the row poisons the exact analysis the ledger exists for |
+| L2 | unreadable genotype tokens accepted at entry | silently excluded from every later analysis; nobody finds out |
+| L3 | free-text phenotype accepted | makes the column unanalysable |
+| L4 | blank `engine_version` accepted | row cannot be reanalysed when CPIC's tables move — and they are moving |
+| L6 | negative cycles, zero and 99 m² BSA accepted | dose-intensity denominators; corrupt quietly rather than loudly |
+| L7 | toxicity at cycle 99 of a 2-cycle course | transcription slip between adjacent columns |
+| L8 | bare `KeyError` for a missing ID | told a site nothing |
+
+Fixed with `latest_per_patient()` (later rows supersede; the superseded count is
+**reported**, not silently applied), entry-time validation, and the same
+supersede logic in the CLI, which reads a flat CSV and had the problem
+independently. PHI checking moved to run **first**, so a leak is refused whether
+or not the rest of the row is well-formed. 114 → 140 tests.
+
+### What pass 6 changes about the plan
+
+1. **The ledger is validated as a mechanism** and correctly scoped: it feeds a
+   publication, which feeds a CPIC inquiry, which may convene a PCEP. Not a
+   direct submission. The SLCO1B1 precedent is the one to cite when the time
+   comes.
+2. **Drop any framing that CPIC has under-examined the Indian alleles.** It has
+   examined them against a threshold it deliberately lowered for this gene. Our
+   position is narrower and more defensible than we had been stating: the
+   evidence CPIC weighed is not from this population, and only outcome data can
+   change that.
+3. **The MCC retrospective is now the single lever, not one of several.** Neither
+   frequency data nor in-vitro work can move a call that already has a
+   type-II-error thumb on the scale.
