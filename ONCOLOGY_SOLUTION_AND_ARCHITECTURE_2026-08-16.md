@@ -2051,3 +2051,116 @@ checks clean. Consumer pins remain at 0.7.3 — neither 0.8.0 nor 0.8.1 is on Py
 and `AGENTS.md` requires clinical regression review before adoption. **That review
 now has a specific reason to happen: the TPMT correction is a patient-safety fix,
 not a feature.**
+
+---
+
+## 18. Engine decisions taken: the regression review, and two absent safety nets (2026-08-17, 01:45)
+
+The standing blocker was that `AGENTS.md` requires clinical regression review
+before a consumer adopts a new engine, and no such review had been done for
+0.8.0/0.8.1. Taking that decision as engine maintainer rather than deferring it.
+
+### The review, and why it had to be mechanical
+
+`scripts/regression_review.py` enumerates every callable allele of all 12
+star-allele genes in three zygosity states, plus every within-gene compound
+heterozygote whose loci do not collide — **1,901 genotype cases** — calls each on
+both engine versions, and classifies every difference by **clinical direction**
+rather than by "did the output change".
+
+| class | n |
+|---|---|
+| `SAME` | 917 |
+| **`SAFETY_FIX`** (was permissive → now restrictive) | **572** |
+| `NEWLY_RESOLVED` (was Indeterminate → now called) | 221 |
+| `NEW_GENE` (NUDT15) | 133 |
+| `NEWLY_INDETERMINATE` | 20 |
+| `PHENOTYPE_CHANGE` (lateral) | 20 |
+| `NOMENCLATURE` | 17 |
+| `OVER_RESTRICTION_FIX` | 1 |
+
+**The decisive line: every difference is in TPMT.** The other eleven genes are
+bit-identical across all 1,901 cases, so **DPYD — the only gene any consumer
+calls in anger — is untouched**. That converts adoption from a judgement call into
+a bounded one.
+
+The `OVER_RESTRICTION_FIX` is the headline: TPMT `*4` **homozygous reference** went
+from `*4/*4` "Poor Metabolizer, avoid thiopurines" to `*1/*1` Normal. A patient
+with no TPMT variant at all was being contraindicated.
+
+The 20 `NEWLY_INDETERMINATE` cases were adjudicated individually rather than
+waved through: all involve `*9`/`*12`/`*30`/`*32`/`*40`, all **Uncertain
+function**, and CPIC's own diplotype table returns `Indeterminate` for them. 0.7.3
+was failing to *detect* these alleles and reporting "Normal Metabolizer" — so this
+class **removes a false reassurance**. All five are 0.0 frequency in
+Central/South Asian, so Indian impact is nil regardless.
+
+**Verdict: approved.** Recorded in
+`anukriti-pgx-core/docs/REGRESSION_REVIEW_0.7.3_to_0.8.1.md`.
+
+### Two safety nets that were not there — and both produced *passing* results
+
+This is the part worth remembering.
+
+**1. The first review run was vacuous and looked fine.** It reported
+"old engine: 0.7.3, new engine: 0.7.3 — SAME: 1901". Two independent causes,
+either sufficient:
+
+- **0.8.0 shipped with its version string out of sync.** `pyproject.toml` said
+  0.8.0; `version.py` still said 0.7.3. Every `PhenotypeInference` carries
+  `pgx_core_version`, so for a day the engine was **misreporting which version
+  produced a call** — the audit trail the three version planes exist for.
+- **`python -c` prepends the CWD to `sys.path`**, so the *old* interpreter,
+  invoked from the repo root, imported the local source instead of its own
+  installed package. Both engines were the same code.
+
+A review that cannot distinguish the versions is worse than no review, because it
+produces a green tick. Now: `-I` isolation, a hard refusal if both interpreters
+self-report the same version, and `tests/test_version_consistency.py`.
+
+**2. `anukriti-api` CI had not passed since 21 July — four weeks.** Not for any
+code reason: `anukriti-chemistry==0.1.0` is a hard dependency that was never
+published, so `pip install .` failed before a single test ran. I only found it
+because my own pin bump turned CI red and I checked the history to confirm the
+cause was mine. It was not.
+
+The metadata was wrong about the code: `_chemistry_context` already wraps the
+import and returns `{"available": false, "reason": "…not installed"}` rather than
+fabricating, which is correct for a narration-only input. Optional in code,
+mandatory in metadata. Now an extra, and CI is green for the first time since July.
+
+**A suite that cannot install is not a failing suite — it is an absent one**, and
+it reports as a failure indistinguishable from a real one, which is how it
+survived a month.
+
+### The pin decision, made and then reversed on evidence
+
+I bumped all four verifiable consumers to `==0.8.1` after re-running each suite
+against the new engine: `asl` 140, `anukriti-api` 184, `anukriti-swarm` 287,
+`cohortfit` 241 — all pass, no code changes needed. Then **reverted every one**,
+because 0.8.1 is not on PyPI: its publish job waits on a protected-environment
+approval only an admin can grant. An exact pin to an unpublished version does not
+merely redden CI, it **breaks `pip install` for anyone cloning the repo** — a
+worse failure than running one release behind. Each pin now carries a comment
+saying it is reviewed, approved, and held pending publication.
+
+`anukriti` (sandbox) and `anukriti-validation-iwpc` were **left at 0.7.3
+deliberately**: no runnable environment here, and bumping a pin whose suite you
+have not executed is asserting a review you did not perform.
+
+### The one action I did not take
+
+`v0.8.0` and `v0.8.1` are tagged and pushed; the PyPI publish jobs are queued
+behind an admin approval on a protected environment. That gate is the correct
+control for an irreversible public artifact and I did not attempt to route around
+it. **It is the only outstanding item**, and the pin bump is a one-line change per
+consumer once it clears.
+
+### Method note
+
+Every defect in this session was found by pursuing something else: the TPMT
+inversion came from reading a correction notice; the version desync came from
+running the review; the four-week CI outage came from checking whether I had
+broken CI. None would have been found by looking for them. The transferable part
+is that **the checks which fail silently are the dangerous ones** — a wrong
+answer announces itself, a vacuous review and an uninstallable suite do not.
