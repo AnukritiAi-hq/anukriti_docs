@@ -197,6 +197,49 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
 ---
 
+## 📁 `colorectal-cancer-dpyd-5fu/` — CRC × DPYD × fluoropyrimidine focus set
+
+Three primary papers backing the colorectal-cancer beachhead (CRC → DPYD →
+5-FU/capecitabine). Kept in a subfolder because they are read together: they
+are the entire published South Asian / Asian evidence base for the two DPYD
+alleles this platform had a population-aware rule about, and **they disagree
+with each other**. That disagreement is the finding — see
+[`../DPYD_SAS_OVERRIDE_AUDIT_2026-07-28.md`](../DPYD_SAS_OVERRIDE_AUDIT_2026-07-28.md),
+which withdrew a shipped refusal built on them.
+
+### 18. Hariprakash-2018-Pharmacogenomics-DPYD-Variant-Landscape-South-Asian-Populations.pdf
+
+- **Title:** Pharmacogenetic landscape of DPYD variants in south Asian populations by integration of genome-scale data
+- **Authors:** Judith M Hariprakash, Shamsudheen K Vellarikkal, Pavithran Keechilat, ... Sridhar Sivasubbu, Vinod Scaria (CSIR-IGIB + Amrita Institute of Medical Sciences)
+- **Journal:** Pharmacogenomics 19(3):227-241 (Feb 2018; epub 14 Dec 2017)
+- **DOI:** [10.2217/pgs-2017-0101](https://doi.org/10.2217/pgs-2017-0101) · **PMID:** [29239269](https://pubmed.ncbi.nlm.nih.gov/29239269/)
+- **Summary:** The largest South Asian DPYD variant map: 15 PharmGKB-annotated variants across an integrated 3,140-genome cohort (SAGE — 1000G SAS, INDICO, SSMP, SAG, SSIP, Wellness Genome, Andamanese), plus a 110-patient clinical validation in Indian GI-cancer patients on 5-FU regimens (36 colon, 41 rectal). Level-1A alleles (`*2A`, `c.1679T>G`, `c.2846A>T`) are near-absent in South Asians; `rs1801265` (`*9A`) and `rs12022243` are the most frequent.
+- **Relevance to Anukriti:** **The paper the withdrawn `U4` DPYD override cited.** Two things to know before citing it: (1) its clinical association is for **M166V/rs2297595** — hand-foot syndrome OR 5.22 (p=0.011), neuropathy OR 3.66 (p=0.027); (2) its **`*9A` assay failed outright** (Table 5, `NW: Not working`), so it supplies no `*9A` clinical evidence at all. Also the source of the real SAS frequency ranges (rs1801265 0.208–0.266; rs2297595 0.062–0.100) that contradicted the platform's hand-written records.
+
+---
+
+### 19. Naushad-2021-JGeneMed-DPYD-Pharmacogenetic-Profiling-Indian-Population.pdf
+
+- **Title:** Pharmacogenetic profiling of dihydropyrimidine dehydrogenase (DPYD) variants in the Indian population
+- **Authors:** Shaik Mohammad Naushad, Tajamul Hussain, Salman Alrokayan, Vijay Kumar Kutala (Sandor Speciality Diagnostics, Hyderabad; King Saud University; NIMS Hyderabad)
+- **Journal:** The Journal of Gene Medicine 23(1):e3289 (Jan 2021; epub 20 Nov 2020)
+- **DOI:** [10.1002/jgm.3289](https://doi.org/10.1002/jgm.3289) · **PMID:** [33105068](https://pubmed.ncbi.nlm.nih.gov/33105068/)
+- **Summary:** The largest single Indian DPYD cohort (n=2,000 healthy adults, Infinium GSA), 12 variants identified, plus a pooled meta-analysis against six prior Indian toxicity studies. Level-1A alleles rare (cumulative MAF 1.889%); Level-3 alleles predominant (C29R 24.91%, I543V 9.05%, M166V 8.99%, V732I 8.44%). In the pooled data, `rs1801160` (`*6`) OR 1.88 (p=0.03), `rs1801158` (`*4`) OR 4.40 (p<0.0001), `rs3918290` (`*2A`) OR 158.14 (sparse-cell artifact; author's own head-and-neck subset gives 3.79).
+- **Relevance to Anukriti:** **Explicitly finds no association for both alleles the override blocked on** — `*9A` OR 1.03 (p=0.95), M166V OR 1.54 (p=0.32) — directly contradicting Hariprakash's M166V result. Functional data agrees (C29R 75%, M166V 72% relative DPD activity). Its `*4`/`rs1801158` result is a live open question for `pgx-core`, which assigns that allele Normal function per CPIC. **Caveat when citing:** the pooled design compares healthy-cohort counts against pooled patient counts across studies with different platforms and cancer types, unadjusted.
+
+---
+
+### 20. Atasilp-2025-CancerChemotherPharmacol-DPYD-Polymorphisms-5FU-Toxicity-Thai-Colorectal.pdf
+
+- **Title:** Influence of DPYD gene polymorphisms on 5-Fluorouracil toxicities in Thai colorectal cancer patients
+- **Authors:** Chalirmporn Atasilp, Natchaya Vanwong, ... Chonlaphat Sukasem (Ramathibodi Hospital / Mahidol University)
+- **Journal:** Cancer Chemotherapy and Pharmacology 95(1):2 (2025; epub 9 Dec 2024)
+- **DOI:** [10.1007/s00280-024-04722-z](https://doi.org/10.1007/s00280-024-04722-z) · **PMID:** [39652193](https://pubmed.ncbi.nlm.nih.gov/39652193/)
+- **Summary:** 75 Thai metastatic CRC patients on 5-FU regimens (FOLFOX/FOLFIRI/5-FU+leucovorin), 5 DPYD SNPs by TaqMan, hematological toxicity graded CTCAE v5.0 over two cycles. `*2A` and `c.1774C>T` absent entirely. `*9A` associated with grade 3–4 neutropenia in 100% (2/2) of GG homozygotes from cycle 1 (p<0.001), leukopenia (p=0.001), thrombocytopenia (p<0.001). `*5` homozygotes showed *no* toxicity (p=0.02).
+- **Relevance to Anukriti:** The **only** one of the three papers supporting a `*9A` toxicity signal — but on **two homozygous patients**, in a Thai (not South Asian) cohort, and **no association survives its own multivariate analysis** (Table 8). The authors name small sample size as their first limitation. Also a useful CRC-specific toxicity-rate reference: 14.7% grade 3–4 neutropenia in cycle 1, which is materially lower than the "30–40% grade ≥3" figure loose in circulation.
+
+---
+
 ## 📰 Companion Document
 
 - **human-pangenome-reference-2023.md** — Press release / paper summary on the Human Pangenome Reference Consortium (Liao et al., Nature 2023; Eimear Kenny co-author).
@@ -218,9 +261,11 @@ Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 | CYP2D6 SV reporting / nomenclature standard (Rung 2) | PharmVar Tutorial 2023 |
 | Targeted PGx panel / input format (Rung 1) | ClinPharmSeq 2022 |
 | Variant frequency / constraint baseline (Rung 4) | GenomeAsia100K 2019, gnomAD constraint 2020 |
+| **DPYD × fluoropyrimidine × South Asian / Asian toxicity (CRC focus)** | **Hariprakash 2018, Naushad 2021, Atasilp 2025** |
 
 > Rung mapping is defined in [`../DETECTION_ROADMAP.md`](../DETECTION_ROADMAP.md).
 
 ---
 
-*Last updated: 2026-06-14*
+*Last updated: 2026-07-28*
+
