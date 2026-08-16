@@ -3,6 +3,28 @@
 > Generated: 2026-06-06 | For: Cancer Research Institute partnership positioning
 > Status: Live in platform (workflow `fluorouracil_dpyd`, CPIC Level A)
 
+> **⚠ TWO CORRECTIONS (2026-08-16) — §8 of this document was wrong on both counts.**
+>
+> 1. **The "27% South Indian `*9A`" figure is refuted.** It was a hand-written
+>    claim that cited a real paper for a number the paper does not support, and
+>    it ran live for 52 days. The audit is
+>    `DPYD_SAS_OVERRIDE_AUDIT_2026-07-28.md`. The defensible figure is CPIC's
+>    **Central/South Asian `*9A` frequency of 0.25526** — an *allele* frequency
+>    from a reference panel, which is not the same quantity as a South Indian
+>    carrier rate and must not be described as one. It was also removed from
+>    `DPYD_PARTNERSHIP_PITCH.md` for the same reason.
+> 2. **Rule `U4_SAS_DPYD_OVERRIDE` is no longer a live feature, and describing it
+>    as a differentiator was the actual defect.** It asserted a
+>    population-specific override of CPIC on the strength of that refuted number.
+>    It shipped in `anukriti-swarm de57afe` as **`P1_SAS_DPYD_CONTESTED`** — a
+>    *named uncertainty* that no longer touches `allows_synthesis` and emits
+>    `UNCERTAINTY_TRANSITION` rather than `SAFE_ABSTENTION`. The 10 hand-written
+>    frequency records behind it were replaced with live-queried gnomAD values.
+>
+> The lesson generalises and is the founding argument for `asl`: **surfacing a
+> conflict with CPIC is defensible; silently overriding CPIC is not.** See
+> `ONCOLOGY_SOLUTION_AND_ARCHITECTURE_2026-08-16.md` §3.1 and §6 item 3.
+
 ---
 
 ## 1. The Clinical Problem (Why This Matters)
@@ -196,15 +218,21 @@ Capecitabine receives identical recommendations (as mandated by CPIC 2017).
 The Ho 2025 paper focuses on the **4-variant European panel** exclusively.
 Our engine goes further:
 
-- **Rule U4:** Population-aware refusal for SAS patients carrying *9A (27% South Indian freq)
+- **`P1_SAS_DPYD_CONTESTED`:** a *named uncertainty* for SAS patients carrying
+  `*9A` (CPIC Central/South Asian allele frequency **0.25526**). It states the
+  conflict alongside CPIC's call and never replaces it. **Corrected 2026-08-16 —
+  this was previously `U4`, a population-aware refusal resting on a refuted
+  "27% South Indian" figure. See the header of this document.**
 - **rs2297595 (M166V):** Enriched in SAS, flagged for expanded monitoring
-- **Named refusal with rule ID** — no other implementation does this
+- **Named uncertainty with a stable rule ID** — no other implementation does this
 - **Evidence density reporting** — we surface WHERE the evidence is thin
 
 The paper explicitly states: "DPYD allele frequencies differ across race and
 ethnicity... each institution's patient population inclusive of race and
 ethnicity should be taken into consideration when selecting which DPYD
-variants to test." — This is exactly what our U4 rule does.
+variants to test." — Our flag surfaces exactly that consideration. Note the
+paper calls for *choosing which variants to test*; it does not license
+reassigning an allele's CPIC function, which is what `U4` did.
 
 ---
 

@@ -1251,3 +1251,186 @@ therefore not a nice-to-have; it is the only honest way to present them.
 **And the go/no-go got sharper.** If the two unbiased Indian studies disagree,
 then Phase 6 — the MCC retrospective, ~400–500 PCR-tested patients with
 toxicity follow-up — is not a confirmation exercise but the tie-breaker.
+
+---
+
+## 11. Adversarial audit of `asl` — seven further defects, all fixed
+
+Written after the package was built and its 72 tests passed. The method was not
+to re-read the code but to **drive patient-shaped inputs through the pipeline and
+inspect what came out** — the same technique that found the strand defect in
+`pgx-core` 0.7.1, where every test passed because the tests shared the table's
+wrong convention.
+
+All seven are the same failure class as §5.6 and as the clinical problem itself:
+**a defensible-looking default that converts "we do not know" into "nothing
+found", without recording that it did.** Every one produced a *confident, clean,
+plausible report* rather than an error.
+
+| # | Defect | Behaviour before | Now |
+|---|---|---|---|
+| 4 | Unknown population key | `"South Asian"` (not a CPIC key) silently suppressed **every** frequency line and the entire uninformative-locus section, while the header still printed the population — a report that looked population-aware and was population-blind | refused, with the six valid keys listed |
+| 5 | Nothing tested | an assay whose every locus was `NOT_TESTED` returned `*1/*1` **"Normal Metabolizer"** from zero observations | refused before the engine is called |
+| 6 | Wrong gene | `gene="CYP2D6"` was accepted and run through the DPYD caller, yielding a DPYD diplotype from another gene's loci | refused |
+| 7 | Unlabelled found allele | an allele with no CPIC label reached the diplotype and appeared **nowhere** in the evidence section — a finding with its provenance stripped off | refused |
+| 8 | Duplicated locus | two readings of one rsID: the second silently overwrote the first, and the losing genotype vanished from the record entirely | refused in `AssayResult.__post_init__` |
+| 9 | Off-panel genotype | a CSV recording `*6` het, interpreted against `cpic4`, marked the locus `NOT_TESTED` and reported `*1/*1` — **the observed variant disappeared** | refused; choose a panel that covers it |
+| 10 | **Blank CSV cell** | an empty `rs1801265` cell defaulted to `hom_ref`, so the locus was printed under **"Tested & negative"** — the patient was told absence was established at a position nobody read | blank ⇒ no-call ⇒ `NOT_TESTED`; the default is **removed**, so an unstated locus is an error |
+
+Defect 10 is the most serious, and it is worth being precise about why: it is the
+exact defect the package was written to prevent, reintroduced one layer below the
+type system that prevents it. `models.py` makes `NOT_TESTED` and `ABSENT`
+unconflatable *as types* — and then the CSV reader collapsed them anyway, because
+`genotypes.get(rsid, Zygosity.HOM_REF)` is an entirely reasonable line of code.
+**A type-level guarantee is only as strong as the boundary that constructs the
+types.** The fix is not a validation check but the removal of the default:
+`_assay` now requires an explicit entry for every panel locus and refuses
+otherwise.
+
+Two consequences follow the fix outward:
+
+- **The panel name now degrades with the data.** When loci return no call the
+  report reads `"... (4 of 8 loci returned a call)"`, because the panel name is
+  what the report attributes its conclusions to and it must not claim coverage
+  the data did not deliver.
+- **`quadrant` excludes no-call patients rather than counting them negative.**
+  Counting them as negative would inflate the panel-negative/grade≥3 cell — the
+  single cell the MCC retrospective exists to measure — **in the direction that
+  flatters our own thesis.** That this bias was self-serving and unnoticed is the
+  point.
+
+**Verification.** 83 tests pass (72 → 83; 11 added, one per defect plus the
+no-call and quadrant-bias properties). `ruff` reports no new findings attributable
+to these changes beyond one stylistic `UP033` matching the file's existing
+`lru_cache` convention. The `pgx-core` pin is untouched at `0.7.3` — every fix is
+in `asl`, and none alters a phenotype, an activity score or a CPIC call.
+
+### What this says about the method
+
+Nine defects have now been found in this work: two in `pgx-core` (§5.6, and the
+`*6` deviation in §8 of the 08:29 document) and seven in `asl`. **None was found
+by a failing test.** Every one was found by asking what the code would print for
+a specific patient and then looking at the output. The test suite grew *after*
+each finding, which is the correct order — a test can only encode a failure mode
+someone has already imagined.
+
+The through-line of §9 holds one level deeper than stated there. It is not merely
+that a guideline-conformant report strips uncertainty off a correct answer. It is
+that **every layer does this, including the layer built to stop it.** `asl` exists
+because a lab report converts "not on our list" into "normal"; `asl` itself
+converted "blank cell" into "negative". The defence is not a better type system,
+a longer refusal list, or more tests. It is the discipline of driving real inputs
+through and reading the output as a patient would.
+
+---
+
+## 12. Research pass 4 — the problem re-derived from current sources (2026-08-16, 17:45)
+
+The prior passes were reviewed rather than re-run. This pass went back to the
+literature and to CDSCO directly, on the principle that a problem statement should
+be re-tested against current sources rather than trusted because it is written
+down. **The problem statement survives and is now better sourced. One claim in
+§11's own fix was wrong and is corrected here.**
+
+### C15 — D-TORCH is now a peer-reviewed paper, not a preprint
+
+The single most-cited source in this whole analysis has been published:
+**Baskarane, Divakar, … Batra. *Front Pharmacol* 17:1732128, 20 February 2026,
+doi 10.3389/fphar.2026.1732128.** Received 25 Oct 2025, accepted 19 Jan 2026.
+Editor Luis Abel Quiñones; reviewers Jacqz-Aigrain and Afolabi. Open access CC-BY.
+Every earlier document treats it as abstract- or preprint-grade. **It is now
+citable as a peer-reviewed primary source, and the ~554-patient supporting base
+in C4 can be dropped to a supporting role.**
+
+Reading the published tables directly settles two internal questions:
+
+- **The Table 4 header swap is real and is in the published version.** The header
+  reads `Variant (n = 22)` / `Wild-type (n = 54)`, but the cohort is 54 variant
+  carriers and 22 wild-type — the labels are transposed. The body text gives the
+  correct orientation: **66.7% (36/54) of variant carriers vs 63.6% (14/22) of
+  wild-type had grade 2–3 toxicity.** Our earlier reading (55.6% vs 63.6%) was
+  taking the `Overall toxicity ≥ grade 2` row, which is a different endpoint from
+  the "grade 2 or 3" figure in the text. **Both readings agree on the conclusion
+  and it is the conclusion that matters: variant status carried no useful
+  information.** All Firth-adjusted ORs are null (any ≥grade 2: OR 0.52,
+  95% CI 0.16–1.51, p = 0.23), and *no covariate at all* was significant.
+- **The headline number is confirmed exactly, and it is the right number.**
+  "35 out of 50 patients … classified as normal metabolizer phenotype as per the
+  CPIC guidelines, still developed grade 2 or 3 toxicity" — **70%**, the authors'
+  own words, and they draw our conclusion for us: *"emphasizing the limitation of
+  CPIC-based phenotype prediction and dose adjustment in the Indian population."*
+
+### C16 — The strongest formulation of the problem is now a published quotation
+
+D-TORCH cites White 2021 (PMID 34916829) for a sentence that states our thesis
+more precisely than any of our own prose:
+
+> "The DPYD activity score, validated in the Caucasian population, remains
+> unverified in other ethnic groups, potentially explaining toxicity differences
+> among CPIC-classified normal metabolizers."
+
+This matters for the §6 regulatory posture. **The claim that the activity score is
+unvalidated for Indians is not ours; it is published, peer-reviewed, and cited
+approvingly by the only Indian NGS cohort.** We are surfacing a limitation the
+field has already stated, which is exactly the "enables independent review of the
+basis" position that keeps this a non-device CDS argument in the US and an
+evidence-display product under CDSCO.
+
+### C17 — Chan 2024 corrects §11's own fix (**a defect in my defect fix**)
+
+Chan, Zhang & Pirmohamed, *Br J Cancer* 131:498–514 (2024), PMID 38886557 — a
+PRISMA systematic review of 32 studies, 1,313 non-European patients, 53 DPYD
+variants across 5 ethnic groups including South Asian. Two findings bear directly
+on code I wrote earlier today:
+
+1. **`*13` was found in a Tunisian patient with severe toxicity although its
+   Middle Eastern reference frequency is 0%.** `*2A` was found in 14 Chinese, 1
+   Thai and Japanese patients although its East Asian reference frequency is 0%.
+2. Therefore **a 0.00000 CPIC frequency is an absence of observation in a
+   reference panel, not proof of absence in the population.**
+
+§11's `ASL-POP-01` section printed: *"this locus cannot return a positive result
+in this population."* **That is an overclaim, and it is the same failure class as
+everything else in this document, inverted.** Where the clinical problem is
+missing data presented as reassurance, my fix presented missing data as
+*impossibility* — and it would have licensed a clinician to dismiss a positive
+`*13` call as an assay error. In a country whose population structure is poorly
+covered by reference panels, that is the wrong direction to be wrong in.
+
+**Fixed.** The section is now `LOCI WITH VERY LOW EXPECTED YIELD HERE`, states that
+a zero reference frequency is an absence of observation rather than proof of
+absence, cites Chan 2024, and ends: *"A positive call at this locus must still be
+acted on."* Pinned by `test_zero_frequency_is_low_yield_not_impossibility`, which
+asserts the phrase "cannot return a positive" is **absent** from every report.
+
+### C18 — Two things the fresh pass did not find
+
+- **CDSCO.** Searched current CDSCO output directly. The SEC (Oncology) minutes
+  through 2026 (13th/26 of 06.05.2026, 15th/26, 18th/26 of 08.07.2026, 21.07.2026)
+  are **entirely clinical-trial approvals** — protocol permissions, sample-size
+  and site conditions, "All PIs shall be Medical Oncologist". **No PGx or DPYD
+  item appears in any of them.** This is consistent with C7's UNVERIFIED status on
+  Indian guideline coverage: still no evidence Indian regulators or the NCG have
+  addressed pre-treatment DPYD testing. Absence of evidence, not proof of absence
+  — but it is now a *searched* absence, twice.
+- **No newer Indian cohort exists.** D-TORCH (n=76) remains the only Indian
+  NGS-based DPYD study. Pavithran 2021 (n=375) is still an ASCO abstract, and
+  D-TORCH's discussion confirms our C11 reading: Pavithran's `c.496A>G`/`*2A`
+  findings come from cohorts **selected for grade-3 toxicity**, which D-TORCH
+  names explicitly as the reason its own unselected cohort disagrees. **The
+  ascertainment-bias problem (C12) is now corroborated by the authors of the one
+  unbiased study.**
+
+### What pass 4 changes about the plan
+
+Nothing in the architecture. The problem is more firmly established, one
+overclaim in the engine is removed, and the go/no-go is unchanged: **two
+unbiased-vs-selected Indian data sources disagree about `c.496A>G` and `*6`, and
+only the MCC retrospective can arbitrate.** What did change is the *citation
+posture* — the two load-bearing claims (activity score unvalidated outside
+Caucasians; 70% of CPIC-normal Indian patients toxify anyway) are now both direct
+quotations from peer-reviewed papers rather than our own inferences. That is the
+strongest position this analysis has been in, and it was reached by re-checking
+rather than by adding.
+
+**Verification:** 84 tests pass (83 → 84). `pgx-core` pin unchanged at 0.7.3.
