@@ -1951,3 +1951,103 @@ above are from the original.
 check clean. `asl` unchanged at 140 tests and still pinned to 0.7.3 — 0.8.0 is not
 on PyPI, and `AGENTS.md` requires clinical regression review before a consumer
 adopts a new engine version.
+
+---
+
+## 17. The TPMT defect — found by fixing something else (2026-08-17, 01:20)
+
+Pass 7 left one open item: read the correction notice to the CPIC 2025 thiopurine
+guideline before quoting figures from it. Doing that led somewhere unexpected.
+
+### The correction itself is minor, and we had already handled it
+
+CPIC corrected **Table 1** of the guideline (*Clin Pharmacol Ther*, 13 May 2026,
+doi 10.1002/cpt.70298): one no-function allele plus one decreased-function allele
+is an **Intermediate Metabolizer**, not a *Possible* Intermediate Metabolizer as
+printed. Therapeutic recommendations are identical for both, so the clinical
+effect is nil.
+
+None of the figures quoted in §16 came from Table 1, so nothing in this document
+needed changing. And the NUDT15 tables generated yesterday came from the live
+API, which is post-correction — verified. **The generate-don't-transcribe rule
+absorbed a guideline correction without anyone acting on it**, which is the first
+time that discipline has paid off observably rather than argumentatively.
+
+### But checking it exposed a genotype-inverting defect in TPMT
+
+While confirming the correction was reflected, I diffed the hand-authored TPMT
+tables — the last thiopurine artifacts not generated from CPIC — against the live
+API. **Three independent defects, and the whole suite passed throughout.**
+
+**1. Six wrong ALT bases, one inverting.** The `*3A` row was
+`rs1800460` / `alt='C'`, but CPIC's `chromosomelocation` is `g.18138997C>T`, so
+`C` is the **reference** base:
+
+| sample | called | truth |
+|---|---|---|
+| homozygous **reference** | `*3A/*3A` **Poor Metabolizer** | `*1/*1` Normal |
+| `*3A` heterozygote | `*1/*3A` | `*1/*3A` (correct by luck) |
+| `*3A` **homozygote** | `*1/*1` **Normal Metabolizer** | `*3A/*3A` Poor |
+
+A healthy patient was told to avoid thiopurines; a true poor metabolizer was
+cleared for full dose. `*4` and `*8` carried the same inversion, and `*7`, `*23`,
+`*38` pointed at the wrong rsID entirely.
+
+**This is the DPYD strand defect, exactly.** Same mechanism (cDNA vs plus-strand
+genomic notation), same gene family of consequence, same reason it survived: the
+**test fixtures encoded the same wrong convention** (`ref="G", alt="C"` at
+rs1800460), so table and test were wrong *together* and agreed. The DPYD write-up
+in 0.7.2 named this failure mode explicitly — "a wrong convention that is
+self-consistent across code and fixtures is invisible to tests written in it" —
+and it was sitting in the next gene over the entire time.
+
+**2. Four allele-function divergences from CPIC**, the 0.7.2 `*6` failure class
+again, none recorded as a deliberate judgement: `*8` No→**Decreased** (as *No
+function*, `*1/*8` computes Intermediate where CPIC publishes **Normal** —
+over-restricting), `*23` Decreased→**No**, `*24` Decreased→**Uncertain**, and
+`*3D` asserting a function **CPIC does not publish at all**.
+
+**3. Coverage: 17 of CPIC's 1225 diplotypes**, leaving **66 caller-reachable
+diplotypes with no phenotype**. A `*6` heterozygote — a no-function allele —
+returned `Indeterminate` where CPIC publishes *Intermediate Metabolizer*. Every
+one of the 17 rows was *correct*, which is why nothing failed. The defect was
+coverage, and coverage defects are invisible to tests written against the covered
+rows.
+
+### And a fourth problem the fix itself exposed
+
+Generating the table correctly made `*3A` heterozygotes resolve to `*3A/*3B` —
+Poor instead of Intermediate. CPIC defines `*3A` by **two** loci
+(`rs1800460:T` + `rs1142345:C`) and `*3B`/`*3C` by one each — *the same two loci*.
+Single-rsID matching, which is the library-wide pattern, cannot distinguish a
+`*3A` heterozygote from a `*3B`/`*3C` compound heterozygote.
+
+`TPMTCaller` is now haplotype-aware: longest-match-first with copy consumption, so
+a two-locus haplotype claims its loci before either subset. **Stated honestly as
+an unphased inference, not a phase determination** — one copy at each locus is
+genuinely ambiguous, and `*3A` is selected because it is far the commoner haplotype
+(European 0.0338 vs `*3B` 0.0028) *and* because it is the non-over-restricting
+reading. A phased laboratory result should override it.
+
+### What this says about the method, and about `asl`
+
+Three things worth recording:
+
+1. **`asl` was never affected.** Its TPMT evidence table was generated from CPIC
+   from the start, so it carries `*8` as *Decreased function* and `*24` as
+   *Uncertain* — correct, while the engine underneath it was wrong. The
+   generated-not-authored rule protected the layer that adopted it.
+2. **The defect was found by pursuing an unrelated open item.** Nobody audits TPMT
+   for its own sake; it is not the wedge gene. It surfaced because reading a
+   correction notice required checking whether our tables reflected it.
+3. **A published post-mortem does not prevent recurrence in a sibling.** 0.7.2
+   documented this exact failure mode in detail, and the next gene had it. The
+   generalisable fix is not "be careful with strands" — it is that **every
+   allele table must be generated, and every ALT checked against CPIC's own
+   notation rather than against our fixtures**, which is now a `cpic_live` test.
+
+Shipped as `pgx-core` **0.8.1**. 235 → 252 tests, `cpic_live` 2 → 5, both drift
+checks clean. Consumer pins remain at 0.7.3 — neither 0.8.0 nor 0.8.1 is on PyPI,
+and `AGENTS.md` requires clinical regression review before adoption. **That review
+now has a specific reason to happen: the TPMT correction is a patient-safety fix,
+not a feature.**
