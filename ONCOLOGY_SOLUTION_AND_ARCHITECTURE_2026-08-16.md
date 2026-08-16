@@ -1434,3 +1434,117 @@ strongest position this analysis has been in, and it was reached by re-checking
 rather than by adding.
 
 **Verification:** 84 tests pass (83 → 84). `pgx-core` pin unchanged at 0.7.3.
+
+---
+
+## 13. Audit round 2 — the variant-positive patient (2026-08-16, 22:40)
+
+Every earlier pass, and every test in §11, walked the **panel-negative** patient
+through the report. That is the patient the package was designed around, so that
+is the path that was already correct. This round walked a *carrier* through
+instead — and the four-quadrant table through a spreadsheet that a site would
+plausibly hand over. **Five defects, all fixed, all now pinned by tests that
+fail against the previous code.** 86 → 107 tests.
+
+### D1 — A Poor Metabolizer was shown the wild-type toxicity rate (**the serious one**)
+
+`residual.compute()` keyed the quoted grade ≥3 rate on the **regimen alone**. A
+`*2A/*2A` Poor Metabolizer on systemic chemotherapy therefore received:
+
+> Regimen-matched rate (systemic): **22.7% (231/1018)** of patients without an
+> actionable DPYD variant experienced grade ≥3 toxicity.
+
+Henricks 2018 and Lunenburg 2018 both measure that rate among patients **without**
+an actionable variant. This patient is the opposite of that group. The line was
+literally true and situationally false, and it failed in the **reassuring**
+direction for the one patient in the whole workflow who should be reassured
+least — someone CPIC says to give no fluoropyrimidine at all. It is the
+package's own thesis — *a number stripped of the population it was measured in*
+— reproduced inside the tool built to prevent it, and it survived three prior
+adversarial passes because every one of them tested a negative panel.
+
+**Fix.** A found allele that CPIC does not call *normal function* now withholds
+the rate and says why. The function call is read from the pinned CPIC evidence
+table, so the set cannot drift from CPIC. `ResidualRisk` carries
+`applies_to_this_patient`, and the report prints `RATE WITHHELD — DOES NOT APPLY
+TO THIS PATIENT`.
+
+**The over-correction was also avoided, deliberately.** A `*9A` or `*6` carrier
+*keeps* the rate, because CPIC calls those alleles normal function and the
+published cohorts defined their comparison group by the absence of an
+**actionable** variant, not of any variant. Withholding it there would have
+stripped the one number a panel-negative Indian patient's report exists to
+deliver — which is the entire product. Pinned in both directions:
+`test_wildtype_rate_is_withheld_from_a_carrier` (8 parametrisations) and
+`test_wildtype_rate_is_kept_for_a_normal_function_carrier`.
+
+A second-order version of the same error was then found *in the fix*: the
+withholding message quoted "22.7% systemic … 13.6% chemoradiation" while
+explaining that neither applied. A number on the page is read whatever the
+sentence around it says. The figures were removed and replaced with PMIDs, and
+the test asserts `"22.7"` is absent from the residual section.
+
+### D2 — "No variant was found among the loci tested" on a panel that mostly failed
+
+With three of four CPIC loci returning no call, the report said *"No variant was
+found among the loci tested"* — one locus of reassurance rendered in the language
+of four. The panel *name* was correctly annotated `(1 of 4 loci returned a call)`
+by the CLI, but the residual section's own sentence contradicted it, and the
+sentence is the one a clinician reads. Now: *"No variant was found at the 1 locus
+that returned a call"*, plus an explicit count of loci not assayed.
+
+### D3 — The CPIC recommendation never named the drug
+
+`interpret.call_engine` hardcoded `action_for("DPYD", phenotype, "capecitabine")`
+and the report rendered a bare `CPIC action : AVOID`. A patient on infusional
+5-FU got a recommendation labelled for a drug they were not taking — invisibly,
+because the drug appeared nowhere in the output. Added a closed `Drug` enum
+(`capecitabine`, `fluorouracil`), threaded through `AssayResult` and the CLI
+(`--drug`, plus a `drug` CSV column), and the report now prints `AVOID (for
+capecitabine)`.
+
+### D4 — A blank clinical action would have rendered as an empty line
+
+`action_for` **never raises** — it is on the hot phenotype path, so an
+unrecognised phenotype/drug pair returns `""` by design. Rendered, that is
+`CPIC action :` followed by nothing, which reads as *nothing to do*. Exhaustive
+search over all 13 pinned loci in every 1- and 2-locus zygosity combination found
+no input that reaches it today (all reachable phenotypes are Normal/Intermediate/
+Poor), so this is a latent defect rather than a live one — but it is exactly the
+kind that activates when a fourteenth allele or a third drug is added. Now
+refused explicitly.
+
+### D5 — The PHI scan did not look inside containers, and unreadable genotypes counted as positive
+
+Two ledger defects, both found by supplying the kind of row a site actually
+produces rather than the tidy row the tests used.
+
+- **`_reject_phi` only pattern-checked top-level strings.** `as_dict()` renders
+  `toxicity` as a list of dicts and `dose_modifications` as a list of strings —
+  which are precisely the **free-text prose fields**, and therefore precisely
+  where a phone number or a date of birth actually arrives. A toxicity term of
+  `"mucositis, patient called on 9876543210"` was accepted and written to the
+  JSONL. Now recursive through lists, tuples and nested mappings, with the
+  offending path named (`toxicity[0].term`).
+- **`quadrant()` treated any token outside a 4-item literal set as a variant.**
+  So `"0|0"` — legal VCF phased wild-type — counted as panel-**POSITIVE**, and so
+  did an empty string. Both directions are wrong, and the first moves patients
+  *out of* the panel-negative cell the retrospective exists to measure. Now
+  wild-type and variant tokens are both enumerated, and anything else is a third
+  state: `excluded_unreadable_genotype`, reported rather than absorbed.
+
+### What this round says about the method
+
+The §11 audit asked "what inputs produce a confidently wrong report?" and found
+seven. It found none of these five, because it varied the *input shape* while
+holding the *patient type* fixed. Four of the five defects here are invisible to
+any panel-negative test case, and the fifth needs a spreadsheet rather than a
+constructor call. **The generalisable lesson is that an adversarial pass inherits
+the blind spot of whatever example it is built around** — and this package's
+founding example is the reassured negative patient, so the carrier was
+systematically untested. The next pass should start from the ledger and the
+NUDT15 path, which have had no adversarial attention at all.
+
+**Verification:** 107 tests pass (86 → 107), `ruff check` clean, `pgx-core` pin
+unchanged at 0.7.3. Each new test was confirmed to fail against the pre-fix
+behaviour before being accepted.
