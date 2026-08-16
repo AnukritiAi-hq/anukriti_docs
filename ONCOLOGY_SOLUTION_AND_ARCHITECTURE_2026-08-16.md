@@ -845,9 +845,10 @@ CPIC's PCEP process** (C7, §3.3).
 ### 5.6 Three defects the walkthrough exposed
 
 **Defect 1 — the engine silently drops alleles when >2 copies are detected.
-Real, verified, and not an edge case for Indian patients.** Executed:
+Real, verified, and not an edge case for Indian patients. FIXED in `pgx-core`
+0.7.3 (tagged, all five consumers bumped).** Executed against 0.7.2:
 
-| Input | Copies detected | Engine output |
+| Input | Copies detected | 0.7.2 output |
 |---|---|---|
 | `*9A` hom | 2 | `*9A/*9A` ✓ |
 | `*9A` het + `*6` het | 2 | `*6/*9A` ✓ |
@@ -858,12 +859,17 @@ A diploid genome has two DPYD chromosomes, so >2 copies means the input is
 inconsistent, unphased across a haplotype, or a genotyping artifact. Whatever the
 cause, **the caller must not resolve it by quietly discarding alleles.** In
 Europeans this is rare. In Indians it is *expected*: `*9A` 0.25526, `*6` 0.09506,
-M166V 0.08517 — P(≥3 copies across these three loci) is not small.
+M166V 0.08517.
 
-*Action:* file against `pgx-core` for 0.7.3 — emit an
-`OVERSPECIFIED_GENOTYPE` signal (or `Indeterminate` with the full detected
-allele list preserved) rather than truncating. **`asl` must not paper over this**:
-`interpret` refuses when detected copies exceed 2 and surfaces the full list.
+**Resolution (0.7.3):** `Diplotype` gains `copies_detected` and `overspecified`
+(`copies_detected > 2`), plus a `total_allele_copies()` helper. The truncation is
+retained for backwards compatibility but is no longer invisible, and the full
+allele set remains recoverable from `alleles_detected` / `allele_counts`.
+Additive — verified across 48 call points in 11 genes against `v0.7.2`, no
+diplotype or phenotype value changed. **`asl`'s `interpret` module must check
+`overspecified` and refuse** rather than paper over it, and `report` must list
+every detected allele rather than the two that sorted first.
+
 This is the same failure class as 0.7.2 — a defensible-looking simplification
 that destroys information without recording that it did.
 
@@ -976,11 +982,14 @@ a caveat the guideline publishes.
 
 ## 8. Immediate next actions
 
-1. **File `pgx-core` 0.7.3** for §5.6 Defect 1 — over-specified genotypes must
-   not silently drop alleles. Highest priority: it is the same failure class as
-   the 0.7.2 strand defect and it disproportionately affects Indian patients.
-2. **Scope `asl` Phases 0–2.** Phase 0 is done (0.7.2 shipped, five consumers
-   bumped). Phase 1 is `regen_evidence_tables.py`, which is a near-copy of
+1. **`pgx-core` 0.7.3 shipped** — §5.6 Defect 1 is fixed: over-specified
+   genotypes now carry `copies_detected` and `overspecified` instead of being
+   silently truncated. Tagged, additive (48 call points, 11 genes, no value
+   changes), all five consumers bumped. **Remaining work:** `asl`'s `interpret`
+   must consume the flag and refuse, and `report` must list every detected
+   allele.
+2. **Scope `asl` Phases 0–2.** Phase 0 is done (0.7.2 + 0.7.3 shipped, five
+   consumers bumped). Phase 1 is `regen_evidence_tables.py`, a near-copy of
    `regen_dpyd_tables.py`.
 3. **Correct the 08:29 document** or supersede it explicitly — it currently
    asserts C1, C2, C4, C5 and C6 incorrectly. This file is the replacement;
