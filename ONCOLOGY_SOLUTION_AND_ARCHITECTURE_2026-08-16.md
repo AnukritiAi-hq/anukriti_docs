@@ -1548,3 +1548,146 @@ NUDT15 path, which have had no adversarial attention at all.
 **Verification:** 107 tests pass (86 → 107), `ruff check` clean, `pgx-core` pin
 unchanged at 0.7.3. Each new test was confirmed to fail against the pre-fix
 behaviour before being accepted.
+
+---
+
+## 14. Research pass 5 — the sources re-tested, and one finding that changes a number (2026-08-16, 23:10)
+
+Pass 4 established the citation posture. This pass went looking for anything that
+would change the analysis rather than confirm it. **One finding is material, one
+Indian source is new, and the two negative results are worth their own lines.**
+
+### C19 — CPIC has announced a change to HapB3, and it lands on 77.5% of what an Indian panel can find (**material**)
+
+CPIC published a pre-guideline notice on **9 July 2026** (Whirl-Carrillo,
+`blog.clinpgx.org`, "CPIC Comment on Pending DPYD Guideline Update"):
+
+> "c.1129-5923C>G, the minor allele at rs75017182 and causal allele associated
+> with the 'HapB3' haplotype, will be assigned an allele value of **0.75**. For a
+> heterozygous carrier, this corresponds to an activity score of 1.75. For these
+> patients, the recommendation is to **initiate treatment at 75% of the intended
+> dose in cycle 1**" — with escalation toward standard dosing if tolerated. Full
+> guideline expected **fall 2026**.
+
+Today CPIC's value is 0.5, activity score 1.5, Intermediate Metabolizer,
+`REDUCE_50PCT`. So a HapB3 heterozygote's dose recommendation is moving from
+**50% of standard to 75% of standard** — a substantial relaxation.
+
+**Why this lands harder here than anywhere else.** Computed from CPIC's own
+Central/South Asian table:
+
+| actionable allele | CPIC Central/South Asian frequency |
+|---|---|
+| **HapB3** | **0.019658** |
+| `*2A` | 0.005076 |
+| c.2846A>T | 0.000640 |
+| `*13` | 0.000000 |
+| total | 0.025380 |
+
+**HapB3 is 77.5% of the entire actionable allele frequency in this population.**
+A guideline-conformant DPYD panel in India is, to a first approximation, a HapB3
+test. So a change to HapB3's recommendation changes what *most* Indian
+panel-positive patients are told — and it changes it in the direction of **less**
+dose reduction.
+
+That is worth stating plainly because it cuts against the natural reading of this
+whole document. Our thesis is that the panel **over-reassures the negatives**.
+This finding says that for the small minority who test positive, the same panel
+has been **over-restricting** them — 50% when the evidence now supports 75%.
+Both are the same underlying defect: a European-derived activity score applied
+without regard to what it was measured on. The asymmetry is not in our favour or
+against it; it is simply that a single number was doing two jobs.
+
+**A gap in our own guard, and the fix.** `scripts/regen_evidence_tables.py
+--check` cannot detect this. CPIC states explicitly that the allele value "will
+remain at AV=0.5 until then" — so the API returns 0.5, the pinned table says 0.5,
+the drift check passes, and the fact that the recommendation is about to move is
+invisible to every automated guard we have. Verified: the check passes right now.
+
+**This is a third defect class**, distinct from both prior ones:
+
+| | signal | guard |
+|---|---|---|
+| 0.7.2 `*6` | we silently deviated from CPIC | `--check` drift guard |
+| literature conflict | published evidence disputes CPIC | `P2`/`P3` conflict flags |
+| **pending change** | **CPIC disputes its own published value, in advance** | **nothing — until now** |
+
+Fixed as `P4_DPYD_HAPB3_CPIC_UPDATE_PENDING`: a new
+`pending_guideline_changes` block in `DPYD_conflicts.json`, a
+`pending_change_flags()` emitter, and a report section that prints **both** values
+each labelled as what it is — "CPIC's value TODAY (used above)" and "CPIC's
+ANNOUNCED value (not applied)".
+
+`asl` deliberately **does not pre-apply the announced value.** Dosing on a
+pre-publication blog comment would be an undeclared deviation from the pinned
+source of truth — the `*6` failure class pointed the other way. Pinned by
+`test_the_announced_value_is_not_applied_to_the_phenotype`, which asserts the
+phenotype is still Intermediate Metabolizer, the action still `REDUCE_50PCT`, and
+the recorded activity value still `0.5`. The flag is notice, never a
+recalculation.
+
+### C20 — A new Indian NUDT15 source, and it is ICMR's own
+
+**Joseph GT, Swain SK, … Rishi B, Misra A. *Front Pharmacol* 16:1714797,
+8 December 2025**, from **ICMR-NICHDR** with AIIMS and Safdarjung. Validates a
+tetra-primer ARMS-PCR assay for NUDT15 c.415C>T + TPMT`*3C` in 61 Indian
+paediatric ALL patients: NUDT15 variants in **16.7%** (9 het, 1 hom), TPMT`*3C`
+in 3.3%, no double mutants; 98.4% accuracy vs Sanger (sensitivity 90.9%,
+specificity 100%); **>70% cheaper than sequencing**, one working day, needs only a
+thermal cycler and gel rig.
+
+Three things this changes:
+
+1. **The NUDT15 wedge is an access problem, and someone has just solved the
+   access part.** Pass 3 called NUDT15 "a bigger problem but an access problem,
+   not an interpretation one." That is now sharper: an ICMR institute has built
+   and validated the cheap assay. The remaining gap is not the test.
+2. **It corroborates the ICiCLe dose-intensity mismatch exactly.** NUDT15
+   carriers achieved median 6-MP dose intensity **0.50 vs 0.79** wild-type
+   (p<0.0001) against a planned 60 mg/m²/day — i.e. ~30 mg/m²/day reached
+   reactively, after toxicity, without any genotype being known in advance. Pass
+   3 predicted this figure; it is now sourced to the paper it came from.
+3. **A caution about its own framing.** The paper's headline selling point is
+   *in silico* prioritisation (SIFT/PolyPhen-2/PROVEAN/Meta-SNP/SNPs&GO) of
+   variants that were **already known to be the actionable ones**. Computational
+   pathogenicity scores agreeing with an established clinical call is not
+   independent validation of anything, and the two-variant panel omits NUDT15
+   `*2`/`*6` and TPMT `*3A`/`*3B` — which the authors state. **The assay result
+   is solid; the in-silico framing around it is decorative.** If we ever cite
+   this, cite the 16.7% and the dose-intensity finding, not the SIFT scores.
+
+### C21 — Two negative results, both searched rather than assumed
+
+- **No CPIC DPYD guideline supersedes Amstutz 2018.** The 2017 update (PMID
+  29152729) remains the published guideline; the update is *in development*, and
+  the only public artifact is the July 2026 comment in C19. Our pinned citation
+  is correct.
+- **No Indian mandate has appeared.** Searched ICMR and NCG output again. ICMR's
+  current public calls are unrelated (diagnostics kits, CAR-2026 grants); NCG's
+  visible 2025-26 activity is the **EMR initiative** (PMC12057217), not PGx. This
+  is now a *thrice*-searched absence. It also slightly strengthens the C20 point:
+  ICMR is funding PGx **assay development** while issuing no testing
+  recommendation, which is the gap `asl` sits in.
+
+### What pass 5 changes about the plan
+
+**The architecture is unchanged.** The problem statement is unchanged. What
+changed is one engine behaviour and one honest qualification:
+
+1. **`P4` is now a permanent capability, not a one-off.** Any allele whose CPIC
+   value is announced-but-unpublished gets a flag. There will be more of these
+   when the full guideline lands in fall 2026 — which is now a **scheduled
+   clinical-regression review**, not a surprise. Add it to the open items.
+2. **The "panel over-reassures" claim needs its counterpart stated.** For the
+   ~5% who test positive in this population, the same European-derived activity
+   score has been over-restricting them, and CPIC is about to say so. A document
+   that only ever argues in the reassuring-direction is doing advocacy. Both
+   directions are the same defect.
+3. **NUDT15 remains second, but for a better-stated reason.** Not "it's only an
+   access problem" — rather, the access problem now has a validated ICMR-built
+   solution, so the marginal contribution of an interpretation layer there is
+   smaller than for DPYD, where the interpretation defect is the whole problem.
+
+**Verification:** 111 tests pass (107 → 111). `ruff` clean. `--check` still
+passes against live CPIC, which is precisely the point of C19. `pgx-core` pin
+unchanged at 0.7.3.
