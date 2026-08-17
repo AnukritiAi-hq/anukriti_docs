@@ -2248,3 +2248,145 @@ What they share is that **they all failed silently or passed falsely**. A wrong
 answer announces itself. A vacuous review, an uninstallable suite, a wheel with no
 data, and a lint gate that never ran do not — and each survived precisely as long
 as nobody had a reason to look.
+
+---
+
+## 20. Research pass 8 — a variant class no refusal covered (2026-08-17, 17:25)
+
+Passes 3–7 tested the problem, the plan, the ledger and the second gene. This
+pass went back to current literature looking for something that would **change**
+the design rather than confirm it, and found one paper published **13 days ago**
+describing a patient `asl` would have reported cleanly and wrongly.
+
+### C29 — An SNV-only negative is not evidence against a deletion, and `asl` said it was
+
+**Delcuratolo et al., *Front Pharmacol* 17:1866621, 4 August 2026**
+(doi 10.3389/fphar.2026.1866621). A 67-year-old man with resected gastric
+adenocarcinoma, adjuvant CAPOX. DPYD RT-PCR for the four guideline variants:
+wild type. Repeated after the event including c.2194G>A (`*6`): wild type again.
+He started full-dose capecitabine, and on **day 8** developed grade 4 diarrhoea
+(12–15 stools/day) progressing to *Klebsiella* septic shock requiring
+norepinephrine, 25 days in hospital, and permanent discontinuation of adjuvant
+chemotherapy he might otherwise have been cured by.
+
+Cause, found afterwards by read-depth NGS and confirmed by SNP array: a
+**heterozygous ~500 kb deletion spanning exons 5 to 20**. DPD activity 49% of
+control, plasma uracil raised, DHU/U ratio reduced — a biochemically confirmed
+intermediate metabolizer. **The deleted interval contains four of the five loci
+his panel screened.**
+
+I ran this patient through `asl` before changing anything. The report was clean,
+confident, and printed:
+
+```
+  Tested & negative : c.1905+1G>A (*2A) | c.1679T>G (*13) |
+                      c.1236G>A (HapB3 tag) | c.2194G>A (*6) | c.2846A>T
+```
+
+**All five listed as tested and negative, and four of them were inside a
+deletion.** The statement is true of the bases and false of the chromosome: an
+SNV method infers zygosity from allele ratio at a single position, so where one
+chromosome carries a deletion there is nothing to amplify and the surviving
+allele reads as homozygous reference. **One reference copy and two reference
+copies are indistinguishable to the method.**
+
+### Why no existing refusal caught it, and why that is the interesting part
+
+`asl` has ten hard refusals and a type system built to stop exactly this class of
+error. None fire here, for a reason worth stating precisely:
+
+**every prior refusal is keyed to a *locus*; this limitation is keyed to the
+*method*.** `NOT_TESTED` says "the assay did not look here". These loci *were*
+looked at, *did* return calls, and the calls were `hom_ref`. There is no untested
+locus to report, so `untested_statement` correctly generates nothing — and the
+result is the most complete-looking report the package can produce, every panel
+locus tested and every one negative. **The case where the method's limit matters
+most was the case where it was least visible.**
+
+Same shape as every other finding here, one axis over. §13's defect showed a
+wild-type toxicity rate to a Poor Metabolizer because the rate was keyed on
+regimen alone. §11's showed a blank spreadsheet cell as a negative because a
+`dict.get` default collapsed two types. Here a whole *class* of variant was
+absent from the model, so the report could not qualify a claim it did not know
+was qualified. **A type system prevents conflating the distinctions it
+represents. It is silent about the ones it has no term for.**
+
+### How often it matters, stated with its denominator
+
+- **7% (5/72)** of DPD-deficient patients carry genomic DPYD deletions
+  (van Kuilenburg et al. 2009, *Hum Genet* 125:581-590, **PMID 19296131**) —
+  "screening of DPD deficient patients for genomic deletions should be
+  considered." **This is the share of deficiency attributable to deletions, not a
+  population carrier frequency**, and printing it as this patient's risk would be
+  precisely the denominator substitution §13 D1 was about. It appears in the
+  report only with its denominator attached.
+- Deletion prevalence is **population-specific**: Saarenheimo 2021 found a novel
+  exon 4 deletion at high prevalence in Finns.
+- **No study has surveyed DPYD structural variants in any Indian population.**
+  The rate here is *unmeasured*, which is not the same as low — and the report
+  says so in those words, because "no data" reads as "no risk" unless named.
+
+### The fix, and the two things it deliberately does not do
+
+New `AssayMethod` enum (`SNV_ONLY` | `CNV_AWARE`) on `AssayResult`, defaulting to
+`SNV_ONLY` — the conservative reading, since every panel `asl` models is a PCR or
+targeted-SNV assay and claiming CNV coverage a method lacks is the failure being
+fixed. It drives `P6_DPYD_CNV_NOT_INTERROGATED`, and the qualifier also sits **on
+the "Tested & negative" line itself**, not only in a flag below it that a reader
+may not reach.
+
+Unlike every other flag, this one **does not depend on what was found** — it is
+emitted for carriers too, because finding one variant says nothing about a
+deletion on the other chromosome.
+
+It attaches **no residual probability** and **recommends no further testing**.
+The first would require a population rate nobody has measured; the second would
+move `asl` from informing clinical management to **driving** it, which is the
+Class A/B line under CDSCO (§6). The report states that the method could not
+interrogate this class and that a negative therefore does not exclude it. What to
+do about that is the oncologist's decision.
+
+The limitation record lives in the hand-maintained `variant_class_limits` block,
+not in generated data — correctly, because CPIC publishes what each allele *does*,
+not what a laboratory method is *capable of seeing*. It is a fourth
+hand-maintained field alongside C1's three, and the same rule applies: it never
+feeds a phenotype.
+
+### What this changes about the plan
+
+Nothing in the architecture, and one thing in the MCC retrospective (Phase 6).
+The four-quadrant table counts patients as panel-negative on PCR results, and
+**every one of those negatives carries this same unexcluded class.** That does not
+invalidate the quadrant — it is what "panel-negative" means in practice, and the
+excess toxicity the retrospective looks for is partly *composed of* cases like
+this one. But the write-up must say panel-negative means SNV-negative, or it will
+imply a completeness the assay never had.
+
+It also sharpens an argument in C13's favour that I had ranked lower. Uracil
+phenotyping **would have caught this patient** — DHU/U reduced, PBMC DPD activity
+49% — because a functional assay is agnostic to the *mechanism* of deficiency,
+including structural variants no genotype panel enumerates. C13's logistical
+objection stands (the 47-minute pre-analytical window, unstudied at Indian
+ambient temperatures), but the class of patient it uniquely catches is now
+concrete rather than theoretical.
+
+**Verification:** 168 → 175 tests (7 new, each confirmed to fail against the
+pre-fix code). `ruff` back to its pre-existing baseline of 2 findings, both in
+`interpret.py` and untouched here. `pgx-core` pin unchanged at 0.9.0 — no engine
+behaviour altered, and no phenotype, activity score or CPIC call changed.
+
+One existing test had to be **narrowed rather than extended**:
+`test_a_panel_negative_patient_gets_no_pending_change_flag` asserted
+`interp.flags == ()`, i.e. "a negative panel produces a clean report" — which is
+the assumption this finding breaks. Left as it was, it would have made the fix
+look like a regression. It now asserts what its name says.
+
+### Method note
+
+This was found by reading a paper, not by auditing code. Eight defects in `asl`
+have been found by adversarial input passes, and this one was invisible to all of
+them, because they varied inputs *within the model* — and the model had no term
+for a copy-number variant, so no input could express one. **An adversarial pass
+can only explore the space its types can represent.** The literature is where the
+missing dimensions come from, which argues for research and engineering passes
+alternating rather than the former merely preceding the latter.
