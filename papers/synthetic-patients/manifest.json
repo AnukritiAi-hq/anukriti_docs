@@ -1,0 +1,46 @@
+[
+  {
+    "file": "Wharrie-2023-Bioinformatics-HAPNEST.pdf",
+    "doi": "10.1093/bioinformatics/btad535",
+    "source_url": "https://acris.aalto.fi/ws/portalfiles/portal/125294719/HAPNEST_efficient_large_scale_generation_and_evaluation_of_synthetic_datasets_for_genotypes_and_phenotypes.pdf",
+    "license": "CC BY 4.0",
+    "retrieved": "2026-09-06",
+    "sha256": "64b23ef33c2db75d4001c05eb6c9b31c8b20234fe901c4f04271f606d9db795b",
+    "bytes": 5224555,
+    "pages": 12,
+    "modified": false
+  },
+  {
+    "file": "Caballero-2019-PLOSGenetics-Ped-sim.pdf",
+    "doi": "10.1371/journal.pgen.1007979",
+    "source_url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1007979&type=printable",
+    "license": "Creative Commons Attribution (as printed)",
+    "retrieved": "2026-09-06",
+    "sha256": "45f2c4ea1124b00ce920ee683378cff76742517d77db66ec2bac5bb2924adb46",
+    "bytes": 2853909,
+    "pages": 29,
+    "modified": false
+  },
+  {
+    "file": "Haller-2025-HPGG-SimHumanity.pdf",
+    "doi": "10.47248/hpgg2505040006",
+    "source_url": "https://benhaller.com/pubs/HallerEtAl2025.pdf",
+    "license": "CC BY 4.0",
+    "retrieved": "2026-09-06",
+    "sha256": "dde1d9a9a7ab31e859c77220d783c89940224b3fcafec846881911d33e30bc10",
+    "bytes": 1165997,
+    "pages": 30,
+    "modified": false
+  },
+  {
+    "file": "Hishinuma-2022-FrontPharmacol-DPYD-Kinetics.pdf",
+    "doi": "10.3389/fphar.2022.930470",
+    "source_url": "https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2022.930470/pdf",
+    "license": "CC BY",
+    "retrieved": "2026-09-06",
+    "sha256": "cc2de61552c4abdbe3e464de1ac67598f3da1042b2ac49e5903b11b213cde634",
+    "bytes": 2473655,
+    "pages": 13,
+    "modified": false
+  }
+]

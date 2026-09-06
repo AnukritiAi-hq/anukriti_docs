@@ -4,6 +4,10 @@
 > courses: one engineering-depth, one friendly-intro. Pick the
 > one that fits how you read best.
 
+Current research: [**Synthetic patients for DPYD/DPD/5-FU**](research/synthetic-patients/README.md)
+contains the September 2026 component research, full implementation plan,
+validation protocol, paper collection, and reproducible synthetic-genome benchmark.
+
 ---
 
 ## Two courses, one platform

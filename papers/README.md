@@ -2,6 +2,11 @@
 
 Naming convention: `FirstAuthor-Year-Journal-Short-Title.pdf`
 
+New collection: [**Synthetic patients and DPYD/DPD/5-FU**](synthetic-patients/README.md)
+includes HAPNEST, Ped-sim, SimHumanity, the CYP2C9 functional-assay study, direct
+DPYD kinetics, the published 5-FU model, and the PK-Sim documentation used by the
+[implementation plan](../research/synthetic-patients/IMPLEMENTATION_PLAN.md).
+
 ---
 
 ## 📚 Papers

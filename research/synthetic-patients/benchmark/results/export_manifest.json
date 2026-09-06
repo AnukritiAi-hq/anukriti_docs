@@ -1,0 +1,14 @@
+{
+  "path": "synthetic_beb_proxy_chr19.vcf.gz",
+  "sha256": "d094e462d7346f09c3a027c8e89beaac605e43d32c8869abcb66bb1c30c4970f",
+  "samples": 5000,
+  "variants": 8901,
+  "all_genotypes_roundtrip_verified": true,
+  "population_proxy": "BEB; not Bhutan",
+  "method": "calibrated_mosaic",
+  "seed": 20269906,
+  "local_seed": 20260906,
+  "n_local_real_people": 20,
+  "n_regional_real_people": 403,
+  "novel_full_region_haplotype_fraction": 1.0
+}
