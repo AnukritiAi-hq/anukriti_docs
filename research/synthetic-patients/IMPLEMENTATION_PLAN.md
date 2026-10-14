@@ -6,6 +6,12 @@
 sequential implementation. This document is the execution order for those
 future steps.
 
+**Execution update, 6 September 2026:** Phase 0 has started. See the
+[qualification report](phase0/QUALIFICATION_REPORT.md) for completed source checks,
+runtime results and unresolved gates. The first published reproduction uses
+Grem 2001's 72-hour constant infusion; the 46-hour oncology pilot below remains
+a separate proposed study.
+
 ## Outcome and first scope
 
 Build an engine that generates source-traceable virtual patients with inherited
@@ -133,8 +139,9 @@ ranges; data access and clinical recruitment are separate dependencies.
 ### Phase 0 — Documentation, source acquisition and model qualification
 
 **Purpose:** establish that the proposed external tools and 5-FU model are usable
-before designing against assumed APIs. Research discovery is complete for this
-planning pass; installation, supplementary extraction and execution remain.
+before designing against assumed APIs. The [Phase 0 execution record](phase0/README.md)
+tracks installation, supplementary acquisition and reproduction against the tasks
+below; an unresolved gate is not a completed phase.
 
 **Read first:** G01–G06, F01–F05, P01–P04, C01–C05 in the evidence register;
 the official Ped-sim examples, OSP installation note, snapshot conversion and

@@ -1,3 +1,6 @@
+> **SUPERSEDED — DO NOT USE FOR CURRENT CLAIMS (13 September 2026).**
+> This June 2026 scan contains claims later shown to be wrong or unsupported, including the retired SAS-specific CPIC override, the false “27% South Indian” narrative, and broad unverified claims about commercial tools. Use [`5FU_DPYD_ENGINE_CURRENT_STATE_AND_WORLDWIDE_LANDSCAPE_2026-09-13.md`](5FU_DPYD_ENGINE_CURRENT_STATE_AND_WORLDWIDE_LANDSCAPE_2026-09-13.md) for the current engine assessment and sourced worldwide landscape. This file remains only as a historical record.
+
 # DPYD Landscape — Ongoing Research, Existing Tools & Competitive Position
 
 > Generated: 2026-06-06 | Research scan for partnership preparation

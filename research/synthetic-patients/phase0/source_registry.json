@@ -1,0 +1,213 @@
+{
+  "schema_version": "phase0-source-registry/1",
+  "checked_date": "2026-09-06",
+  "scope": "source qualification; no private partner participant records",
+  "model": {
+    "repository_url": "https://github.com/Clinical-Pharmacy-Saarland-University/5-FU-PBPK-Model",
+    "commit": "e4ba27100d17336a53c3465b873e224afa90624a",
+    "tree_api_url": "https://api.github.com/repos/Clinical-Pharmacy-Saarland-University/5-FU-PBPK-Model/git/trees/e4ba27100d17336a53c3465b873e224afa90624a",
+    "tree_manifest": {
+      "bytes": 1911,
+      "sha256": "5b749b4423b866a0cd41cf9391834a31b32f3df36ffc3856ce7282abcc39d3de"
+    },
+    "archive_url": "https://codeload.github.com/Clinical-Pharmacy-Saarland-University/5-FU-PBPK-Model/tar.gz/e4ba27100d17336a53c3465b873e224afa90624a",
+    "archive": {
+      "bytes": 281986401,
+      "sha256": "6d870644a1b66a2dee42f371c762d2360823928a552d6e0043a9ed92beeaceb4"
+    },
+    "readme_runtime": "PK-Sim 9.1",
+    "model_license_status": "unresolved_no_license_file_in_complete_pinned_tree_or_explicit_reuse_terms_in_readme",
+    "public_model_vendoring": false,
+    "files": [
+      {
+        "filename": "5-FU_chronomodulated_infusions.pksim5",
+        "bytes": 74739712,
+        "sha256": "fb72d8059281c940adadf5c6e4736c1ff3b3d0549383857cfb55f23eb498f9a7",
+        "git_blob_sha1": "d107a5bf09e972a7c80c773412b29a3f53b40b97",
+        "upstream_git_blob_sha1": "d107a5bf09e972a7c80c773412b29a3f53b40b97",
+        "public_copy_in_docs": false,
+        "sqlite_project_versions": [
+          79
+        ],
+        "simulation_count": 40,
+        "observed_data_count": 48
+      },
+      {
+        "filename": "5-FU_constant_rate_infusions.pksim5",
+        "bytes": 83922944,
+        "sha256": "3dc92f452b6e7508027f036266886974b18d8fcbfc98b118817fc3ad1365a9a4",
+        "git_blob_sha1": "b2fd7e9895bf0d0ffcc1d79a12ef798dbea43470",
+        "upstream_git_blob_sha1": "b2fd7e9895bf0d0ffcc1d79a12ef798dbea43470",
+        "public_copy_in_docs": false,
+        "sqlite_project_versions": [
+          79
+        ],
+        "simulation_count": 42,
+        "observed_data_count": 48
+      },
+      {
+        "filename": "5-FU_injections.pksim5",
+        "bytes": 92151808,
+        "sha256": "f8a9308074b6034f90cd9a9ec4e60104ec17873809f2bfb7a6ccdc36c3302431",
+        "git_blob_sha1": "64e2f7dfef85babfefc30066f4f85e955510814d",
+        "upstream_git_blob_sha1": "64e2f7dfef85babfefc30066f4f85e955510814d",
+        "public_copy_in_docs": false,
+        "sqlite_project_versions": [
+          77
+        ],
+        "simulation_count": 38,
+        "observed_data_count": 53
+      },
+      {
+        "filename": "README.md",
+        "bytes": 1207,
+        "sha256": "53778e90fc5fae138caf3e3a74a84aef0cebb6f4dfa2277945fca68ff01f403b",
+        "git_blob_sha1": "d0b600cc10e9dde600a715fd78fdddf588ddd238",
+        "upstream_git_blob_sha1": "d0b600cc10e9dde600a715fd78fdddf588ddd238",
+        "public_copy_in_docs": false
+      },
+      {
+        "filename": "Uracil_and_5-FU_oral_solutions.pksim5",
+        "bytes": 53432320,
+        "sha256": "928f727dddd7ab5b61a92ff90512015844145cc386daa3b771aed67806f3aef9",
+        "git_blob_sha1": "f0f373ab2b070aaa06954be6bcff38fdac9fb00e",
+        "upstream_git_blob_sha1": "f0f373ab2b070aaa06954be6bcff38fdac9fb00e",
+        "public_copy_in_docs": false,
+        "sqlite_project_versions": [
+          77
+        ],
+        "simulation_count": 15,
+        "observed_data_count": 22
+      }
+    ]
+  },
+  "reproduction_case": {
+    "paper_doi": "10.1002/cpt.3181",
+    "paper_figure": "3b",
+    "source_study_doi": "10.1023/a:1013185125186",
+    "source_study_pmid": "11822758",
+    "project_file": "5-FU_constant_rate_infusions.pksim5",
+    "simulation_name": "FU_86_G01_IV_C_Circ",
+    "simulation_id": "oN3eNDMrFkaMF6-4L8aGVA",
+    "simulation_content_id": 32574,
+    "saved_simulation_results_id": 2970,
+    "observed_repository_id": "0e19b8c8-2eb7-4dd4-835e-a113496ccefc",
+    "route": "intravenous_constant_infusion",
+    "total_dose_mg_per_m2": 5250,
+    "infusion_duration_hours": 72,
+    "figure_subset_n": 16,
+    "observed_point_count": 10,
+    "training_test_allocation": "unverified_supplement",
+    "independence_classification": "source_reproduction_with_study_adapted_circadian_parameter",
+    "local_oncology_46h_equivalent": false
+  },
+  "article": {
+    "doi": "10.1002/cpt.3181",
+    "pmid": "38264789",
+    "metadata_url": "https://wrap.warwick.ac.uk/id/eprint/182490/",
+    "pdf_url": "https://wrap.warwick.ac.uk/id/eprint/182490/7/Clin%20Pharma%20and%20Therapeutics%20-%202024%20-%20Marok%20-%20Personalized%20Chronomodulated%205%E2%80%90Fluorouracil%20Treatment%20%20A.pdf",
+    "bytes": 7294825,
+    "sha256": "f93f1850e1d75d59e99bd9ab7c2a60b3e375945bf39b7cfd8e37bb972d3b91f6",
+    "license": "CC-BY-NC-4.0 per university published-version record; PDF confirms Attribution-NonCommercial",
+    "read_sections": [
+      "Methods",
+      "Results",
+      "Discussion",
+      "Figure 3 page 6",
+      "license text page 10"
+    ],
+    "public_copy_in_docs": false
+  },
+  "supplement": {
+    "filename": "cpt3181-sup-0001-Supinfo.pdf",
+    "publisher_lists_asset": true,
+    "acquired": false,
+    "sha256": null,
+    "access_attempts": [
+      {
+        "url": "https://ascpt.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fcpt.3181&file=cpt3181-sup-0001-Supinfo.pdf",
+        "http_status": 403,
+        "checked_date": "2026-09-06"
+      },
+      {
+        "url": "https://ascpt.onlinelibrary.wiley.com/doi/suppl/10.1002/cpt.3181/supinfo/cpt3181-sup-0001-supinfo.pdf",
+        "http_status": 403,
+        "checked_date": "2026-09-06"
+      }
+    ],
+    "interpretation": "environment retrieval failed; existence established by publisher listing; no table content inferred"
+  },
+  "core_snapshot": {
+    "repository": "anukriti-pgx-core",
+    "commit": "2b1d696951f5a6b2d66140f258eb453068015e49",
+    "version": "0.9.0",
+    "actual_panel_allele_rows": 18,
+    "actual_diplotype_entries": 190,
+    "clinical_behavior_changed": false,
+    "new_clinical_audit_performed": false,
+    "files": [
+      {
+        "path": "pyproject.toml",
+        "bytes": 2282,
+        "sha256": "903f909c71ce9297be3e89fad0e473a92b9cbd0f1b92fd171b00239b104287e3"
+      },
+      {
+        "path": "anukriti_pgx_core/calling/genes/dpyd.py",
+        "bytes": 8371,
+        "sha256": "64273a89b00f88c04ed7209709082e50a6986e3b36837f28aa82ab837cffcc11"
+      },
+      {
+        "path": "anukriti_pgx_core/calling/data/dpyd/DPYD_alleles_anukriti_v2024.01.tsv",
+        "bytes": 659,
+        "sha256": "0518f56e5a5d86dd73def79b62cd8ab359fd72789d3c20ec479f5b2b5bfdac25"
+      },
+      {
+        "path": "anukriti_pgx_core/phenotype/tables/DPYD_diplotypes_anukriti_v2024.01.json",
+        "bytes": 8891,
+        "sha256": "959a9401af18df833dae84ba85d7edaeab91862665f4f506f56bb96b18d7acdd"
+      },
+      {
+        "path": "anukriti_pgx_core/phenotype/tables/DPYD_CLINICAL_ACTIONS_v2024.01.json",
+        "bytes": 3855,
+        "sha256": "5081b28362a2436f4024aa1cc50886c0ed04ee88a2e405d1e2a23e774cc88ce6"
+      },
+      {
+        "path": "anukriti_pgx_core/phenotype/tables/CPIC_PROVENANCE.json",
+        "bytes": 28875,
+        "sha256": "2a350ae370c748ee8bfaa59aeee731d80664eca28260f10c7695c3e6edc4585c"
+      }
+    ]
+  },
+  "cpic_live_alleles": {
+    "url": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.DPYD",
+    "bytes": 46607,
+    "sha256": "6791d61d91d566311cc8a292640d198271e3e542072f701288bae500c01a00eb",
+    "entry_count": 84,
+    "selected_entries": [
+      {
+        "id": 778378,
+        "version": 392,
+        "name": "c.1129-5923C>G, c.1236G>A (HapB3)",
+        "clinicalfunctionalstatus": "Decreased function",
+        "activityvalue": "0.5"
+      },
+      {
+        "id": 3942828,
+        "version": 179,
+        "name": "c.1129-5923C>G",
+        "clinicalfunctionalstatus": "Decreased function",
+        "activityvalue": "0.5"
+      }
+    ],
+    "pending_notice_url": "https://blog.clinpgx.org/cpic-comment-on-pending-dpyd-guideline-update/",
+    "pending_notice_publication_date": "2026-07-09",
+    "pending_activity_value": 0.75,
+    "pending_change_applied": false,
+    "response_public_copy_in_docs": false
+  },
+  "partner_data": {
+    "participant_records_available_in_phase0": false,
+    "access_and_derivative_permissions": "pending",
+    "regimen": "adult 46-hour infusional 5-FU planning candidate; not confirmed"
+  }
+}
