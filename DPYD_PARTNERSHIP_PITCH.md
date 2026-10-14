@@ -11,7 +11,7 @@
 | Metric | Value | Source |
 |--------|-------|--------|
 | Patients receiving fluoropyrimidines globally/year | >2,000,000 | Ho 2025 (PMID:39887719) |
-| Severe toxicity (Grade 3+) in unscreened DPD-deficient patients | **70–80%** | CPIC 2017, Henricks 2018 |
+| ~~Severe toxicity (Grade 3+) in unscreened DPD-deficient patients~~ | ~~**70–80%**~~ ⛔ **WITHDRAWN 2026-10-14 — the cited source does not support this.** Henricks 2018 (PMID 30348537) reports grade ≥3 toxicity in **39% of DPYD variant carriers vs 23% of wild-type**, not 70–80%. Use 39%/23% with that citation, or drop the row. | ~~CPIC 2017, Henricks 2018~~ |
 | Treatment-related mortality in unscreened carriers | **1–2%** | CPIC 2017 (PMID:29152729) |
 | Population carrying heterozygous DPYD variant | **6–9%** | Ho 2025 |
 | DPYD \*9A allele frequency, South Asian | **0.2550** | gnomAD v2.1.1 exomes, live query 2026-07-28 |

@@ -12,6 +12,7 @@ published 5-FU model over the previous CYP2C19/clopidogrel pilot suggestion.
 | Read | Purpose |
 |---|---|
 | [Full implementation plan](IMPLEMENTATION_PLAN.md) | Phases 0–10, dependencies, concrete tasks, source references, acceptance criteria, estimates and first session |
+| [Phase 0 execution](phase0/README.md) | Pinned source inventory, 5-FU reproduction case, evidence snapshot and qualification status |
 | [Component research](COMPONENT_RESEARCH.md) | Founder data, inheritance, adult physiology, DPYD function, 5-FU modeling and clinical evaluation |
 | [Data contracts](DATA_CONTRACTS.md) | Genome/patient/scenario records, phase/SV, assay coverage, units, evidence classes and provenance |
 | [Validation protocol](VALIDATION_PROTOCOL.md) | Genetic fidelity, model reproduction, real exposure, synthetic utility and later toxicity endpoints |
@@ -38,10 +39,10 @@ The new plan adds three findings that change the implementation order:
   treatment. The existing caller's provenance is useful but its phase capability
   cannot be inferred from the presence of phased input strings.
 
-The next execution step is **Phase 0 qualification**: confirm the clinical
-context, pin sources and runtime, execute documented examples and reproduce one
-published 5-FU case. The default adult infusion setting remains a planning
-assumption pending confirmation of the partner regimen.
+**Phase 0 qualification is underway.** Its [execution record](phase0/README.md)
+distinguishes completed checks from remaining gates. The selected published
+reproduction is a 72-hour constant infusion; the candidate adult 46-hour partner
+study remains a separate configuration pending regimen confirmation.
 
 Historical source code and VCF bytes are unchanged. Markdown links were relocated
 for this docs repository and archive notes added where original workspace paths
