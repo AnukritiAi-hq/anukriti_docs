@@ -1,3 +1,25 @@
+> # ⛔ CORRECTION REQUIRED BEFORE THIS DOCUMENT IS SENT — 2026-10-14
+>
+> **The "21 CFR Part 11 audit trail" and "RFC 3161 timestamping" claims in this
+> document are not supported by the implementation and must not be sent to a
+> third party as written.**
+>
+> `anukriti/src/audit_trail.py` is not RFC 3161. It POSTs a JSON body to a
+> timestamp authority instead of a DER-encoded ASN.1 `TimeStampReq`, never
+> receives, parses or stores a timestamp token, marks the record
+> `"timestamped"` on any HTTP 200, and swallows every failure into
+> `"prepared_not_submitted"`. Its own docstring concedes it is "simplified".
+> No 21 CFR Part 11 conformance assessment has been performed and no FHIR R5
+> conformance testing has been run.
+>
+> What is real and can be claimed: a SHA-256 payload hash, an append-only
+> record, and a versioned citation trail for every output. That is a provenance
+> mechanism. It is not a regulatory conformance claim, and the two must not be
+> described in the same breath.
+>
+> The wording below is deliberately left unedited — the pitch is the author's
+> to rewrite, not mine. Fix the claims or cut them before sending.
+
 # Anukriti — Pre-Seed Investor Pitch
 
 > **A short, defensible pitch grounded in verifiable facts from the
