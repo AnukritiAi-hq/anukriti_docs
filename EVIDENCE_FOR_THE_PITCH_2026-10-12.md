@@ -171,3 +171,86 @@ answer band is for.
 
 None of those three is our claim. All three are someone else's, and that is
 what makes them usable.
+
+---
+
+# Addendum, 2026-10-15 — claims withdrawn, and what replaces them
+
+Added after an audit of everything currently published or sent. **Nothing
+in an application, deck, abstract or email may contradict this section.**
+Check text against this list before it goes to a funder, an investor, a
+reviewer or a journal.
+
+## 9. Withdrawn — do not use, in any document
+
+| Claim | Why it is dead | Use instead |
+| --- | --- | --- |
+| *"99 of 467 (21%) had INR outside target — empirical confirmation the dose was wrong"* | Wrong twice. Only **416** of the 467 had a recorded INR, so it is 23.8%. And the comparator from the same table runs **the other way**: the flagged subgroup is 23.8% out of range against **40.8%** for the rest of the high-risk group. No comparator was ever reported. **[S]** `IWPC_VALIDATION_DEEP_DIVE.md` Q5 | The monotonic dose gradient, 45.8 → 21.6 mg/wk across risk tiers. Real, reproducible, needs no outcome claim. |
+| *"IWPC validated"*, *"clinical validation (5,700 patients)"* | IWPC is a **public retrospective cohort** (Klein, NEJM 2009). Not our patients, not our cohort, not a validation. Letting "5,700 patients" sit next to any partnership line implies a clinical collaboration that does not exist. | *"a retrospective consistency check on the public IWPC warfarin cohort"* |
+| *"Active MOU with MCC"*, *"live clinical validation partnership"* | **There is no active MoU.** `mcc-visit/05_data_sharing_mou_outline.md` is an outline. **No MCC patient data has ever been processed.** | *"a research relationship with MCC; a data-sharing MoU is drafted and not executed"* |
+| *"phenotype concordance 1.000"* | Hides its denominator. | *"100.00% agreement with PyPGx on 2,038 comparable 1000 Genomes samples of 2,504 — 466 excluded as uncallable."* PyPGx is a second implementation, **not a truth set**. |
+| *"ground truth already validated against clinical reference standards"* | Unsupported. This is the line a benchmark reviewer tests hardest. | Name the actual reference set and its limits: GeT-RM is 33 cell lines, 6 South Asian, and the engine is **handed** consensus genotypes rather than detecting them. |
+| *"South Asian override, validated against GenomeIndia"* | The `*9A` override was **withdrawn 2026-10-14** — CPIC classifies `*9A` as **Normal function**. The claim describes a feature that no longer exists. | Nothing. Delete it. |
+| *"13 clinical validations"*, *"150+ benchmark samples"* | Flagged unverified in July, still unverified, and not reproducible from any file. | Unusable until someone re-derives them. Not "corrected" — **withdrawn**. |
+| *"live production system"* (where it reads as clinical deployment) | `anukriti-api` is live **infrastructure**. No hospital or pilot is known to use it, and the Azure logs have **not** been checked. | *"a deployed research API"*. Do not imply clinical use until the logs are checked. |
+| *"FHIR R5 + 21 CFR Part 11 audit trails"*, *"RFC 3161 timestamping"* | `audit_trail.py` POSTs JSON instead of a DER-encoded `TimeStampReq`, never parses or stores a token, and marks records timestamped on any HTTP 200. **No conformance assessment has been done.** | *"a SHA-256 payload hash, an append-only record and a versioned citation trail"* — provenance, **not** regulatory conformance. The two must never share a sentence. |
+| *"the four variants Europe mandates screening for"* | The **EMA names zero DPYD variants** in its own text. The four come from national bodies. (The EMA 2020 requirement to test for **DPD deficiency** before fluoropyrimidines is real — that is a different claim and it is fine.) | *"the four variants routinely tested in the UK and EU"* |
+
+## 10. The published artefact that needs fixing first
+
+**The Zenodo paper describes a retrospective cohort as "prospective" and
+calls it a "validation."** It carries a DOI, so it is citable and
+permanent, and it is the only item here a third party can cite against us
+indefinitely. **Dr. Roshan is a co-author and has not been told.** He
+hears before any new version goes up — that is a courtesy owed to a
+co-author, and it is also the only way the correction reads as ours
+rather than as something we were caught at.
+
+## 11. The lead claim — unchanged and stronger than anything withdrawn
+
+**[S] The CPIC-4 panel covers 78.1% of the South Asian actionable DPYD
+burden against 98.7% European**, driven by `c.2279C>T`, effectively absent
+in Europeans. Measured and independently verified.
+
+Carry its limitation in the same breath, because a reviewer finds it
+anyway: the 1000 Genomes South Asian panel is **4/5 non-India diaspora**,
+and rates diverge from GenomeIndia by up to 6x. A GenomeIndia comparator
+is wired in. **Donor reweighting was refused** — it would manufacture a
+population we did not sequence.
+
+## 12. What we found ourselves — usable, and better than a clean record
+
+A clean record invites one check. A published list of our own corrections
+survives all of them.
+
+- A **diplotype truncation defect** was reporting **HapB3 homozygotes as
+  Normal Metabolizers on a standard fluoropyrimidine dose** — the engine
+  was under-calling toxicity. Found in-project and fixed. 22 of 2,008
+  comparable 1KGP samples corrected; **9 of 449 South Asian (2.0%)**.
+- A **panel widening** took GeT-RM silent false negatives from **8 to 0**.
+  State the honest yield: **none of the 8 is South Asian**, and the
+  measured Indian yield is 2 of 15 alleles at 0.0205% and 0.0051%.
+- `0.7.2` shipped a **strand defect** that stored the REF base as the
+  variant allele. Found and fixed in-project.
+- A **release-governance policy, a per-version release log and a CI gate**
+  that fails the build if a release ships unlabelled while its clinical
+  review is unsigned — `anukriti-pgx-core/docs/RELEASE_GOVERNANCE.md`.
+
+**[S] CYP2C19 South Asian figures 36% / 14% are empirically correct** —
+only the citation attached to them was wrong.
+
+## 13. The honest state of the HapB3 withdrawal
+
+0.11.0 **removes a dose reduction** when the HapB3 tag is present and the
+causal variant is genotyped as reference. Measured in **5,008 1000 Genomes
+chromosomes: it fires 0 times.**
+
+**Do not say "it never fires."** At the published 0.223% discordance rate
+the expected count among 48 tag carriers is **0.107** — a zero here cannot
+distinguish 0% from the published rate. The honest statement is a **bound,
+not a rate**: no more than ~6% of HapB3 carriers, and only ~16% in South
+Asians, who contribute 19 tag chromosomes in the whole cohort. **No Indian
+cohort measures it at all.**
+
+Both halves travel together: it will rarely fire in Indian patients, **and**
+the evidence that it is safe in them is correspondingly thin.
