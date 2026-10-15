@@ -1,3 +1,43 @@
+> # ⛔ CORRECTION — the INR headline in this document is NOT supported by its own table — 2026-10-15
+>
+> **The claim "99 of the 467 undertreated high-risk patients (21%) have INR
+> outside the 2.0–3.0 target range — empirical confirmation that those
+> prescribed doses were wrong" must not be quoted. It is wrong twice, and
+> both errors are checkable from the Q5 table in this same document.**
+>
+> **1. Wrong denominator.** Only **416** of the 467 had a recorded INR.
+> 99/416 = **23.8%**, not 99/467 = 21.2%. The published figure counts 51
+> patients with no INR as though they were in target.
+>
+> **2. The comparator runs the other way.** Q5's own rows give:
+>
+> | group | with INR | out of range |
+> |---|---|---|
+> | all engine-flagged HIGH sensitivity | 1,657 | 605 = **36.5%** |
+> | the flagged "undertreated" subgroup | 416 | 99 = **23.8%** |
+> | the rest of the high-risk group | 1,241 | 506 = **40.8%** |
+>
+> The patients the engine singles out as wrongly dosed were **less** likely
+> to have an out-of-range INR than the high-risk patients it did not single
+> out — 23.8% against 40.8%. That is the opposite direction from
+> "confirmation the dose was wrong." No comparator was ever reported, and
+> without one the 21% supports nothing in either direction.
+>
+> **This does not show the engine is wrong.** The comparison is confounded:
+> patients prescribed at or above the median may simply be better managed,
+> INR timing is not controlled, and this document itself calls the
+> cohort-median threshold a coarse and deliberately conservative proxy. What
+> it shows is that the sentence is not supported by the evidence printed
+> beside it.
+>
+> **What is still defensible:** the monotonic dose gradients. They are a
+> real, reproducible signal and they need no INR claim to stand up.
+>
+> The wording below is left unedited so the error stays auditable. Fix or
+> cut the claim before this document is cited anywhere.
+
+---
+
 # IWPC Validation — Deep Dive
 
 > **Audience:** founder, prospective engineers, technical reviewers,
