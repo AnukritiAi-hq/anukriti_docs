@@ -70,7 +70,7 @@ Insights from this archive feed into:
 
 ## High-Signal Entries
 
-- `mcc_roshan/` — oncology research-center discovery call on DPYD,
+- `mcc_molecular_oncology/` — oncology research-center discovery call on DPYD,
   real-time PCR, and fluoropyrimidine toxicity in an Indian cohort.
   Key outcome: MCC may already have 400-500 DPYD-tested patients with
   toxicity follow-up; the Level 2 ask is the exact 7-variant panel plus

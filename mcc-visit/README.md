@@ -6,7 +6,7 @@
 >
 > Prepared: 2026-06-10. Owner: Abhimanyu R B (founder).
 > Grounds on the prior discovery call notes in
-> `../founder-research/mcc_roshan/`.
+> `../founder-research/mcc_molecular_oncology/`.
 
 ## What's in here
 

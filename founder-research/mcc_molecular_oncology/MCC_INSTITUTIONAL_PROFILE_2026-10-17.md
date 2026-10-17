@@ -291,18 +291,17 @@ other. "Paperless" is described as a journey *initiated*, not completed.
 
 | Person | Role (from the reports) |
 |---|---|
-| **Dr. Satheesan Balasubramanyan** | Director |
-| **Dr. Deepak Roshan V G** | **Assistant Professor; Division In Charge, Molecular Oncology Division**. Our contact. Co-author on the draft paper. PhD, not MBBS (per project memory). |
-| Dr. Vipin Gopinath | Assistant Professor, Molecular Oncology. Projects on biomarkers for early colon cancer detection. |
+| Director | named in the annual reports |
+| **the MCC Molecular Oncology lead** | **Assistant Professor; Division In Charge, Molecular Oncology Division**. Our contact. Co-author on the draft paper. |
+| Second Molecular Oncology academic | Assistant Professor, Molecular Oncology. Projects on biomarkers for early colon cancer detection. |
 | **Dr. Chandran K Nair** | **Professor, Medical Oncology. NCG chair for the national Medical Oncology EMR module.** |
-| Dr. Abhilash Menon, Dr. Shoaib Nawas | Assistant Professors, Medical Oncology |
-| Dr. Saina Sunilkumar, Smt. Bindu T | Registry & Epidemiology |
+| Two further Medical Oncology academics | Assistant Professors, Medical Oncology |
+| Registry lead and biostatistician | Registry & Epidemiology |
 
-Molecular Oncology non-academic staff: Vincy Augustine M A and Sreehari O P (Lab
-Technicians), Sreeja K V (Lab Assistant). It is a **small lab** — two academics, three staff.
+The Molecular Oncology division is a **small lab**: two academic staff and three technical staff.
 
-`01_pilot_lead_record.json:5` still says "confirm full name" for Roshan and `:8` has his email
-as "TBD". Both are now answerable: he is Dr. Deepak Roshan V G, Assistant Professor and
+`01_pilot_lead_record.json:5` still says "confirm full name" for the MCC Molecular Oncology lead and `:8` has his email
+as "TBD". Both are now answerable: he is the MCC Molecular Oncology lead, Assistant Professor and
 Division In Charge of Molecular Oncology.
 
 ---
@@ -352,7 +351,7 @@ profile than this workspace had assumed.
   partner, or changed panel? Resolve before quoting either.
 - ⚠️ **Live liability:** the published Zenodo paper describes a retrospective cohort as
   "prospective" and calls it a "validation". It carries a DOI, is citable, and
-  **Dr. Roshan is a co-author and has not been told**
+  **the MCC Molecular Oncology lead is a co-author and has not been told**
   (`EVIDENCE_FOR_THE_PITCH_2026-10-12.md:201-205`).
 
 ---

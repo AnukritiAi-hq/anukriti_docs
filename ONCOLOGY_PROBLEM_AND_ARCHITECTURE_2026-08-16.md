@@ -452,7 +452,7 @@ Grounded in what Indian cancer centres actually run:
 | 6 | MCC retrospective run on their ~400–500 PCR-tested patients | The four-quadrant table: PCR± × toxicity± |
 
 Phase 6 is the one that matters. It is already scoped, the site is already
-warm (Dr. Deepak Roshan V G, co-author, MoU outline drafted), and it converts
+warm (the MCC Molecular Oncology lead, co-author, MoU outline drafted), and it converts
 this from architecture into a finding.
 
 ---

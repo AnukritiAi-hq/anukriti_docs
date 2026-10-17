@@ -2,7 +2,7 @@
 
 Subject: DPYD / 5-FU toxicity: variant table and PCR workflow for MCC collaboration
 
-Dear Dr. Roshan,
+Dear the MCC Molecular Oncology lead,
 
 Thank you for the conversation today. Your question helped clarify the exact clinical use case.
 

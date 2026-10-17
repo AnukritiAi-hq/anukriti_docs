@@ -1,4 +1,4 @@
-# MCC / Dr. Roshan — Raw Conversation Notes
+# MCC / the MCC Molecular Oncology lead — Raw Conversation Notes
 
 Date: 2026-05-27
 Context: Founder discovery call with research-center oncology clinician.
@@ -12,7 +12,7 @@ Abhimanyu introduced Anukriti as a deterministic pharmacogenomics engine that ru
 
 ### MCC's current setup
 
-Dr. Roshan said MCC currently uses real-time PCR for DPYD testing, not NGS. They test 7 known polymorphisms per patient. They have tested around 400-500 patients so far. DPYD positivity is relatively low in their cohort. Toxicity data is collected over roughly 7 months to 1 year per patient because true drug-dependent toxicity needs treatment follow-up and dose-context review.
+the MCC Molecular Oncology lead said MCC currently uses real-time PCR for DPYD testing, not NGS. They test 7 known polymorphisms per patient. They have tested around 400-500 patients so far. DPYD positivity is relatively low in their cohort. Toxicity data is collected over roughly 7 months to 1 year per patient because true drug-dependent toxicity needs treatment follow-up and dose-context review.
 
 His assistant asked about VCF files and whether NGS covers DPYD.
 
@@ -27,7 +27,7 @@ Abhimanyu clarified:
 
 ### Drug toxicity vs drug effectiveness
 
-Dr. Roshan asked whether the output is drug intoxication/toxicity or whether the drug works.
+the MCC Molecular Oncology lead asked whether the output is drug intoxication/toxicity or whether the drug works.
 
 Abhimanyu clarified:
 
@@ -35,9 +35,9 @@ Abhimanyu clarified:
 - Drug effectiveness is different: will the tumor respond to the drug? That depends on tumor biology and somatic mutations, not only germline DPYD.
 - Anukriti is the safety gate before or alongside the efficacy decision.
 
-Abhimanyu also said he comes from an engineering background, so his wording may not be clinically precise. Dr. Roshan replied that this is why they are speaking in layman terms: MCC wants to understand what has been built and then help attach the correct clinical terminology. The input and output are different: a drug can be effective against cancer and still toxic to the patient.
+Abhimanyu also said he comes from an engineering background, so his wording may not be clinically precise. the MCC Molecular Oncology lead replied that this is why they are speaking in layman terms: MCC wants to understand what has been built and then help attach the correct clinical terminology. The input and output are different: a drug can be effective against cancer and still toxic to the patient.
 
-### What Dr. Roshan was actually asking
+### What the MCC Molecular Oncology lead was actually asking
 
 He has 400-500 patients. MCC tested DPYD. Some patients developed toxicity and some did not. He wants to know:
 
@@ -47,7 +47,7 @@ This is a clinical mapping question, not primarily a technology question.
 
 ### Indian vs non-Indian DPYD variants
 
-Dr. Roshan asked for the full list of DPYD variants identified in Indian and non-Indian populations so MCC can map against their existing data. If Anukriti provides the variant list, MCC can compare it to their own PCR panel and check whether toxicity-positive patients have variants outside their current assay.
+the MCC Molecular Oncology lead asked for the full list of DPYD variants identified in Indian and non-Indian populations so MCC can map against their existing data. If Anukriti provides the variant list, MCC can compare it to their own PCR panel and check whether toxicity-positive patients have variants outside their current assay.
 
 He specifically raised the possibility that NGS may find additional DPYD mutations, but emphasized that toxicity outcome labeling takes months because patients receive treatment, may have dose changes, and need proper follow-up to determine whether toxicity is truly drug-dependent.
 
@@ -77,7 +77,7 @@ Possible result: Indian DPYD variant-to-toxicity frequency paper, with MCC as le
 
 ### Outcome
 
-Level 1 complete. Dr. Roshan was receptive to collaboration. Follow-up needed the same day:
+Level 1 complete. the MCC Molecular Oncology lead was receptive to collaboration. Follow-up needed the same day:
 
 - DPYD variant table.
 - PCR integration workflow.

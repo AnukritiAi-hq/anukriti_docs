@@ -80,5 +80,5 @@ deeper, and arrived at Anukriti.
   fluoropyrimidine/DPYD wedge discussed.
 - `anukriti_docs/DPYD_PARTNERSHIP_PITCH.md` — Kerala oncology-centre pilot
   narrative this lead feeds into.
-- `anukriti_docs/founder-research/mcc_roshan/` — the parallel (and more
+- `anukriti_docs/founder-research/mcc_molecular_oncology/` — the parallel (and more
   advanced) oncology/DPYD partner conversation.

@@ -119,7 +119,7 @@ activity), **use the raw AlphaMissense score directly**, not the classifier.
 1. **Rotate the HF token** — `hf_…GByTJ` was shared in plaintext this session
    (huggingface.co/settings/tokens). HIGH priority.
 2. **Validation paper → co-authors.** Pushed to `anukriti_docs/main`; co-authors
-   (Aagneye Syam, Johan George, Atul Alexander, Deepak Roshan V G) can review via
+   (Aagneye Syam, Johan George, Atul Alexander, the MCC Molecular Oncology lead) can review via
    repo. If a different channel is wanted (email/export), set it up.
 3. (Optional) Rename HF repo `abhimanyu12/dpyd-classifier` → `abhimanyurb/…` if
    that account is yours and preferred.

@@ -201,7 +201,7 @@ reviewer or a journal.
 **The Zenodo paper describes a retrospective cohort as "prospective" and
 calls it a "validation."** It carries a DOI, so it is citable and
 permanent, and it is the only item here a third party can cite against us
-indefinitely. **Dr. Roshan is a co-author and has not been told.** He
+indefinitely. **the MCC Molecular Oncology lead is a co-author and has not been told.** He
 hears before any new version goes up — that is a courtesy owed to a
 co-author, and it is also the only way the correction reads as ours
 rather than as something we were caught at.

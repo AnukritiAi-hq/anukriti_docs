@@ -306,7 +306,7 @@ The platform already has real relationships documented in
   definitions; the clinality finding is squarely her domain.
 - **Dr. Andrew Somogyi** (IUPHAR PGx chair) — reached *via Gaedigk's referral*,
   on population pharmacogenomics in Asia-Pacific. The chain works; use it.
-- **Dr. Deepak Roshan V G** (Malabar Cancer Centre, Molecular Biology) —
+- **the MCC Molecular Oncology lead** (Malabar Cancer Centre, Molecular Biology) —
   co-author on the paper draft, clinical input on DPYD oncology and MTB output.
   MoU outline already drafted (`mcc-visit/05_data_sharing_mou_outline.md`).
 
@@ -318,7 +318,7 @@ The platform already has real relationships documented in
 | 2 | **CSIR-IGIB** (IndiGenomes authors, PMID 33095885) | Own the cohort we already queried; their undocumented API is our second source | Co-authorship-grade offer: we contribute the divergence + clinality analysis across their cohort vs gnomAD for the full actionable panel. They get an analysis they have not published; we get sanctioned access and provenance we can cite. |
 | 3 | **CCMB Hyderabad** (Dr. K. Thangaraj) | Co-author on both foundational Indian population-structure papers (Moorjani 2013, Narasimhan 2019) *and* GenomeIndia | Population-structure review of the clinality method. He is the right person to say whether NW→SE ordering reflects ANI/ASI gradients. |
 | 4 | **BRIC-NIBMG Kolkata** (Dr. Analabha Basu) | Lead author on GenomeIndia flagship study design + allele frequency spectrum sections | Direct: does GenomeIndia's own S13 PGx section report per-population-group frequencies for CPIC alleles? If yes, that is the L3 mitigation. |
-| 5 | **MCC Kannur** (Dr. Roshan) — existing | Prospective clinical validation site; DPYD/5-FU need already identified | Advance the drafted MoU to a retrospective genotype-phenotype cohort. This is the dataset that fixes L6 (real clinical labels, not assay surrogates). |
+| 5 | **MCC Kannur** (the MCC Molecular Oncology lead) — existing | Prospective clinical validation site; DPYD/5-FU need already identified | Advance the drafted MoU to a retrospective genotype-phenotype cohort. This is the dataset that fixes L6 (real clinical labels, not assay surrogates). |
 | 6 | **Genes & Health** (QMUL, van Heel) | 44,028 South Asian exomes + EHR; published clopidogrel/CYP2C19 outcome data | Managed-access application. Their cohort is British South Asian — a *third* point on the clinality gradient, and diaspora vs subcontinental comparison is itself a finding. |
 
 ### 6.4 Preconditions before sending anything
